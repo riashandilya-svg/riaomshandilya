@@ -1508,10 +1508,10 @@ body::after{
     padding: 6px 10px;
   }
 
-/* Hero gets space */
-.hero{
-  padding: 10px 6px 8px;
-}
+  /* Hero gets LOTS of space */
+  .hero{
+    padding: 20px 6px 8px; /* Reduced top padding since body already has 90px */
+  }
 
   /* Everything else */
   .noteCloud{ opacity: .55; }
@@ -2569,8 +2569,6 @@ worldCarousel.innerHTML = worldwideBooks.map(b => `
 `).join("");
 
   }
-
-  // Footer email
   // Footer email
   const mail = document.querySelector('.footer a[href^="mailto:"]');
   if (mail) {
