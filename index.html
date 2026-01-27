@@ -697,12 +697,13 @@ body{ padding-top: 68px; }
   background: rgba(255,255,255,.85);
 }
 
+/* ===== FIX: Learn-to-Play preview shows full page ===== */
 .previewFrame iframe{
-  --previewScale: 0.36;
+  --previewScale: 0.30; /* smaller = more of the page visible */
   width: calc(100% / var(--previewScale));
   height: calc(100% / var(--previewScale));
   border: 0;
-  display:block;
+  display: block;
   transform: scale(var(--previewScale));
   transform-origin: 0 0;
   filter: saturate(1.02) contrast(1.02);
@@ -751,15 +752,6 @@ body{ padding-top: 68px; }
   z-index: 1; /* under the clefs, over the staff background */
   border: 1px solid rgba(26,20,10,.12);
   background: rgba(255,255,255,.85);
-}
-
-.previewFrame iframe{
-  width: 180%;
-  height: 180%;
-  border: 0;
-  transform: scale(0.56);
-  transform-origin: top left;
-  filter: saturate(1.02) contrast(1.02);
 }
 
 .vignetteTap{
@@ -1340,20 +1332,24 @@ body{ padding-top: 60px; }
 }
 
 .brand .name{
-  font-size: 18px;
+  font-size: 15px;
+  white-space: nowrap;
 }
 .brand .name::after{
-  bottom: -6px;
+  bottom: -5px;
   height: 2px;
 }
 
+.brand .tag{
+  display: none !important;
+}
 .nav{
   flex-wrap: nowrap;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  gap: 8px;
+  gap: 6px;
   padding-bottom: 2px;
-  max-width: 56vw;
+  max-width: 65vw;
   scroll-behavior: smooth;
 }
 .nav::-webkit-scrollbar{ display:none; }
@@ -1474,7 +1470,14 @@ main{
   border-radius: 14px;
 }
 }
-
+/* Skip intro automatically on mobile after 2 seconds */
+@media (max-width: 720px){
+  .skipButton{
+    bottom: 20px;
+    font-size: 12px;
+    padding: 10px 16px;
+  }
+}
 /* Tiny phones */
 @media (max-width: 380px){
 .nav{ max-width: 56vw; }
@@ -1934,13 +1937,21 @@ setTimeout(() => overlay.classList.add('isHidden'), 480);
   setTimeout(() => {
     flipSequence();
   }, 240);
+  
+  // Auto-skip on mobile after 2 seconds
+  if(window.innerWidth <= 768){
+    setTimeout(() => {
+      if(!isSkipped){
+        skipToEnd();
+      }
+    }, 2000);
+  }
 });
 })();
 
 
 /* ===== Cursor glitter (gold + white, classy) ===== */
 const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isMobile = window.innerWidth <= 768;
       
         const canvas = document.getElementById('glitter');
         const ctx = canvas.getContext('2d', { alpha: true });
@@ -1959,7 +1970,7 @@ const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-
         const MAX = 320;
       
         function addSpark(x, y, intensity=1){
-          if(prefersReduced || isMobile) return;
+          if(prefersReduced) return;
       
           const count = Math.floor(7 * intensity);
           for(let i=0;i<count;i++){
