@@ -1454,162 +1454,106 @@ body::after{
   opacity: 1;
   transition: opacity .45s ease 0.8s;
 }
-/* =========================
-   Mobile polish
-   ========================= */
-   @media (max-width: 720px){
 
-/* Topbar becomes compact + scrollable nav (no hamburger needed) */
-.topbar{
-  height: 60px;
-}
-body{ padding-top: 60px; }
+@media (max-width: 720px){
+  /* Topbar wraps to 2 rows */
+  .topbar{
+    height: auto;
+    min-height: 60px;
+    padding: 8px 0;
+  }
+  
+  body{ 
+    padding-top: 90px; /* Extra space for wrapped topbar */
+    scroll-padding-top: 95px;
+  }
 
-.topbarInner{
-  padding: 0 8px;
-  gap: 6px;
-  overflow: hidden;
-}
+  .topbarInner{
+    padding: 0 8px;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-.brand .name{
-  font-size: 15px;
-  white-space: nowrap;
-}
-.brand .name::after{
-  bottom: -5px;
-  height: 2px;
-}
+  .brand{
+    flex: 1 1 100%;
+    justify-content: center;
+    min-width: 0;
+  }
 
-.brand .tag{
-  display: none !important;
-}
-.nav{
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  gap: 6px;
-  padding-bottom: 2px;
-  max-width: 65vw;
-  scroll-behavior: smooth;
-}
-.nav::-webkit-scrollbar{ display:none; }
-.nav a{
-  white-space: nowrap;
-  font-size: 12px;
-  padding: 7px 10px;
-}
+  .brand .name{
+    font-size: 14px;
+  }
+  
+  .brand .name::after{
+    bottom: -5px;
+    height: 2px;
+  }
 
-/* Main layout + sheet spacing */
-main{
-  padding: 16px 12px 64px;
-}
-.sheet{
-  border-radius: 24px;
-}
-.sheet::before{
-  inset: 10px;
-  border-radius: 18px;
-}
-.sheetInner{
-  padding: 16px;
-}
+  .brand .tag{
+    display: none !important;
+  }
 
-/* Hero */
-/* Hero */
+  .nav{
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    max-width: 100%;
+  }
+  
+  .nav a{
+    white-space: nowrap;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+/* Hero gets space */
 .hero{
-  padding: 120px 6px 8px; /* MUCH more space to clear the wrapped topbar */
-}
-.kicker{
-  padding: 8px 12px;
-  font-size: 12px;
-}
-.heroSub{
-  font-size: 14.5px;
-  line-height: 1.7;
+  padding: 10px 6px 8px;
 }
 
-/* CTAs become full-width and easy to tap */
-.heroActions{
-  gap: 8px;
-}
-.heroActions .btn{
-  width: 100%;
-  justify-content: center;
-  padding: 12px 14px;
-  border-radius: 16px;
-}
-
-/* Section headings */
-.secTitle h2{
-  font-size: 28px;
-}
-
-/* Learn block */
-.learnGrid{
-  gap: 14px;
-}
-.featureTitle{
-  font-size: 38px;
-}
-.featureText{
-  font-size: 14.5px;
-}
-
-.bigButton{
-  border-radius: 18px;
-  padding: 16px;
-}
-.bigButton .topline{ font-size: 13px; }
-.bigButton .subline{ font-size: 12px; }
-
-/* Preview vignette: reduce height on phones */
-.vignette{
-  height: 210px;
-  border-radius: 18px;
-}
-.previewBadge{
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  padding: 9px 10px;
-  font-size: 12px;
-}
-
-/* Books carousel: slightly smaller cards so it feels great on phones */
-.bookCard{
-  width: 168px;
-}
-.bookBody h3{
-  font-size: 15px;
-}
-.bookBody p{
-  font-size: 13px;
-}
-
-/* About section stacks (your grid already stacks at 900px, but tighten spacing) */
-.aboutGrid{
-  gap: 14px;
-}
-
-/* Make the embedded portrait video feel nice on mobile */
-.portrait.portraitVideo{
-  aspect-ratio: 16 / 9;
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-/* Intro overlay sizing: keep it contained on small screens */
-.introStage{
-  width: 94vw;
-  height: 70vh;
-}
-.book3D{
-  width: 94vw;
-}
-.spreadWindow{
-  inset: 12% 8% 12% 8%;
-  border-radius: 14px;
-}
+  /* Everything else */
+  .noteCloud{ opacity: .55; }
+  .noteCloud span{ filter: blur(.1px); }
+  
+  main{ padding: 16px 12px 64px; }
+  .sheet{ border-radius: 24px; }
+  .sheet::before{ inset: 10px; border-radius: 18px; }
+  .sheetInner{ padding: 16px; }
+  
+  .kicker{ padding: 8px 12px; font-size: 12px; }
+  .heroSub{ font-size: 14.5px; line-height: 1.7; }
+  
+  .heroActions{ gap: 8px; }
+  .heroActions .btn{ width: 100%; justify-content: center; padding: 12px 14px; border-radius: 16px; }
+  
+  .secTitle h2{ font-size: 28px; }
+  .learnGrid{ gap: 14px; }
+  .featureTitle{ font-size: 38px; }
+  .featureText{ font-size: 14.5px; }
+  
+  .bigButton{ border-radius: 18px; padding: 16px; }
+  .bigButton .topline{ font-size: 13px; }
+  .bigButton .subline{ font-size: 12px; }
+  
+  .vignette{ height: 210px; border-radius: 18px; }
+  .previewBadge{ left: 12px; right: 12px; bottom: 12px; padding: 9px 10px; font-size: 12px; }
+  
+  .bookCard{ width: 168px; }
+  .bookBody h3{ font-size: 15px; }
+  .bookBody p{ font-size: 13px; }
+  
+  .aboutGrid{ gap: 14px; }
+  .portrait.portraitVideo{ aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; }
+  
+  .introStage{ width: 94vw; height: 70vh; }
+  .book3D{ width: 94vw; }
+  .spreadWindow{ inset: 12% 8% 12% 8%; border-radius: 14px; }
+  .skipButton{ bottom: 20px; font-size: 12px; padding: 10px 16px; }
+  
+  .bgBase{ top: 90px; } /* Match body padding */
+  body::before, body::after{ top: 90px; }
 }
 /* Skip intro automatically on mobile after 2 seconds */
 @media (max-width: 720px){
