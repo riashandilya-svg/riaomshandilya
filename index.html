@@ -34,7 +34,7 @@
        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
        <link rel="preload" as="image" href="01.png">
        <link rel="preload" as="image" href="02.png">
-       <link rel="preload" as="image" href="images/notebook-cover.png">
+       <link rel="preload" as="image" href="notebook-cover.png">
        
        <style>
  :root{
@@ -1252,6 +1252,31 @@ body{ padding-top: 68px; }
   opacity: 1;
   transition: opacity .45s ease 0.8s;
 }
+            .introSkip{
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 10001;
+
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.78);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 50px rgba(26,20,10,.12);
+
+  font-weight: 950;
+  font-size: 12.5px;
+  color: rgba(26,20,10,.88);
+  cursor: pointer;
+}
+
+.introSkip:hover{ filter: brightness(1.03); }
+.introSkip:active{ transform: translateX(-50%) scale(0.98); }
+
+#introOverlay.isHidden .introSkip{ display:none; }
+
 /* =========================
    Mobile polish
    ========================= */
@@ -1417,27 +1442,55 @@ main{
       <canvas id="glitter" aria-hidden="true"></canvas>
 
 <!-- ===== Intro Notebook Overlay (Single Cover + Flip + Final Blank Page) ===== -->
+<!-- ===== Intro Notebook Overlay (Single Cover + Flip + Final Blank Page) ===== -->
 <div id="introOverlay" aria-hidden="true">
   <div class="introStage">
     <div class="book3D" id="book3D">
+
       <!-- Pages -->
       <div class="spread" id="spread">
-  <div class="spreadWindow">
-    <div class="leaf left"><img id="leftImg" alt=""></div>
-    <div class="leaf right"><img id="rightImg" alt=""></div>
-    <div class="turn right" id="turnLeaf"><img id="turnImg" alt=""></div>
+        <div class="spreadWindow">
+          <div class="leaf left"><img id="leftImg" alt=""></div>
+          <div class="leaf right"><img id="rightImg" alt=""></div>
+          <div class="turn right" id="turnLeaf"><img id="turnImg" alt=""></div>
 
-    <div class="finalSpread" id="finalSpread">
-      <div class="finalInk">Ria Om Shandilya</div>
+          <div class="finalSpread" id="finalSpread">
+            <div class="finalInk">Ria Om Shandilya</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cover (swings open) -->
+      <img class="bookCover" src="notebook-cover.png" alt="" />
     </div>
   </div>
+
+  <!-- Skip button -->
+  <button class="introSkip" type="button" id="introSkipBtn" aria-label="Skip intro">
+    Skip →
+  </button>
+</div>
+
+  </div>
+           <div id="introOverlay" aria-hidden="true">
+  <div class="introStage">
+    <div class="book3D" id="book3D">
+      ...
+      <img class="bookCover" src="notebook-cover.png" alt="" />
+    </div>
+  </div>
+
+  <!-- ADD THIS -->
+  <button class="introSkip" type="button" id="introSkipBtn" aria-label="Skip intro">
+    Skip →
+  </button>
+</div>
+
 </div>
 
 
-
-
       <!-- Cover (swings open) -->
-      <img class="bookCover" src="images/notebook-cover.png" alt="" />
+      <img class="bookCover" src="notebook-cover.png" alt="" />
     </div>
   </div>
 </div>
@@ -1678,116 +1731,140 @@ main{
      
        <script>
   /* ===== INTRO NOTEBOOK (01–20 flip, land on blank 21) ===== */
-  (function(){
+/* ===== INTRO NOTEBOOK (01–20 flip, auto-fly-close, skip = instant close) ===== */
+(function(){
   const overlay = document.getElementById('introOverlay');
-  const cover = document.querySelector('.bookCover');
-
-  // your pages array (keep your working path)
-  const PAGES = Array.from({ length: 20 }, (_, i) => {
-    const n = String(i + 1).padStart(2, "0");
-return new URL(`${n}.png`, document.baseURI).href;
-  });
+  if(!overlay) return;
 
   const leftImg  = document.getElementById('leftImg');
   const rightImg = document.getElementById('rightImg');
   const turnLeaf = document.getElementById('turnLeaf');
   const turnImg  = document.getElementById('turnImg');
+  const skipBtn  = document.getElementById('introSkipBtn');
 
   const TURN_MS = 110;  // very fast
   const GAP_MS  = 10;
 
+  let skipped = false;
+  let done = false;
+
+  const PAGES = Array.from({ length: 20 }, (_, i) => {
+    const n = String(i + 1).padStart(2, "0");
+    return new URL(`${n}.png`, document.baseURI).href;
+  });
+
   function setSpread(currentOdd){
-  const rightIndex = currentOdd - 1; // 1->0
-  const leftIndex  = currentOdd;     // 2->1
-
-  rightImg.src = PAGES[rightIndex] || "";
-  leftImg.src  = PAGES[leftIndex]  || "";
-}
-
+    const rightIndex = currentOdd - 1; // 1->0
+    const leftIndex  = currentOdd;     // 2->1
+    rightImg.src = PAGES[rightIndex] || "";
+    leftImg.src  = PAGES[leftIndex]  || "";
+  }
 
   const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+  function hideInstant(){
+    if(done) return;
+    done = true;
+
+    // no fly, no transition
+    overlay.style.transition = 'none';
+    overlay.style.transform = '';
+    overlay.style.opacity = '0';
+    overlay.classList.add('isHidden');
+  }
+
+  function flyAwayClose(){
+    if(done) return;
+    done = true;
+
+    const btn =
+      document.querySelector('.heroActions a[href="#books"]') ||
+      document.querySelector('.nav a[href="#books"]') ||
+      document.querySelector('a[href="#books"]');
+
+    if(btn){
+      const r = btn.getBoundingClientRect();
+      const toX = r.left + r.width/2;
+      const toY = r.top + r.height/2;
+
+      const fromX = window.innerWidth/2;
+      const fromY = window.innerHeight/2;
+
+      const dx = toX - fromX;
+      const dy = toY - fromY;
+
+      overlay.style.transform = `translate(${dx}px, ${dy}px) scale(0.25)`;
+      overlay.style.opacity = '0';
+
+      btn.animate(
+        [
+          { boxShadow: '0 0 0 rgba(255,191,47,0)' },
+          { boxShadow: '0 0 0 10px rgba(255,191,47,0.16)' },
+          { boxShadow: '0 0 0 0 rgba(255,191,47,0)' }
+        ],
+        { duration: 450, easing: 'ease-out' }
+      );
+    } else {
+      overlay.style.opacity = '0';
+    }
+
+    setTimeout(() => overlay.classList.add('isHidden'), 480);
+  }
+
+  if(skipBtn){
+    skipBtn.addEventListener('click', () => {
+      skipped = true;
+      hideInstant(); // IMPORTANT: skip does NOT fly
+    });
+  }
 
   async function flipSequence(){
     let odd = 1;
     setSpread(odd);
 
     while(odd < 19){
+      if(skipped) return;
+
       turnImg.src = rightImg.src;
 
       turnLeaf.classList.remove('flip');
-      void turnLeaf.offsetWidth;
+      void turnLeaf.offsetWidth; // restart animation
       turnLeaf.classList.add('flip');
 
       await wait(TURN_MS + GAP_MS);
+      if(skipped) return;
 
       odd += 2;
       setSpread(odd);
     }
 
-    // land on page 21 (your existing final logic)
-    // after the last flip:
-const btn =
-  document.querySelector('.heroActions a[href="#books"]') ||
-  document.querySelector('.nav a[href="#books"]') ||
-  document.querySelector('a[href="#books"]');
-
-if(btn){
-  const r = btn.getBoundingClientRect();
-  const toX = r.left + r.width/2;
-  const toY = r.top + r.height/2;
-
-  const fromX = window.innerWidth/2;
-  const fromY = window.innerHeight/2;
-
-  const dx = toX - fromX;
-  const dy = toY - fromY;
-
-  // fly + fade
-  overlay.style.transform = `translate(${dx}px, ${dy}px) scale(0.25)`;
-  overlay.style.opacity = '0';
-
-  btn.animate(
-    [
-      { boxShadow: '0 0 0 rgba(255,191,47,0)' },
-      { boxShadow: '0 0 0 10px rgba(255,191,47,0.16)' },
-      { boxShadow: '0 0 0 0 rgba(255,191,47,0)' }
-    ],
-    { duration: 450, easing: 'ease-out' }
-  );
-} else {
-  overlay.style.opacity = '0';
-}
-
-// fully remove overlay
-setTimeout(() => overlay.classList.add('isHidden'), 480);
-
+    if(!skipped) flyAwayClose(); // IMPORTANT: auto-close flies
   }
+
   window.addEventListener('load', () => {
-  overlay.classList.add('play');
-  overlay.classList.remove('showPages');
+    overlay.classList.add('play');
+    overlay.classList.remove('showPages');
 
-  // Start loading page 01 & 02 immediately
-  setSpread(1);
+    // start loading first spread
+    setSpread(1);
 
-  // Wait until BOTH images are decoded (decode avoids “loaded but not painted”)
-  const decodeImg = (img) => {
-    if (!img.src) return Promise.resolve();
-    if (img.decode) return img.decode().catch(() => {});
-    return new Promise(res => img.complete ? res() : img.addEventListener('load', res, { once:true }));
-  };
+    const decodeImg = (img) => {
+      if (!img.src) return Promise.resolve();
+      if (img.decode) return img.decode().catch(() => {});
+      return new Promise(res => img.complete ? res() : img.addEventListener('load', res, { once:true }));
+    };
 
-  Promise.all([decodeImg(rightImg), decodeImg(leftImg)]).then(() => {
-    // show pages as soon as they’re actually ready to paint
-    overlay.classList.add('showPages');
+    Promise.all([decodeImg(rightImg), decodeImg(leftImg)]).then(() => {
+      overlay.classList.add('showPages');
+    });
+
+    // start flips when cover is mostly open
+    setTimeout(() => {
+      if(!skipped) flipSequence();
+    }, 240);
   });
-
-  // Start flipping as soon as cover is mostly open, not after it fully finishes
-  // (tweak this number if you want: 220–280 is usually perfect)
-  setTimeout(() => {
-    flipSequence();
-  }, 240);
-});
 })();
+
 
 
         /* ===== Cursor glitter (gold + white, classy) ===== */
