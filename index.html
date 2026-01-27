@@ -1800,6 +1800,57 @@ body{
   fill: rgba(26,20,10,.92) !important;
   stroke: none !important;
 }
+/* ===== Topbar: make the brand + nav size-sensitive on mobile ===== */
+@media (max-width: 720px){
+  .topbarInner{
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Let brand shrink instead of forcing overflow */
+  .brand{
+    min-width: 0;            /* IMPORTANT: allows shrinking */
+    flex: 1 1 auto;
+  }
+
+  /* Title becomes responsive + ellipsizes instead of pushing nav */
+  .brand .name{
+    font-size: clamp(13px, 3.8vw, 16px);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Nav takes remaining space, scrolls horizontally */
+  .nav{
+    flex: 0 1 68vw;          /* nav gets a predictable share */
+    min-width: 0;
+    max-width: 68vw;         /* tweak 60–75vw to taste */
+  }
+}
+
+@media (max-width: 380px){
+  .nav{ max-width: 62vw; }
+  .brand .name{ font-size: clamp(12px, 4.2vw, 15px); }
+}
+/* Optional (nice): keep brand left + nav right in one line on mobile */
+@media (max-width: 720px){
+  .topbarInner{ flex-wrap: nowrap; }
+}
+/* Make the fixed glow/vignette start below the topbar too */
+body::before,
+body::after{
+  top: 68px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@media (max-width: 720px){
+  body::before,
+  body::after{ top: 60px; }
+}
 
        </style>
      </head>
@@ -1886,8 +1937,8 @@ aria-label="Amazon Store" data-tip="Amazon Store">
        <div class="paperTexture" aria-hidden="true"></div>
        <div class="sparkles" aria-hidden="true"></div>
      
-       <header class="topbar">
-         <div class="topbarInner">
+<header class="topbar">
+  <div class="topbarInner">
           <a class="brand" href="#top">
             <span class="name" id="siteName">Ria Om Shandilya</span>
             <span class="tag" id="siteTag">a golden manuscript of music ✦</span>
@@ -1900,9 +1951,9 @@ aria-label="Amazon Store" data-tip="Amazon Store">
             <a href="#books">Books</a>
             <a href="#about">About</a>
             <a href="connect.html">Contact & Forms</a>
-          </nav>
-          
-       </header>
+       </nav>
+  </div>
+</header>
      
        <main id="top">
          <section class="sheet">
