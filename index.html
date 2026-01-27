@@ -1,3 +1,4 @@
+now fine?
 <!-- =========================
      index.html (V2 - STUNNING)
      ========================= -->
@@ -175,29 +176,24 @@
   border-bottom: 1px solid rgba(var(--gold), 0.46);
   box-shadow: 0 16px 50px rgba(26,20,10,0.12);
 }
-body{ 
-  padding-top: 68px;
-  scroll-padding-top: 80px; /* Prevents content from hiding under topbar when scrolling */
-}
-.topbarInner{
-  width: min(1140px, 100%);
-  padding: 0 16px;
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
-}
+body{ padding-top: 68px; }
+
+ .topbarInner{
+           width: min(1140px, 100%);
+           padding: 0 16px;
+           display:flex;
+           align-items:center;
+           justify-content: space-between;
+           gap: 14px;
+         }
        .brand{
-  display:flex;
-  align-items: baseline;
-  gap: 10px;
-  text-decoration:none;
-  color: inherit;
-  white-space: nowrap;
-  flex-shrink: 0; /* Keep brand from shrinking too much */
-  min-width: 0; /* Allow some flexibility */
-}
+           display:flex;
+           align-items: baseline;
+           gap: 10px;
+           text-decoration:none;
+           color: inherit;
+           white-space: nowrap;
+         }
          .brand .name{
            font-family: "Cormorant Garamond", serif;
            font-weight: 700;
@@ -228,28 +224,25 @@ body{
          }
          @media (min-width: 900px){ .brand .tag{ display:inline; } }
      
-     .nav{
-  display:flex;
-  gap: 6px;
-  align-items:center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  flex-shrink: 1; /* Allow nav to shrink */
-  min-width: 0; /* Important for flexbox shrinking */
-}
-.nav a{
-  text-decoration:none;
-  font-size: 11.5px; /* Slightly smaller */
-  font-weight: 950;
-  color: rgba(26,20,10,.86);
-  padding: 7px 9px; /* Slightly tighter */
-  border-radius: 999px;
-  border: 1px solid rgba(26,20,10,.14);
-  background: rgba(255,255,255,.66);
-  backdrop-filter: blur(10px);
-  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-  white-space: nowrap; /* Prevent text wrapping inside buttons */
-}
+       .nav{
+           display:flex;
+           gap: 10px;
+           align-items:center;
+           flex-wrap: wrap;
+           justify-content: flex-end;
+         }
+         .nav a{
+           text-decoration:none;
+           font-size: 12.5px;
+           font-weight: 950;
+           color: rgba(26,20,10,.86);
+           padding: 8px 10px;
+           border-radius: 999px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.66);
+           backdrop-filter: blur(10px);
+           transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+         }
          .nav a:hover{
            transform: translateY(-1px);
            filter: brightness(1.03);
@@ -500,10 +493,10 @@ body{
      
          /* HERO */
          .hero{
-  position: relative;
-  padding: 120px 14px 12px; /* MUCH MORE space from top */
-  text-align:center;
-}
+           position: relative;
+           padding: 44px 14px 12px;
+           text-align:center;
+         }
          .kicker{
            display:inline-flex;
            gap: 10px;
@@ -1094,57 +1087,9 @@ body{
        .noteCloud span, h1, .ribbon { animation: none !important; }
      }
      @media (max-width: 720px){
-  .topbar{
-    height: auto; /* Let it grow if needed */
-    min-height: 60px;
-    padding: 8px 0;
-  }
-  
-  body{ 
-    padding-top: 76px; /* More space for wrapped content */
-    scroll-padding-top: 80px;
-  }
-
-  .topbarInner{
-    padding: 0 8px;
-    gap: 8px;
-    flex-wrap: wrap; /* Allow wrapping */
-    justify-content: center; /* Center everything */
-  }
-
-  .brand{
-    flex: 1 1 100%; /* Take full width on first row */
-    justify-content: center; /* Center the name */
-    min-width: 0;
-  }
-
-  .brand .name{
-  font-size: 14px; /* Make it smaller so it doesn't push down too much */
-}
-  
-  .brand .name::after{
-    bottom: -5px;
-    height: 2px;
-  }
-
-  .brand .tag{
-    display: none !important;
-  }
-
-  .nav{
-    flex: 1 1 100%; /* Take full width on second row */
-    flex-wrap: wrap; /* Allow nav items to wrap */
-    justify-content: center; /* Center nav items */
-    gap: 6px;
-    max-width: 100%;
-  }
-  
-  .nav a{
-    white-space: nowrap;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
-}
+       .noteCloud{ opacity: .55; }
+       .noteCloud span{ filter: blur(.1px); }
+     }
      
      /* pages fill the SAME frame, but inset to match cover art padding */
      .spread{
@@ -1454,106 +1399,161 @@ body::after{
   opacity: 1;
   transition: opacity .45s ease 0.8s;
 }
+/* =========================
+   Mobile polish
+   ========================= */
+   @media (max-width: 720px){
 
-@media (max-width: 720px){
-  /* Topbar wraps to 2 rows */
-  .topbar{
-    height: auto;
-    min-height: 60px;
-    padding: 8px 0;
-  }
-  
-  body{ 
-    padding-top: 90px; /* Extra space for wrapped topbar */
-    scroll-padding-top: 95px;
-  }
+/* Topbar becomes compact + scrollable nav (no hamburger needed) */
+.topbar{
+  height: 60px;
+}
+body{ padding-top: 60px; }
 
-  .topbarInner{
-    padding: 0 8px;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+.topbarInner{
+  padding: 0 8px;
+  gap: 6px;
+  overflow: hidden;
+}
 
-  .brand{
-    flex: 1 1 100%;
-    justify-content: center;
-    min-width: 0;
-  }
+.brand .name{
+  font-size: 15px;
+  white-space: nowrap;
+}
+.brand .name::after{
+  bottom: -5px;
+  height: 2px;
+}
 
-  .brand .name{
-    font-size: 14px;
-  }
-  
-  .brand .name::after{
-    bottom: -5px;
-    height: 2px;
-  }
+.brand .tag{
+  display: none !important;
+}
+.nav{
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 6px;
+  padding-bottom: 2px;
+  max-width: 65vw;
+  scroll-behavior: smooth;
+}
+.nav::-webkit-scrollbar{ display:none; }
+.nav a{
+  white-space: nowrap;
+  font-size: 12px;
+  padding: 7px 10px;
+}
 
-  .brand .tag{
-    display: none !important;
-  }
+/* Main layout + sheet spacing */
+main{
+  padding: 16px 12px 64px;
+}
+.sheet{
+  border-radius: 24px;
+}
+.sheet::before{
+  inset: 10px;
+  border-radius: 18px;
+}
+.sheetInner{
+  padding: 16px;
+}
 
-  .nav{
-    flex: 1 1 100%;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    max-width: 100%;
-  }
-  
-  .nav a{
-    white-space: nowrap;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
+/* Hero */
+.hero{
+  padding: 32px 6px 8px;
+}
+.kicker{
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.heroSub{
+  font-size: 14.5px;
+  line-height: 1.7;
+}
 
-  /* Hero gets LOTS of space */
-  .hero{
-    padding: 20px 6px 8px; /* Reduced top padding since body already has 90px */
-  }
+/* CTAs become full-width and easy to tap */
+.heroActions{
+  gap: 8px;
+}
+.heroActions .btn{
+  width: 100%;
+  justify-content: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+}
 
-  /* Everything else */
-  .noteCloud{ opacity: .55; }
-  .noteCloud span{ filter: blur(.1px); }
-  
-  main{ padding: 16px 12px 64px; }
-  .sheet{ border-radius: 24px; }
-  .sheet::before{ inset: 10px; border-radius: 18px; }
-  .sheetInner{ padding: 16px; }
-  
-  .kicker{ padding: 8px 12px; font-size: 12px; }
-  .heroSub{ font-size: 14.5px; line-height: 1.7; }
-  
-  .heroActions{ gap: 8px; }
-  .heroActions .btn{ width: 100%; justify-content: center; padding: 12px 14px; border-radius: 16px; }
-  
-  .secTitle h2{ font-size: 28px; }
-  .learnGrid{ gap: 14px; }
-  .featureTitle{ font-size: 38px; }
-  .featureText{ font-size: 14.5px; }
-  
-  .bigButton{ border-radius: 18px; padding: 16px; }
-  .bigButton .topline{ font-size: 13px; }
-  .bigButton .subline{ font-size: 12px; }
-  
-  .vignette{ height: 210px; border-radius: 18px; }
-  .previewBadge{ left: 12px; right: 12px; bottom: 12px; padding: 9px 10px; font-size: 12px; }
-  
-  .bookCard{ width: 168px; }
-  .bookBody h3{ font-size: 15px; }
-  .bookBody p{ font-size: 13px; }
-  
-  .aboutGrid{ gap: 14px; }
-  .portrait.portraitVideo{ aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; }
-  
-  .introStage{ width: 94vw; height: 70vh; }
-  .book3D{ width: 94vw; }
-  .spreadWindow{ inset: 12% 8% 12% 8%; border-radius: 14px; }
-  .skipButton{ bottom: 20px; font-size: 12px; padding: 10px 16px; }
-  
-  .bgBase{ top: 90px; } /* Match body padding */
-  body::before, body::after{ top: 90px; }
+/* Section headings */
+.secTitle h2{
+  font-size: 28px;
+}
+
+/* Learn block */
+.learnGrid{
+  gap: 14px;
+}
+.featureTitle{
+  font-size: 38px;
+}
+.featureText{
+  font-size: 14.5px;
+}
+
+.bigButton{
+  border-radius: 18px;
+  padding: 16px;
+}
+.bigButton .topline{ font-size: 13px; }
+.bigButton .subline{ font-size: 12px; }
+
+/* Preview vignette: reduce height on phones */
+.vignette{
+  height: 210px;
+  border-radius: 18px;
+}
+.previewBadge{
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 9px 10px;
+  font-size: 12px;
+}
+
+/* Books carousel: slightly smaller cards so it feels great on phones */
+.bookCard{
+  width: 168px;
+}
+.bookBody h3{
+  font-size: 15px;
+}
+.bookBody p{
+  font-size: 13px;
+}
+
+/* About section stacks (your grid already stacks at 900px, but tighten spacing) */
+.aboutGrid{
+  gap: 14px;
+}
+
+/* Make the embedded portrait video feel nice on mobile */
+.portrait.portraitVideo{
+  aspect-ratio: 16 / 9;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Intro overlay sizing: keep it contained on small screens */
+.introStage{
+  width: 94vw;
+  height: 70vh;
+}
+.book3D{
+  width: 94vw;
+}
+.spreadWindow{
+  inset: 12% 8% 12% 8%;
+  border-radius: 14px;
+}
 }
 /* Skip intro automatically on mobile after 2 seconds */
 @media (max-width: 720px){
@@ -1951,7 +1951,7 @@ aria-label="Amazon Store" data-tip="Amazon Store">
                target="_blank" rel="noopener">Learn to Play</a>
             <a href="#books">Books</a>
             <a href="#about">About</a>
-            <a href="connect.html">Contact</a>
+            <a href="connect.html">Contact & Forms</a>
        </nav>
   </div>
 </header>
@@ -2003,7 +2003,7 @@ aria-label="Amazon Store" data-tip="Amazon Store">
                 href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
                 target="_blank" rel="noopener">Learn to Play!</a>             
                 <a class="btn" id="ctaSecondary" href="#books">Explore Books</a>
-                <a class="btn" id="ctaContact" href="connect.html">Contact</a>
+                <a class="btn" id="ctaContact" href="connect.html">Contact & Forms</a>
               </div>
         
               
@@ -2570,6 +2570,7 @@ worldCarousel.innerHTML = worldwideBooks.map(b => `
 
   }
 
+  // Footer email
   // Footer email
   const mail = document.querySelector('.footer a[href^="mailto:"]');
   if (mail) {
