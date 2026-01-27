@@ -1898,7 +1898,6 @@ aria-label="Amazon Store" data-tip="Amazon Store">
                href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
                target="_blank" rel="noopener">Learn to Play</a>
             <a href="#books">Books</a>
-            <a href="#youtube">YouTube</a>
             <a href="#about">About</a>
             <a href="connect.html">Contact & Forms</a>
           </nav>
@@ -2249,38 +2248,32 @@ if(btn){
 setTimeout(() => overlay.classList.add('isHidden'), 480);
 
   }
+  // Preload first 4 pages while page loads
+  const preloadImages = [PAGES[0], PAGES[1], PAGES[2], PAGES[3]];
+  preloadImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+
   window.addEventListener('load', () => {
   overlay.classList.add('play');
-  overlay.classList.remove('showPages');
-
+  overlay.classList.add('showPages'); // Show immediately, don't wait
+  
   // Start loading page 01 & 02 immediately
   setSpread(1);
 
-  // Wait until BOTH images are decoded (decode avoids “loaded but not painted”)
-  const decodeImg = (img) => {
-    if (!img.src) return Promise.resolve();
-    if (img.decode) return img.decode().catch(() => {});
-    return new Promise(res => img.complete ? res() : img.addEventListener('load', res, { once:true }));
-  };
-
-  Promise.all([decodeImg(rightImg), decodeImg(leftImg)]).then(() => {
-    // show pages as soon as they’re actually ready to paint
-    overlay.classList.add('showPages');
-  });
-
-  // Start flipping as soon as cover is mostly open, not after it fully finishes
-  // (tweak this number if you want: 220–280 is usually perfect)
+  // Start flipping MUCH faster - don't wait for decode
   setTimeout(() => {
     flipSequence();
-  }, 240);
+  }, 100); // Reduced from 240ms to 100ms
   
-  // Auto-skip on mobile after 2 seconds
+  // Auto-skip on mobile after 1.5 seconds (faster)
   if(window.innerWidth <= 768){
     setTimeout(() => {
       if(!isSkipped){
         skipToEnd();
       }
-    }, 2000);
+    }, 1500); // Reduced from 2000ms
   }
 });
 })();
