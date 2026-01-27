@@ -327,57 +327,8 @@ body{
 
 
 @media (max-width: 720px){
-  .topbar{
-    height: auto; /* Let it grow if needed */
-    min-height: 60px;
-    padding: 8px 0;
-  }
-  
-  body{ 
-    padding-top: 76px; /* More space for wrapped content */
-    scroll-padding-top: 80px;
-  }
-
-  .topbarInner{
-    padding: 0 8px;
-    gap: 8px;
-    flex-wrap: wrap; /* Allow wrapping */
-    justify-content: center; /* Center everything */
-  }
-
-  .brand{
-    flex: 1 1 100%; /* Take full width on first row */
-    justify-content: center; /* Center the name */
-    min-width: 0;
-  }
-
-  .brand .name{
-    font-size: 16px;
-    white-space: nowrap;
-  }
-  
-  .brand .name::after{
-    bottom: -5px;
-    height: 2px;
-  }
-
-  .brand .tag{
-    display: none !important;
-  }
-
-  .nav{
-    flex: 1 1 100%; /* Take full width on second row */
-    flex-wrap: wrap; /* Allow nav items to wrap */
-    justify-content: center; /* Center nav items */
-    gap: 6px;
-    max-width: 100%;
-  }
-  
-  .nav a{
-    white-space: nowrap;
-    font-size: 11px;
-    padding: 6px 10px;
-  }
+  .socialBtn{ width: 36px; height: 36px; }
+  .socialBtn svg{ width: 17px; height: 17px; }
 }
 
          /* ===== Layout ===== */
@@ -1143,9 +1094,58 @@ body{
        .noteCloud span, h1, .ribbon { animation: none !important; }
      }
      @media (max-width: 720px){
-       .noteCloud{ opacity: .55; }
-       .noteCloud span{ filter: blur(.1px); }
-     }
+  .topbar{
+    height: auto; /* Let it grow if needed */
+    min-height: 60px;
+    padding: 8px 0;
+  }
+  
+  body{ 
+    padding-top: 76px; /* More space for wrapped content */
+    scroll-padding-top: 80px;
+  }
+
+  .topbarInner{
+    padding: 0 8px;
+    gap: 8px;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: center; /* Center everything */
+  }
+
+  .brand{
+    flex: 1 1 100%; /* Take full width on first row */
+    justify-content: center; /* Center the name */
+    min-width: 0;
+  }
+
+  .brand .name{
+    font-size: 16px;
+    white-space: nowrap;
+  }
+  
+  .brand .name::after{
+    bottom: -5px;
+    height: 2px;
+  }
+
+  .brand .tag{
+    display: none !important;
+  }
+
+  .nav{
+    flex: 1 1 100%; /* Take full width on second row */
+    flex-wrap: wrap; /* Allow nav items to wrap */
+    justify-content: center; /* Center nav items */
+    gap: 6px;
+    max-width: 100%;
+  }
+  
+  .nav a{
+    white-space: nowrap;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}
      
      /* pages fill the SAME frame, but inset to match cover art padding */
      .spread{
