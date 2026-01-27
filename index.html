@@ -19,7 +19,14 @@
           youtube: {
             embed: "https://www.youtube.com/embed/vUWFVOcv0V0",
             watch: "https://www.youtube.com/watch?v=vUWFVOcv0V0",
+            channel: "https://www.youtube.com/riashandilya",
             title: "Featured performance"
+          },
+      
+          socials: {
+            instagram: "https://www.instagram.com/riaomshandilya/",
+            linktree: "https://linktr.ee/riashandilya",
+            amazonStore: "https://www.amazon.com/stores/Ria-Om-Shandilya/author/B09QN8NFFD"
           },
       
           contact: {
@@ -28,6 +35,7 @@
           }
         };
       </script>
+      
       
        <link rel="preconnect" href="https://fonts.googleapis.com">
        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -489,6 +497,7 @@ body{ padding-top: 68px; }
            margin-top: 16px;
            position: relative;
            z-index: 3;
+          
          }
      
          .btn{
@@ -997,7 +1006,13 @@ body{ padding-top: 68px; }
          }
          .footer a:hover{ filter: brightness(1.02); }
          .footer a:hover{ filter: brightness(1.02); }
-     
+         .copyright{
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(26,20,10,.70);
+}
+
      @media (prefers-reduced-motion: reduce){
        .noteCloud span, h1, .ribbon { animation: none !important; }
      }
@@ -1515,6 +1530,124 @@ body{
   .bgBase{ top: 60px; }
 }
 
+.socialRow{
+
+  margin-top: 12px;
+  display:flex;
+  gap: 10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  position: relative;
+  z-index: 3;
+}
+
+.socialBtn{
+  text-decoration:none;
+  font-size: 12.5px;
+  font-weight: 950;
+  color: rgba(26,20,10,.86);
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.66);
+  backdrop-filter: blur(10px);
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+}
+
+.socialBtn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 16px 40px rgba(26,20,10,.12);
+}
+
+/* ===== Sticky Social Rail (right side) ===== */
+.socialRail{
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99998;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.socialIcon{
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.74);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 50px rgba(26,20,10,.12);
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  text-decoration: none;
+}
+
+.socialIcon:hover{
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+  box-shadow: 0 24px 70px rgba(26,20,10,.16);
+}
+
+.socialIcon svg{
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: rgba(26,20,10,.92);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.socialIcon .fill{
+  fill: rgba(26,20,10,.92);
+  stroke: none;
+}
+
+/* Small tooltip */
+.socialIcon[data-tip]{
+  position: relative;
+}
+.socialIcon[data-tip]::before{
+  content: attr(data-tip);
+  position: absolute;
+  right: 56px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.86);
+  color: rgba(26,20,10,.86);
+  font-size: 12px;
+  font-weight: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease;
+  box-shadow: 0 16px 40px rgba(26,20,10,.10);
+}
+.socialIcon:hover::before{
+  opacity: 1;
+}
+
+/* Mobile: move to bottom as a compact row */
+@media (max-width: 720px){
+  .socialRail{
+    top: auto;
+    bottom: 14px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 10px;
+  }
+  .socialIcon[data-tip]::before{ display:none; }
+}
+
        </style>
      </head>
      
@@ -1522,6 +1655,43 @@ body{
       <div class="bgBase" aria-hidden="true"></div>
 
       <canvas id="glitter" aria-hidden="true"></canvas>
+<!-- ===== Sticky Social Rail ===== -->
+<div class="socialRail" aria-label="Social links">
+  <a class="socialIcon" id="railYoutube" target="_blank" rel="noopener" aria-label="YouTube" data-tip="YouTube">
+    <!-- YouTube icon -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M21.5 7.3s-.2-1.6-.8-2.3c-.8-.8-1.7-.8-2.1-.9C15.7 3.8 12 3.8 12 3.8h0s-3.7 0-6.6.3c-.4.1-1.3.1-2.1.9C2.7 5.7 2.5 7.3 2.5 7.3S2.2 9.2 2.2 11v1.7c0 1.8.3 3.7.3 3.7s.2 1.6.8 2.3c.8.8 1.9.8 2.4.9 1.7.2 6.3.3 6.3.3s3.7 0 6.6-.3c.4-.1 1.3-.1 2.1-.9.6-.7.8-2.3.8-2.3s.3-1.9.3-3.7V11c0-1.8-.3-3.7-.3-3.7Z" class="fill" opacity=".10"></path>
+      <path d="M10 9.5v5l5-2.5-5-2.5Z" class="fill"></path>
+      <path d="M21.5 7.3s-.2-1.6-.8-2.3c-.8-.8-1.7-.8-2.1-.9C15.7 3.8 12 3.8 12 3.8s-3.7 0-6.6.3c-.4.1-1.3.1-2.1.9C2.7 5.7 2.5 7.3 2.5 7.3S2.2 9.2 2.2 11v1.7c0 1.8.3 3.7.3 3.7s.2 1.6.8 2.3c.8.8 1.9.8 2.4.9 1.7.2 6.3.3 6.3.3s3.7 0 6.6-.3c.4-.1 1.3-.1 2.1-.9.6-.7.8-2.3.8-2.3s.3-1.9.3-3.7V11c0-1.8-.3-3.7-.3-3.7Z"></path>
+    </svg>
+  </a>
+
+  <a class="socialIcon" id="railInstagram" target="_blank" rel="noopener" aria-label="Instagram" data-tip="Instagram">
+    <!-- Instagram icon -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="6.5" y="6.5" width="11" height="11" rx="3"></rect>
+      <path d="M10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"></path>
+      <path d="M15.8 8.2h.01"></path>
+    </svg>
+  </a>
+
+  <a class="socialIcon" id="railLinktree" target="_blank" rel="noopener" aria-label="Linktree" data-tip="Linktree">
+    <!-- Link icon (clean + universal) -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1"></path>
+      <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1"></path>
+    </svg>
+  </a>
+
+  <a class="socialIcon" id="railAmazon" target="_blank" rel="noopener" aria-label="Amazon Store" data-tip="Amazon Store">
+    <!-- Shopping bag icon -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 8h12l-1 12H7L6 8Z"></path>
+      <path d="M9 8a3 3 0 0 1 6 0"></path>
+      <path d="M9.5 12h5"></path>
+    </svg>
+  </a>
+</div>
 
 <!-- ===== Intro Notebook Overlay (Single Cover + Flip + Final Blank Page) ===== -->
 <div id="introOverlay" aria-hidden="true">
@@ -1622,6 +1792,12 @@ body{
                 target="_blank" rel="noopener">Learn to Play!</a>             
                 <a class="btn" id="ctaSecondary" href="#books">Explore Books</a>
                 <a class="btn" id="ctaContact" href="connect.html">Contact & Forms</a>
+              </div>
+              <div class="socialRow" aria-label="Social links">
+                <a class="socialBtn" id="socialYoutube" target="_blank" rel="noopener">YouTube</a>
+                <a class="socialBtn" id="socialInstagram" target="_blank" rel="noopener">Instagram</a>
+                <a class="socialBtn" id="socialLinktree" target="_blank" rel="noopener">Linktree</a>
+                <a class="socialBtn" id="socialAmazon" target="_blank" rel="noopener">Amazon Store</a>
               </div>
               
              </section>
@@ -1776,10 +1952,14 @@ body{
              </section>
      
              <div class="footer">
-               Contact: <a href="mailto:riaomshandilya@gmail.com">riaomshandilya@gmail.com</a>
-               &nbsp;•&nbsp;
-               <a href="connect.html">Forms / Teacher’s Guide / Message</a>
-             </div>
+              Contact: <a href="mailto:riaomshandilya@gmail.com">riaomshandilya@gmail.com</a>
+              &nbsp;•&nbsp;
+              <a href="connect.html">Forms / Teacher’s Guide / Message</a>
+            
+              <div class="copyright">
+                © <span id="siteYear"></span> Ria Om Shandilya. All rights reserved.
+              </div>
+            </div>
            </div>
          </section>
        </main>
@@ -2053,6 +2233,18 @@ const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-
         /* ===== Personalisation fill ===== */
 (function () {
   const S = window.SITE;
+  // Sticky social rail links
+  const railYoutube = document.getElementById("railYoutube");
+  if (railYoutube) railYoutube.href = S.youtube.channel;
+
+  const railInstagram = document.getElementById("railInstagram");
+  if (railInstagram) railInstagram.href = S.socials.instagram;
+
+  const railLinktree = document.getElementById("railLinktree");
+  if (railLinktree) railLinktree.href = S.socials.linktree;
+
+  const railAmazon = document.getElementById("railAmazon");
+  if (railAmazon) railAmazon.href = S.socials.amazonStore;
 
   // Top + hero text
   const set = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
@@ -2074,6 +2266,19 @@ const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-
   if (ctaContact) { ctaContact.href = S.contact.contactPage; }
 
   // YouTube links
+    // Social links (Hero buttons)
+    const y = document.getElementById("socialYoutube");
+  if (y) y.href = S.youtube.channel;
+
+  const ig = document.getElementById("socialInstagram");
+  if (ig) ig.href = S.socials.instagram;
+
+  const lt = document.getElementById("socialLinktree");
+  if (lt) lt.href = S.socials.linktree;
+
+  const amz = document.getElementById("socialAmazon");
+  if (amz) amz.href = S.socials.amazonStore;
+
   const iframe = document.querySelector('#youtube iframe');
   if (iframe) iframe.src = S.youtube.embed;
   const aboutVid = document.getElementById("aboutVideo");
@@ -2178,12 +2383,18 @@ worldCarousel.innerHTML = worldwideBooks.map(b => `
   }
 
   // Footer email
+  // Footer email
   const mail = document.querySelector('.footer a[href^="mailto:"]');
   if (mail) {
     mail.href = `mailto:${S.contact.email}`;
     mail.textContent = S.contact.email;
   }
+
+  // Footer year (ADD THIS HERE)
+  const yearEl = document.getElementById("siteYear");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();
+
 
       </script>
       
