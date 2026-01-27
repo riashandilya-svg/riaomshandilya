@@ -1,0 +1,489 @@
+<!-- =========================
+     connect.html (V2)
+     ========================= -->
+     <!doctype html>
+     <html lang="en">
+     <head>
+       <meta charset="utf-8" />
+       <meta name="viewport" content="width=device-width, initial-scale=1" />
+       <title>Contact & Forms • Ria Om Shandilya</title>
+     
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+     
+       <style>
+         :root{
+           --ivory:#FFFDF5;
+           --cream:#FFF3D1;
+           --butter:#FFE07A;
+           --gown:#FFBF2F;
+           --gold:255,184,38;
+     
+           --ink:#1A140A;
+           --muted: rgba(26,20,10,0.72);
+           --shadow: 0 30px 90px rgba(26,20,10,0.20);
+           --shadowSoft: 0 20px 60px rgba(26,20,10,0.14);
+           --radius: 28px;
+         }
+         *{ box-sizing:border-box; }
+         html,body{ height:100%; }
+     
+         body{
+           margin:0;
+           color: var(--ink);
+           font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+           overflow-x:hidden;
+           background:
+             radial-gradient(1200px 700px at 50% 0%, rgba(255,255,255,0.75), transparent 60%),
+             linear-gradient(180deg, var(--ivory) 0%, var(--cream) 34%, var(--butter) 100%);
+         }
+         body::before{
+           content:"";
+           position: fixed;
+           inset: 0;
+           pointer-events:none;
+           z-index:-5;
+           background:
+             radial-gradient(1200px 650px at 20% 10%, rgba(var(--gold),0.36), transparent 62%),
+             radial-gradient(900px 560px at 86% 18%, rgba(var(--gold),0.28), transparent 66%),
+             radial-gradient(820px 620px at 50% 105%, rgba(var(--gold),0.20), transparent 62%);
+         }
+         #glitter{
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+         .paperTexture{
+           position: fixed;
+           inset:0;
+           z-index:-3;
+           pointer-events:none;
+           opacity:.22;
+           mix-blend-mode: multiply;
+           background:
+             radial-gradient(circle at 14% 26%, rgba(26,20,10,.06) 0 1px, transparent 2px),
+             radial-gradient(circle at 62% 72%, rgba(26,20,10,.05) 0 1px, transparent 2px),
+             radial-gradient(circle at 86% 22%, rgba(26,20,10,.05) 0 1px, transparent 2px),
+             radial-gradient(circle at 34% 82%, rgba(26,20,10,.05) 0 1px, transparent 2px),
+             repeating-linear-gradient(120deg, rgba(26,20,10,.03) 0px, rgba(26,20,10,.03) 1px, transparent 1px, transparent 10px);
+           filter: blur(.2px);
+         }
+     
+         #glitter{
+           position: fixed;
+           inset:0;
+           z-index: 9998;
+           pointer-events:none;
+           mix-blend-mode: screen;
+         }
+     
+         .topbar{
+           position: sticky;
+           top:0;
+           z-index:9999;
+           height: 68px;
+           display:flex;
+           align-items:center;
+           justify-content:center;
+           background: rgba(255,243,209,0.72);
+           backdrop-filter: blur(12px);
+           border-bottom: 1px solid rgba(var(--gold), 0.46);
+           box-shadow: 0 16px 50px rgba(26,20,10,0.12);
+         }
+         .topbarInner{
+           width: min(1140px, 100%);
+           padding: 0 16px;
+           display:flex;
+           align-items:center;
+           justify-content: space-between;
+           gap: 14px;
+         }
+         .brand{
+           text-decoration:none;
+           color:inherit;
+           font-family: "Cormorant Garamond", serif;
+           font-weight: 700;
+           font-size: 22px;
+           letter-spacing:.6px;
+         }
+         .nav{
+           display:flex;
+           gap:10px;
+           flex-wrap:wrap;
+           justify-content:flex-end;
+         }
+         .nav a{
+           text-decoration:none;
+           font-size: 12.5px;
+           font-weight: 950;
+           color: rgba(26,20,10,.86);
+           padding: 8px 10px;
+           border-radius: 999px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.66);
+           transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+         }
+         .nav a:hover{
+           transform: translateY(-1px);
+           filter: brightness(1.03);
+           box-shadow: 0 16px 40px rgba(26,20,10,.12);
+         }
+         .nav a.primary{
+           border-color: rgba(var(--gold), .66);
+           background: linear-gradient(135deg, #FFD35A, #FFBF2F);
+           color: #2A1A00;
+           box-shadow: 0 18px 50px rgba(255,191,47,0.30);
+         }
+     
+         main{
+           width: min(1140px, 100%);
+           margin: 0 auto;
+           padding: 26px 16px 78px;
+         }
+     
+         .sheet{
+           position: relative;
+           border-radius: 30px;
+           background: rgba(255,255,255,0.62);
+           box-shadow: var(--shadow);
+           overflow: hidden;
+           border: 1px solid rgba(var(--gold), 0.52);
+         }
+         .sheet::before{
+           content:"";
+           position:absolute;
+           inset: 14px;
+           border-radius: 24px;
+           border: 1px solid rgba(var(--gold), 0.48);
+           pointer-events:none;
+           background: radial-gradient(900px 320px at 50% 0%, rgba(var(--gold),0.10), transparent 70%);
+         }
+         .sheetInner{ position:relative; z-index:1; padding: 24px; }
+     
+         .titleRow{
+           display:flex;
+           align-items: baseline;
+           justify-content: space-between;
+           gap: 12px;
+           flex-wrap: wrap;
+           margin: 0 0 12px;
+         }
+         h1{
+           font-family: "Cormorant Garamond", serif;
+           font-size: clamp(36px, 4.2vw, 52px);
+           margin: 0;
+           letter-spacing: -0.01em;
+           text-shadow: 0 0 16px rgba(var(--gold), 0.18);
+         }
+         .titleRow p{
+           margin: 0;
+           color: rgba(26,20,10,.72);
+           font-size: 13.5px;
+           font-weight: 650;
+         }
+     
+         .twoCol{
+           display:grid;
+           grid-template-columns: 1fr 1fr;
+           gap: 14px;
+         }
+         @media (max-width: 900px){ .twoCol{ grid-template-columns: 1fr; } }
+     
+         .card{
+           border-radius: 24px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.78);
+           padding: 14px;
+           box-shadow: var(--shadowSoft);
+           position: relative;
+           overflow:hidden;
+         }
+         .card::before{
+           content:"";
+           position:absolute;
+           inset:-40px;
+           background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.50), transparent 55%),
+                       radial-gradient(circle at 70% 50%, rgba(255,255,255,0.30), transparent 55%);
+           opacity:.35;
+           transform: rotate(10deg);
+           pointer-events:none;
+         }
+         .card > *{ position:relative; z-index:1; }
+     
+         .card h3{ margin:0 0 8px; font-size: 15px; font-weight: 950; }
+         .card p{ margin:0 0 12px; color: rgba(26,20,10,.74); line-height: 1.6; font-size: 13.5px; }
+     
+         .rowLink{
+           display:flex;
+           align-items:center;
+           justify-content: space-between;
+           gap: 12px;
+           text-decoration:none;
+           color: inherit;
+           padding: 12px 14px;
+           border-radius: 18px;
+           border: 1px solid rgba(var(--gold), 0.54);
+           background: rgba(255,255,255,.80);
+           box-shadow: 0 12px 32px rgba(26,20,10,.08);
+         }
+         .rowLink strong{ font-weight: 950; font-size: 13.5px; }
+         .rowLink span{ color: rgba(26,20,10,.62); font-size: 12.5px; font-weight: 750; }
+     
+         form{ display:grid; gap: 10px; }
+         input, textarea{
+           width: 100%;
+           padding: 12px 12px;
+           border-radius: 16px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.86);
+           font: inherit;
+         }
+         textarea{ min-height: 150px; resize: vertical; }
+     
+         .submit{
+           border: 1px solid rgba(var(--gold), .72);
+           background: linear-gradient(135deg, #FFE07A, #FFBF2F);
+           color: #2A1A00;
+           font-weight: 950;
+           padding: 12px 14px;
+           border-radius: 16px;
+           cursor: pointer;
+           box-shadow: 0 18px 54px rgba(255,191,47,0.26);
+         }
+     
+         .footer{
+           margin-top: 18px;
+           text-align:center;
+           color: rgba(26,20,10,.80);
+           font-size: 13px;
+           font-weight: 900;
+         }
+         .footer a{
+           color: rgba(26,20,10,.95);
+           text-decoration:none;
+           border-bottom: 1px solid rgba(var(--gold), 0.62);
+         }
+       </style>
+     </head>
+     
+     <body>
+      <canvas id="glitter" aria-hidden="true"></canvas>
+       <div class="paperTexture" aria-hidden="true"></div>
+     
+       <header class="topbar">
+         <div class="topbarInner">
+           <a class="brand" href="index.html">Ria Om Shandilya</a>
+           <nav class="nav">
+             <a href="index.html">Home</a>
+             <a class="primary" href="connect.html">Contact & Forms</a>
+           </nav>
+         </div>
+       </header>
+     
+       <main>
+         <section class="sheet">
+           <div class="sheetInner">
+             <div class="titleRow">
+               <div>
+                 <h1>Contact & Forms</h1>
+                 <p>requests, teacher resources, and a direct message</p>
+               </div>
+             </div>
+     
+             <div class="twoCol">
+               <div class="card">
+                 <h3>Google Forms</h3>
+                 <p>Open in a new tab.</p>
+     
+                 <div style="display:flex; flex-direction:column; gap:10px;">
+                   <a class="rowLink" href="https://forms.gle/YOUR_SONG_REQUEST_FORM" target="_blank" rel="noopener">
+                     <div>
+                       <strong>Request a Song</strong><br>
+                       <span>Suggest a Hindi song you want arranged</span>
+                     </div>
+                     <strong>→</strong>
+                   </a>
+     
+                   <a class="rowLink" href="https://forms.gle/YOUR_TEACHERS_GUIDE_FORM" target="_blank" rel="noopener">
+                     <div>
+                       <strong>Teacher’s Guide Form</strong><br>
+                       <span>For teachers / educators / access</span>
+                     </div>
+                     <strong>→</strong>
+                   </a>
+                 </div>
+               </div>
+     
+               <div class="card">
+                 <h3>Teacher’s Guide Downloads</h3>
+                 <p>Update file paths to match your site.</p>
+     
+                 <div style="display:flex; flex-direction:column; gap:10px;">
+                   <a class="rowLink" href="downloads/MeetTheNotes-TeachersGuide.pdf" download>
+                     <div>
+                       <strong>Download PDF</strong><br>
+                       <span>Meet the Notes: Teacher’s Guide</span>
+                     </div>
+                     <strong>↓</strong>
+                   </a>
+     
+                   <a class="rowLink" href="downloads/MeetTheNotes-Tracker.xlsx" download>
+                     <div>
+                       <strong>Download Excel</strong><br>
+                       <span>Teacher tracker / planning sheet</span>
+                     </div>
+                     <strong>↓</strong>
+                   </a>
+                 </div>
+               </div>
+             </div>
+     
+             <div style="height:14px;"></div>
+     
+             <div class="twoCol">
+               <div class="card">
+                 <h3>Quick email</h3>
+                 <p>Opens your mail app.</p>
+     
+                 <a class="rowLink" href="mailto:riaomshandilya@gmail.com">
+                   <div>
+                     <strong>Email</strong><br>
+                     <span>riaomshandilya@gmail.com</span>
+                   </div>
+                   <strong>✉</strong>
+                 </a>
+               </div>
+     
+               <div class="card">
+                 <h3>Message</h3>
+                 <p>This sends via your email app (no backend needed).</p>
+     
+                 <form id="contactForm">
+                   <input id="cName" type="text" placeholder="Your name" required>
+                   <input id="cEmail" type="email" placeholder="Your email" required>
+                   <textarea id="cMsg" placeholder="Your message" required></textarea>
+                   <button class="submit" type="submit">Send Email</button>
+                 </form>
+     
+                 <p style="margin:10px 0 0; color:rgba(26,20,10,.58); font-size:12.5px;">
+                   If you want “send inside the site”, you’ll need a backend or a form service.
+                 </p>
+               </div>
+             </div>
+     
+             <div class="footer">
+              Back to <a href="index.html">Home</a>
+            </div>
+
+          </div>
+        </section>
+      </main>
+
+      <script>
+      /* ===== Cursor glitter (gold + white, classy) ===== */
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const canvas = document.getElementById('glitter');
+      const ctx = canvas.getContext('2d', { alpha: true });
+
+      function resize(){
+        canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+        canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const particles = [];
+      const MAX = 320;
+
+      function addSpark(x, y, intensity=1){
+        if(prefersReduced) return;
+
+        const count = Math.floor(7 * intensity);
+        for(let i=0;i<count;i++){
+          if(particles.length > MAX) particles.shift();
+
+          const angle = Math.random() * Math.PI * 2;
+          const speed = (0.30 + Math.random() * 2.0) * intensity;
+
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 0.20,
+            life: 34 + Math.random() * 30,
+            size: 1.0 + Math.random() * 2.8,
+            tw: Math.random() * Math.PI * 2,
+            alpha: 0.52 + Math.random() * 0.34
+          });
+        }
+      }
+
+      let last = { x: window.innerWidth/2, y: window.innerHeight/2 };
+      window.addEventListener('pointermove', (e) => {
+        const dx = e.clientX - last.x;
+        const dy = e.clientY - last.y;
+        const d = Math.min(34, Math.hypot(dx, dy));
+        const intensity = Math.max(0.75, d / 16);
+        addSpark(e.clientX, e.clientY, intensity);
+        last = { x: e.clientX, y: e.clientY };
+      }, { passive: true });
+
+      window.addEventListener('pointerdown', (e) => addSpark(e.clientX, e.clientY, 1.9), { passive: true });
+
+      function tick(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        for(let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          p.life -= 1;
+          if(p.life <= 0){ particles.splice(i,1); continue; }
+
+          p.vx *= 0.986;
+          p.vy *= 0.986;
+          p.vy += 0.018;
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          p.tw += 0.22;
+          const twinkle = 0.62 + Math.sin(p.tw) * 0.38;
+          const fade = Math.min(1, p.life / 44);
+          const a = p.alpha * fade * twinkle;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, 191, 47, ${a})`;
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, 255, 255, ${a * 0.55})`;
+          ctx.arc(p.x, p.y, p.size * 0.55, 0, Math.PI*2);
+          ctx.fill();
+
+          if(Math.random() < 0.24){
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.tw * 0.35);
+            ctx.globalAlpha = a * 0.90;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${a})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-p.size*2.2, 0); ctx.lineTo(p.size*2.2, 0);
+            ctx.moveTo(0, -p.size*2.2); ctx.lineTo(0, p.size*2.2);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+      </script>
+
+    </body>
+    </html>

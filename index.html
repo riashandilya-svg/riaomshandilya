@@ -1,0 +1,2032 @@
+<!-- =========================
+     index.html (V2 - STUNNING)
+     ========================= -->
+     <!doctype html>
+     <html lang="en">
+     <head>
+       <meta charset="utf-8" />
+       <meta name="viewport" content="width=device-width, initial-scale=1" />
+       <title>Ria Om Shandilya</title>
+       <script>
+        window.SITE = {
+          name: "Ria Om Shandilya",
+          tagline: "Pianist • Author • Educator • Transcriber",
+          heroLine: "Romantic, magical music education and beautifully crafted sheet music for Hindi songs.",
+          heroLine2: "Built for learners who want clarity, beauty, and that Bollywood glow.",
+          primaryCTA: { label: "Learn to Play", href: "#learn" },
+          secondaryCTA: { label: "Explore Books", href: "#books" },
+      
+          youtube: {
+            embed: "https://www.youtube.com/embed/vUWFVOcv0V0",
+            watch: "https://www.youtube.com/watch?v=vUWFVOcv0V0",
+            title: "Featured performance"
+          },
+      
+          contact: {
+            email: "riaomshandilya@gmail.com",
+            contactPage: "connect.html"
+          }
+        };
+      </script>
+      
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+       <link rel="preload" as="image" href="images/pages/01.png">
+       <link rel="preload" as="image" href="images/pages/02.png">
+       <link rel="preload" as="image" href="images/notebook-cover.png">
+       
+       <style>
+ :root{
+  --pageInsetTop: 10%;
+  --pageInsetRight: 12%;
+  --pageInsetBottom: 12%;
+  --pageInsetLeft: 12%;
+  --inkRGB: 26,20,10;
+
+  /* ===== Belle Ballroom Palette ===== */
+  --ivory:  #FFFDF5;
+  --cream:  #FFF3D1;
+  --butter: #FFE07A;
+  --gown:   #FFBF2F;
+  --gold:   255, 184, 38;
+
+  --ink: #1A140A;
+  --muted: rgba(26,20,10,0.72);
+
+  --shadow: 0 30px 90px rgba(26,20,10,0.20);
+  --shadowSoft: 0 20px 60px rgba(26,20,10,0.14);
+  --radius: 26px;
+
+  --frame: rgba(var(--gold), 0.52);
+  --line: rgba(26,20,10,0.16);
+  --lineSoft: rgba(26,20,10,0.10);
+}
+#glitter{
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+     
+         *{ box-sizing:border-box; }
+         html,body{ height:100%; }
+         body{
+           margin:0;
+           color: var(--ink);
+           font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+           overflow-x:hidden;
+           overscroll-behavior:none;
+           background: radial-gradient(1200px 700px at 50% 0%, rgba(255,255,255,0.75), transparent 60%),
+                       linear-gradient(180deg, var(--ivory) 0%, var(--cream) 34%, var(--butter) 100%);
+         }
+     
+         /* Warm magical glow */
+         body::before{
+           content:"";
+           position: fixed;
+           inset: 0;
+           pointer-events:none;
+           z-index:-5;
+           background:
+             radial-gradient(1200px 650px at 20% 10%, rgba(var(--gold),0.38), transparent 62%),
+             radial-gradient(900px 560px at 86% 18%, rgba(var(--gold),0.30), transparent 66%),
+             radial-gradient(820px 620px at 50% 105%, rgba(var(--gold),0.22), transparent 62%);
+           transform: translateZ(0);
+         }
+     
+         /* Subtle vignette to feel cinematic */
+         body::after{
+           content:"";
+           position: fixed;
+           inset:0;
+           pointer-events:none;
+           z-index:-4;
+           background: radial-gradient(circle at 50% 20%, transparent 60%, rgba(26,20,10,0.14) 100%);
+           opacity: .28;
+         }
+     
+         /* Paper grain */
+         .paperTexture{
+           position: fixed;
+           inset:0;
+           z-index:-3;
+           pointer-events:none;
+           opacity:.22;
+           mix-blend-mode: multiply;
+           background:
+             radial-gradient(circle at 14% 26%, rgba(26,20,10,.06) 0 1px, transparent 2px),
+             radial-gradient(circle at 62% 72%, rgba(26,20,10,.05) 0 1px, transparent 2px),
+             radial-gradient(circle at 86% 22%, rgba(26,20,10,.05) 0 1px, transparent 2px),
+             radial-gradient(circle at 34% 82%, rgba(26,20,10,.05) 0 1px, transparent 2px),
+             repeating-linear-gradient(120deg, rgba(26,20,10,.03) 0px, rgba(26,20,10,.03) 1px, transparent 1px, transparent 10px);
+           filter: blur(.2px);
+         }
+     
+         /* Background sparkles (gold only) */
+         .sparkles{
+           position: fixed;
+           inset:0;
+           z-index:-2;
+           pointer-events:none;
+           opacity:.28;
+           background:
+             radial-gradient(circle at 16% 18%, rgba(var(--gold),.22) 0 1px, transparent 2px),
+             radial-gradient(circle at 28% 52%, rgba(var(--gold),.18) 0 1px, transparent 2px),
+             radial-gradient(circle at 48% 28%, rgba(var(--gold),.18) 0 1px, transparent 2px),
+             radial-gradient(circle at 66% 66%, rgba(var(--gold),.16) 0 1px, transparent 2px),
+             radial-gradient(circle at 84% 42%, rgba(var(--gold),.16) 0 1px, transparent 2px),
+             radial-gradient(circle at 92% 18%, rgba(var(--gold),.14) 0 1px, transparent 2px);
+           filter: blur(.2px);
+         }
+     
+         /* Cursor glitter canvas */
+         #glitter{
+           position: fixed;
+           inset:0;
+           z-index: 9998;
+           pointer-events:none;
+           mix-blend-mode: screen;
+         }
+     
+         /* ===== Topbar ===== */
+         .topbar{
+  position: fixed;          /* always visible */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;           /* above everything */
+  height: 68px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(255,243,209,0.72);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(var(--gold), 0.46);
+  box-shadow: 0 16px 50px rgba(26,20,10,0.12);
+}
+body{ padding-top: 68px; }
+
+         .topbarInner{
+           width: min(1140px, 100%);
+           padding: 0 16px;
+           display:flex;
+           align-items:center;
+           justify-content: space-between;
+           gap: 14px;
+         }
+         .brand{
+           display:flex;
+           align-items: baseline;
+           gap: 10px;
+           text-decoration:none;
+           color: inherit;
+           white-space: nowrap;
+         }
+         .brand .name{
+           font-family: "Cormorant Garamond", serif;
+           font-weight: 700;
+           font-size: 22px;
+           letter-spacing: .6px;
+           position: relative;
+         }
+         .brand .name::after{
+           content:"";
+           position:absolute;
+           left:0; right:0;
+           bottom:-7px;
+           height: 3px;
+           border-radius: 999px;
+           background: linear-gradient(90deg,
+             rgba(var(--gold),.95),
+             rgba(255,255,255,.90),
+             rgba(var(--gold),.70)
+           );
+           opacity:.95;
+           filter: blur(.15px);
+         }
+         .brand .tag{
+           display:none;
+           font-size: 12px;
+           font-weight: 900;
+           color: rgba(26,20,10,.62);
+         }
+         @media (min-width: 900px){ .brand .tag{ display:inline; } }
+     
+         .nav{
+           display:flex;
+           gap: 10px;
+           align-items:center;
+           flex-wrap: wrap;
+           justify-content: flex-end;
+         }
+         .nav a{
+           text-decoration:none;
+           font-size: 12.5px;
+           font-weight: 950;
+           color: rgba(26,20,10,.86);
+           padding: 8px 10px;
+           border-radius: 999px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.66);
+           backdrop-filter: blur(10px);
+           transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+         }
+         .nav a:hover{
+           transform: translateY(-1px);
+           filter: brightness(1.03);
+           box-shadow: 0 16px 40px rgba(26,20,10,.12);
+         }
+         .nav a.primary{
+           border-color: rgba(var(--gold), .66);
+           background: linear-gradient(135deg, #FFD35A, #FFBF2F);
+           color: #2A1A00;
+           box-shadow: 0 18px 50px rgba(255,191,47,0.34);
+         }
+     
+         /* ===== Layout ===== */
+         main{
+           width: min(1140px, 100%);
+           margin: 0 auto;
+           padding: 26px 16px 78px;
+         }
+     
+         /* Manuscript “sheet” container (THIS is what makes it not basic) */
+         .sheet{
+           position: relative;
+           border-radius: 30px;
+           background: rgba(255,255,255,0.62);
+           box-shadow: var(--shadow);
+           overflow: hidden;
+           border: 1px solid rgba(var(--gold), 0.52);
+         }
+         .sheet::before{
+           content:"";
+           position:absolute;
+           inset: 14px;
+           border-radius: 24px;
+           border: 1px solid rgba(var(--gold), 0.48);
+           pointer-events:none;
+           background:
+             radial-gradient(900px 320px at 50% 0%, rgba(var(--gold),0.10), transparent 70%);
+         }
+         .sheet::after{
+           /* torn edge illusion */
+           content:"";
+           position:absolute;
+           inset:0;
+           pointer-events:none;
+           opacity:.45;
+           background:
+             radial-gradient(18px 22px at 2% 12%, rgba(26,20,10,0.10), transparent 70%),
+             radial-gradient(22px 18px at 98% 18%, rgba(26,20,10,0.08), transparent 70%),
+             radial-gradient(18px 18px at 96% 92%, rgba(26,20,10,0.08), transparent 70%),
+             radial-gradient(18px 18px at 3% 90%, rgba(26,20,10,0.08), transparent 70%);
+           mix-blend-mode: multiply;
+         }
+         .sheetInner{
+           position: relative;
+           z-index: 1;
+           padding: 24px;
+         }
+     
+         /* Staff background inside sheet */
+         .staffBed{
+           position:absolute;
+           inset: 0;
+           pointer-events:none;
+           opacity: .40;
+           background:
+             repeating-linear-gradient(
+               to bottom,
+               rgba(26,20,10,0.14) 0px,
+               rgba(26,20,10,0.14) 1px,
+               transparent 1px,
+               transparent 26px
+             );
+           mask-image: radial-gradient(circle at 50% 18%, black 64%, transparent 92%);
+           z-index: 0;
+           transform: translateZ(0);
+         }
+     
+         /* Animated drifting “staff ribbons” for extra magic */
+         .staffRibbons{
+           position:absolute;
+           inset:0;
+           z-index: 0;
+           pointer-events:none;
+           opacity:.26;
+           filter: blur(.1px);
+         }
+         .staffRibbons svg{
+           width:100%;
+           height:100%;
+           display:block;
+         }
+         .ribbon{
+           stroke: rgba(26,20,10,0.22);
+           stroke-width: 1;
+           fill: none;
+           stroke-linecap: round;
+           stroke-dasharray: 6 10;
+           animation: drift 14s linear infinite;
+         }
+         .ribbon:nth-child(2){ animation-duration: 18s; opacity: .70; }
+         .ribbon:nth-child(3){ animation-duration: 22s; opacity: .55; }
+         @keyframes drift{
+           from{ stroke-dashoffset: 0; }
+           to{ stroke-dashoffset: 260; }
+         }
+     
+         /* Corner flourishes */
+         .flourish{
+           position:absolute;
+           inset:0;
+           pointer-events:none;
+           z-index: 1;
+           opacity: .70;
+         }
+         .flourish span{
+           position:absolute;
+           font-family: "Cormorant Garamond", serif;
+           color: rgba(26,20,10,0.72);
+           text-shadow: 0 0 20px rgba(var(--gold), 0.16);
+           user-select:none;
+           line-height: 1;
+         }
+         .flourish .tl{ left: 18px; top: 14px; font-size: 42px; transform: rotate(-8deg); }
+         .flourish .tr{ right: 18px; top: 14px; font-size: 42px; transform: rotate(8deg); }
+         .flourish .bl{ left: 18px; bottom: 14px; font-size: 42px; transform: rotate(8deg); }
+         .flourish .br{ right: 18px; bottom: 14px; font-size: 42px; transform: rotate(-8deg); }
+     
+         /* Huge watermark clefs */
+         .watermarks{
+           position:absolute;
+           inset:0;
+           pointer-events:none;
+           z-index: 1;
+           opacity: .18;
+           mix-blend-mode: multiply;
+         }
+         .watermarks span{
+           position:absolute;
+           font-family: "Cormorant Garamond", serif;
+           color: rgba(26,20,10,0.70);
+           text-shadow: 0 0 30px rgba(var(--gold), 0.18);
+           user-select:none;
+         }
+         .watermarks .w1{ left: -18px; top: 72px; font-size: 190px; transform: rotate(-10deg); }
+         .watermarks .w2{ right: -30px; top: 220px; font-size: 170px; transform: rotate(12deg); }
+         .watermarks .w3{ left: 60px; bottom: -20px; font-size: 140px; transform: rotate(8deg); opacity: .22; }
+     
+         /* Floating notes (bold, more alive) */
+         .noteCloud{
+           position:absolute;
+           inset:0;
+           pointer-events:none;
+           z-index: 2;
+           opacity: .78;
+         }
+         .noteCloud span{
+           position:absolute;
+           font-family: "Cormorant Garamond", serif;
+           font-weight: 700;
+           user-select:none;
+           color: rgba(26,20,10,.92);
+           text-shadow:
+             0 0 22px rgba(var(--gold),0.32),
+             0 12px 28px rgba(26,20,10,0.10);
+             animation: floaty 11.5s ease-in-out infinite;
+         }
+         .noteCloud span:nth-child(2){ animation-duration: 8.8s; }
+         .noteCloud span:nth-child(3){ animation-duration: 7.4s; }
+         .noteCloud span:nth-child(4){ animation-duration: 9.6s; }
+         .noteCloud span:nth-child(5){ animation-duration: 8.2s; }
+         .noteCloud span:nth-child(6){ animation-duration: 10.2s; }
+         .noteCloud span:nth-child(7){ animation-duration: 9.2s; }
+         .noteCloud span:nth-child(8){ animation-duration: 11.0s; }
+     
+         @keyframes floaty{
+           0%,100%{ transform: translateY(0) rotate(0deg); opacity:.65; }
+           50%{ transform: translateY(-20px) rotate(7deg); opacity:1; }
+         }
+     
+         /* HERO */
+         .hero{
+           position: relative;
+           padding: 44px 14px 12px;
+           text-align:center;
+         }
+         .kicker{
+           display:inline-flex;
+           gap: 10px;
+           align-items:center;
+           justify-content:center;
+           padding: 10px 14px;
+           border-radius: 999px;
+           background: rgba(255,255,255,.72);
+           border: 1px solid rgba(26,20,10,.12);
+           box-shadow: var(--shadowSoft);
+           backdrop-filter: blur(10px);
+           font-weight: 900;
+           letter-spacing: .02em;
+           color: rgba(26,20,10,.78);
+           font-size: 12.5px;
+           position: relative;
+           z-index: 3;
+         }
+     
+         /* Gold-foil ink title with shimmer */
+         h1{
+           font-family: "Cormorant Garamond", serif;
+           font-weight: 700;
+           font-size: clamp(48px, 5.8vw, 92px);
+           line-height: 1.01;
+           margin: 18px 0 12px;
+           letter-spacing: -0.02em;
+           position: relative;
+           z-index: 3;
+     
+           background: linear-gradient(
+             100deg,
+             #2A1A00 0%,
+             #2A1A00 22%,
+             #FFBF2F 38%,
+             #FFFFFF 48%,
+             #FFBF2F 60%,
+             #2A1A00 78%,
+             #2A1A00 100%
+           );
+           background-size: 220% 100%;
+           -webkit-background-clip: text;
+           background-clip: text;
+           color: transparent;
+           filter: drop-shadow(0 0 22px rgba(var(--gold),0.22));
+           animation: shimmer 6.8s ease-in-out infinite;
+         }
+         @keyframes shimmer{
+           0%,100%{ background-position: 0% 50%; }
+           50%{ background-position: 100% 50%; }
+         }
+     
+         .heroSub{
+           margin: 0 auto 14px;
+           max-width: 82ch;
+           line-height: 1.75;
+           color: rgba(26,20,10,.80);
+           font-size: 16px;
+           position: relative;
+           z-index: 3;
+         }
+     
+         .heroActions{
+           display:flex;
+           gap: 10px;
+           justify-content:center;
+           flex-wrap:wrap;
+           margin-top: 16px;
+           position: relative;
+           z-index: 3;
+         }
+     
+         .btn{
+           display:inline-flex;
+           align-items:center;
+           gap: 10px;
+           padding: 12px 16px;
+           border-radius: 16px;
+           text-decoration:none;
+           font-weight: 950;
+           font-size: 13px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.74);
+           color: rgba(26,20,10,.92);
+           backdrop-filter: blur(10px);
+           transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
+         }
+         .btn:hover{
+           transform: translateY(-2px);
+           filter: brightness(1.03);
+           box-shadow: 0 22px 60px rgba(26,20,10,.12);
+         }
+     
+         .btnPrimary{
+           border-color: rgba(var(--gold), .70);
+           background: linear-gradient(135deg, #FFE07A, #FFBF2F);
+           color: #2A1A00;
+           box-shadow: 0 22px 60px rgba(255,191,47,0.34);
+         }
+     
+         /* Section blocks inside sheet */
+         .section{ margin-top: 20px; }
+         .secTitle{
+           display:flex;
+           align-items: baseline;
+           justify-content: space-between;
+           gap: 12px;
+           flex-wrap: wrap;
+           margin: 0 0 12px;
+           position: relative;
+           z-index: 2;
+         }
+         .secTitle h2{
+           font-family: "Cormorant Garamond", serif;
+           font-size: clamp(28px, 3.4vw, 38px);
+           margin: 0;
+           letter-spacing: -0.01em;
+           color: rgba(26,20,10,.94);
+           text-shadow: 0 0 16px rgba(var(--gold), 0.18);
+         }
+         .secTitle p{
+           margin: 0;
+           color: rgba(26,20,10,.72);
+           font-size: 13.5px;
+           font-weight: 650;
+         }
+     
+         /* Learn to Play block: make it feel like a “wax-sealed invitation” */
+         .learnGrid{
+           display:grid;
+           grid-template-columns: minmax(0, 1fr) 360px;
+           gap: 16px;
+           align-items: center;
+           position: relative;
+           z-index: 2;
+         }
+         @media (max-width: 980px){ .learnGrid{ grid-template-columns: 1fr; } }
+     
+         .featureLabel{
+           display:inline-flex;
+           align-items:center;
+           gap: 10px;
+           padding: 8px 12px;
+           border-radius: 999px;
+           border: 1px solid rgba(var(--gold), 0.62);
+           background: rgba(255,255,255,.74);
+           font-weight: 950;
+           font-size: 12px;
+           color: rgba(26,20,10,.92);
+           width: fit-content;
+         }
+         .featureTitle{
+           font-family: "Cormorant Garamond", serif;
+           font-size: clamp(34px, 4.3vw, 56px);
+           margin: 10px 0 6px;
+           line-height: 1.06;
+           letter-spacing: -0.01em;
+         }
+         .featureText{
+           margin: 0 0 14px;
+           color: rgba(26,20,10,.78);
+           line-height: 1.75;
+           font-size: 15px;
+         }
+     
+         .bigButton{
+           display:flex;
+           align-items:center;
+           justify-content:space-between;
+           gap: 14px;
+           padding: 18px 18px;
+           border-radius: 22px;
+           text-decoration:none;
+           font-weight: 950;
+           letter-spacing: .01em;
+           border: 1px solid rgba(var(--gold), .76);
+           background: linear-gradient(135deg, #FFE07A, #FFBF2F);
+           color: #2A1A00;
+           box-shadow: 0 28px 80px rgba(255,191,47,0.34);
+           transition: transform .14s ease, filter .14s ease;
+           position: relative;
+           overflow:hidden;
+         }
+         .bigButton::before{
+           content:"";
+           position:absolute;
+           inset:-40px;
+           background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.55), transparent 55%),
+                       radial-gradient(circle at 70% 50%, rgba(255,255,255,0.35), transparent 55%);
+           opacity:.40;
+           transform: rotate(8deg);
+         }
+         .bigButton:hover{ transform: translateY(-3px); filter: brightness(1.03); }
+         .bigButton .left{ position:relative; display:flex; flex-direction: column; gap: 2px; min-width: 0; z-index:1; }
+         .bigButton .topline{ font-size: 14px; }
+         .bigButton .subline{
+           font-size: 12.5px;
+           opacity: .90;
+           font-weight: 850;
+           white-space: nowrap;
+           overflow: hidden;
+           text-overflow: ellipsis;
+         }
+         .bigButton .arrow{ position:relative; z-index:1; font-size: 20px; font-weight: 1000; line-height: 1; }
+     
+         .vignette{
+           position: relative;
+           height: 260px;
+           border-radius: 22px;
+           border: 1px solid rgba(26,20,10,.12);
+           background: rgba(255,255,255,.72);
+           overflow:hidden;
+           box-shadow: var(--shadowSoft);
+         }
+         .vignette::before{
+           content:"";
+           position:absolute;
+           inset:0;
+           background:
+             radial-gradient(240px 240px at 20% 20%, rgba(var(--gold),.20), transparent 62%),
+             radial-gradient(280px 280px at 80% 38%, rgba(var(--gold),.16), transparent 66%);
+           opacity: 1;
+         }
+         .vignette .staff{
+           position:absolute;
+           left:0; right:0;
+           top: 64px;
+           height: 140px;
+           opacity: .68;
+           background:
+             repeating-linear-gradient(
+               to bottom,
+               rgba(26,20,10,.20) 0px,
+               rgba(26,20,10,.20) 1px,
+               transparent 1px,
+               transparent 20px
+             );
+           mask-image: radial-gradient(circle at 50% 50%, black 56%, transparent 92%);
+         }
+         .vignette .symbols{
+           position:absolute;
+           inset:0;
+           pointer-events:none;
+           opacity: .78;
+           mix-blend-mode: multiply;
+         }
+         .vignette .symbols span{
+           position:absolute;
+           font-family: "Cormorant Garamond", serif;
+           font-weight: 700;
+           color: rgba(26,20,10,.92);
+           user-select:none;
+           text-shadow: 0 0 26px rgba(var(--gold), .28);
+           animation: floaty 8.6s ease-in-out infinite;
+         }
+         .vignette .symbols .treble{ left: 16px; top: 10px; font-size: 126px; transform: rotate(-8deg); }
+         .vignette .symbols .bass{ right: 18px; bottom: 10px; font-size: 104px; transform: rotate(10deg); }
+         .vignette .symbols .n1{ left: 150px; top: 104px; font-size: 60px; transform: rotate(8deg); opacity: .92; }
+         .vignette .symbols .n2{ left: 210px; top: 136px; font-size: 56px; transform: rotate(-8deg); opacity: .88; }
+     
+/* ===== Learn-to-Play: full box website preview ===== */
+.vignettePreview{
+  position: relative;
+  overflow: hidden;
+}
+
+/* iframe wrapper fills the whole vignette */
+/* Preview frame fills the vignette */
+.previewFrame{
+  position:absolute;
+  inset: 12px;
+  border-radius: 18px;
+  overflow:hidden;
+  z-index: 1;
+  border: 1px solid rgba(var(--inkRGB),.12);
+  background: rgba(255,255,255,.85);
+}
+
+.previewFrame iframe{
+  --previewScale: 0.36;
+  width: calc(100% / var(--previewScale));
+  height: calc(100% / var(--previewScale));
+  border: 0;
+  display:block;
+  transform: scale(var(--previewScale));
+  transform-origin: 0 0;
+  filter: saturate(1.02) contrast(1.02);
+  pointer-events: none;
+}
+
+
+
+/* full clickable layer */
+.vignetteTap{
+  position:absolute;
+  inset:0;
+  z-index: 5;
+  border-radius: inherit;
+}
+
+/* small label */
+.previewBadge{
+  position:absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 6;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.78);
+  backdrop-filter: blur(10px);
+  font-weight: 900;
+  font-size: 12px;
+}
+.previewBadge .dot{
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,191,47,0.95);
+}
+.previewBadge .hint{ opacity: .75; font-weight: 850; }
+
+
+.previewFrame{
+  position:absolute;
+  inset: 12px;
+  border-radius: 18px;
+  overflow:hidden;
+  z-index: 1; /* under the clefs, over the staff background */
+  border: 1px solid rgba(26,20,10,.12);
+  background: rgba(255,255,255,.85);
+}
+
+.previewFrame iframe{
+  width: 180%;
+  height: 180%;
+  border: 0;
+  transform: scale(0.56);
+  transform-origin: top left;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+.vignetteTap{
+  position:absolute;
+  inset:0;
+  z-index: 4;
+  border-radius: 22px;
+}
+
+.previewBadge{
+  position:absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  z-index: 3;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(26,20,10,.14);
+  box-shadow: 0 16px 40px rgba(26,20,10,.10);
+  font-weight: 900;
+  font-size: 12px;
+  color: rgba(26,20,10,.86);
+  backdrop-filter: blur(10px);
+}
+
+.previewBadge .dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,191,47,0.95);
+  box-shadow: 0 0 0 6px rgba(255,191,47,0.14);
+}
+
+.previewBadge .hint{
+  margin-left:auto;
+  opacity: .72;
+}
+
+.vignettePreview .symbols{
+  z-index: 2; /* keep clefs floating above preview */
+}
+
+/* ===== Books carousel sizing tweak (aim: ~5 visible on desktop) ===== */
+.carousel{
+  display:flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 10px;
+  padding: 6px 2px 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bookCard{
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+
+.carousel::-webkit-scrollbar{ height: 10px; }
+.carousel::-webkit-scrollbar-thumb{
+  background: rgba(26,20,10,.18);
+  border-radius: 999px;
+}
+.carousel::-webkit-scrollbar-track{
+  background: rgba(255,255,255,.35);
+  border-radius: 999px;
+}
+.scrollHint{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 8px;
+  margin: 6px 2px 8px;
+  font-weight: 900;
+  font-size: 12px;
+  color: rgba(26,20,10,.70);
+  user-select: none;
+}
+
+.scrollHint .arrow{
+  font-size: 16px;
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
+@keyframes nudge{
+  0%,100%{ transform: translateX(0); opacity:.75; }
+  50%{ transform: translateX(6px); opacity:1; }
+}
+
+.bookCard{
+  flex: 0 0 auto;          /* IMPORTANT: prevents wrapping/stacking */
+  width: 200px;
+  scroll-snap-align: start;
+}
+
+/* optional: slightly reduce cover height feel */
+.cover{
+  aspect-ratio: 2 / 3;
+}
+
+  .cover{
+  aspect-ratio: 2 / 3;   /* rectangle book cover */
+  height: auto;
+  position: relative;
+  background:
+    radial-gradient(240px 240px at 20% 20%, rgba(var(--gold),.18), transparent 62%),
+    rgba(255,255,255,.74);
+  border-bottom: 1px solid rgba(26,20,10,.10);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+         .cover::after{
+           /* staff overlay inside cover */
+           content:"";
+           position:absolute;
+           inset:0;
+           opacity:.22;
+           background:
+             repeating-linear-gradient(to bottom, rgba(26,20,10,.20) 0px, rgba(26,20,10,.20) 1px, transparent 1px, transparent 20px);
+           mask-image: radial-gradient(circle at 50% 60%, black 52%, transparent 92%);
+           pointer-events:none;
+         }
+         .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+         .coverPlaceholder{
+           font-family: "Cormorant Garamond", serif;
+           font-weight: 700;
+           font-size: 18px;
+           opacity: .92;
+           padding: 0 18px;
+           text-align:center;
+         }
+     
+         .bookBody{ padding: 14px 14px 16px; }
+         .bookBody h3{ margin: 0 0 6px; font-size: 16px; font-weight: 950; letter-spacing: -0.01em; }
+         .bookBody p{ margin: 0 0 12px; color: rgba(26,20,10,.74); font-size: 13.5px; line-height: 1.5; }
+     
+         /* YouTube */
+         .ytGrid{
+           display:grid;
+           grid-template-columns: minmax(0, 1fr) 360px;
+           gap: 16px;
+           align-items: start;
+           position: relative;
+           z-index: 2;
+         }
+         @media (max-width: 980px){ .ytGrid{ grid-template-columns: 1fr; } }
+     
+         .video{
+           border-radius: 24px;
+           overflow:hidden;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.76);
+           box-shadow: var(--shadowSoft);
+         }
+         .video iframe{
+           width: 100%;
+           aspect-ratio: 16/9;
+           border:0;
+           display:block;
+         }
+     
+         .sideCard{
+           border-radius: 24px;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.78);
+           padding: 14px;
+           box-shadow: var(--shadowSoft);
+         }
+         .sideCard h3{ margin:0 0 8px; font-size: 15px; font-weight: 950; }
+         .sideCard p{ margin:0 0 12px; color: rgba(26,20,10,.74); line-height: 1.6; font-size: 13.5px; }
+     
+         /* About */
+         .aboutGrid{
+           display:grid;
+           grid-template-columns: 270px minmax(0, 1fr);
+           gap: 16px;
+           align-items: start;
+           position: relative;
+           z-index: 2;
+         }
+         @media (max-width: 900px){ .aboutGrid{ grid-template-columns: 1fr; } }
+     
+         .portrait{
+           border-radius: 24px;
+           overflow:hidden;
+           border: 1px solid rgba(26,20,10,.14);
+           background: rgba(255,255,255,.76);
+           box-shadow: var(--shadowSoft);
+           height: 330px;
+           display:flex;
+           align-items:center;
+           justify-content:center;
+         }
+         .portrait img{ width:100%; height:100%; object-fit:cover; display:block; }
+         .portrait .ph{
+           padding: 16px;
+           text-align:center;
+           color: rgba(26,20,10,.72);
+           font-weight: 900;
+         }
+         .portrait img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  object-position: center 5%; /* lower = show more head, tweak 10%–30% */
+  display:block;
+}
+.portrait.portraitVideo{
+  padding: 0;
+  height: auto;          /* override fixed portrait height */
+  aspect-ratio: 9 / 16;  /* tall like a portrait; change to 16/9 if you want */
+}
+
+.portrait.portraitVideo iframe{
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+         .footer{
+           margin-top: 18px;
+           text-align:center;
+           color: rgba(26,20,10,.80);
+           font-size: 13px;
+           font-weight: 900;
+           position: relative;
+           z-index: 2;
+         }
+         .footer a{
+           color: rgba(26,20,10,.95);
+           text-decoration:none;
+           border-bottom: 1px solid rgba(var(--gold), 0.62);
+         }
+         .footer a:hover{ filter: brightness(1.02); }
+     
+         @media (prefers-reduced-motion: reduce){
+           .noteCloud span, h1, .ribbon { animation: none !important; }
+         }
+         @media (max-width: 720px){
+  .noteCloud{ opacity: .55; }
+  .noteCloud span{ filter: blur(.1px); }
+}
+
+/* pages fill the SAME frame, but inset to match cover art padding */
+.spread{
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#introOverlay.showPages .spread{
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+
+
+
+.spreadWindow{
+  position: absolute;
+  inset: 10% 12% 12% 12%;  /* paper area only */
+  border-radius: 16px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(255,255,255,0.94);
+  box-shadow: 0 18px 60px rgba(26,20,10,0.10);
+}
+/* forces GPU layer so the first paint is quicker */
+.spreadWindow{
+  transform: translateZ(0);
+  will-change: opacity;
+}
+
+
+.leaf, .turn{
+  position: relative;
+  overflow: hidden;
+}
+
+.leaf img, .turn img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* prevents weird stretching */
+  display: block;
+  background: rgba(255,255,255,0.94);
+}
+
+
+.leaf.left{ border-right: 1px solid rgba(26,20,10,0.10); }
+.leaf.right{ border-left: 1px solid rgba(26,20,10,0.06); }
+
+/* turning page layer (covers right side when turning forward) */
+.turn{
+  position:absolute;
+  top:0; bottom:0;
+  width: 50%;
+  right: 0;
+  transform-origin: 0% 50%;
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+  pointer-events:none;
+  box-shadow: -18px 0 40px rgba(26,20,10,0.10);
+}
+
+.turn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(90deg, rgba(26,20,10,0.10), transparent 55%);
+  opacity:.25;
+  pointer-events:none;
+}
+
+/* VERY FAST page turn */
+.turn.flip{ animation: fastTurn 0.12s linear forwards; }
+
+
+@keyframes fastTurn{
+  0%{ transform: rotateY(0deg); opacity:1; }
+  100%{ transform: rotateY(-180deg); opacity:0.0; }
+}
+
+/* final blank spread (page 21) */
+.finalSpread{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+  opacity: 0;
+  background: rgba(255,255,255,0.96);
+}
+
+#introOverlay.showFinal .finalSpread{
+  opacity: 1;
+  transition: opacity .12s linear;
+}
+
+         
+/* ===== Intro Notebook Overlay (Single Cover) ===== */
+#introOverlay{
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(900px 560px at 50% 30%, rgba(255,255,255,0.82), transparent 70%),
+    rgba(255,243,209,0.70);
+  backdrop-filter: blur(10px);
+  transition: opacity .6s ease, visibility .6s ease, transform .85s ease;
+}
+
+/* cover fills the same exact frame */
+.bookCover{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;      /* cover fits nicely */
+  transform-origin: 12% 52%;
+  z-index: 5;
+  backface-visibility: hidden;
+}
+
+.finalInk{
+  position: relative;
+  z-index: 1;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: clamp(44px, 6vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+
+  background: linear-gradient(
+    100deg,
+    #2A1A00 0%,
+    #2A1A00 22%,
+    #FFBF2F 38%,
+    #FFFFFF 48%,
+    #FFBF2F 60%,
+    #2A1A00 78%,
+    #2A1A00 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  filter: drop-shadow(0 0 26px rgba(255,184,38,0.18));
+  animation: introShimmer 4.8s ease-in-out infinite;
+}
+
+@keyframes introShimmer{
+  0%,100%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+}
+
+
+#introOverlay.play .bookCover{
+  animation: coverSwing 0.35s linear forwards;
+}
+
+
+/* open animation */
+@keyframes coverSwing{
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-128deg); }
+}
+
+
+@media (prefers-reduced-motion: reduce){
+  #introOverlay{ display:none !important; }
+}
+
+#introOverlay.isHidden{
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.introStage{
+  width: min(920px, 94vw);
+  height: min(600px, 76vh);
+  display: grid;
+  place-items: center;
+}
+
+.book3D{
+  width: min(760px, 94vw);
+  aspect-ratio: 16 / 10;
+  position: relative;
+  transform: translateZ(0) scale(0.98);
+  filter: drop-shadow(0 40px 120px rgba(26,20,10,0.22));
+  perspective: 1400px;
+}
+
+.finalInk{
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: clamp(44px, 6vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+
+  background: linear-gradient(
+    100deg,
+    #2A1A00 0%,
+    #2A1A00 22%,
+    #FFBF2F 38%,
+    #FFFFFF 48%,
+    #FFBF2F 60%,
+    #2A1A00 78%,
+    #2A1A00 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  filter: drop-shadow(0 0 26px rgba(255,184,38,0.25));
+  animation: introShimmer 4.8s ease-in-out infinite;
+}
+
+@keyframes introShimmer{
+  0%,100%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+}
+
+
+/* The actual “open” */
+@keyframes coverSwing{
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-128deg); }
+}
+
+#introOverlay.play .pageStack{
+  opacity: 1;
+  transition: opacity .45s ease 0.8s;
+}
+/* =========================
+   Mobile polish
+   ========================= */
+   @media (max-width: 720px){
+
+/* Topbar becomes compact + scrollable nav (no hamburger needed) */
+.topbar{
+  height: 60px;
+}
+body{ padding-top: 60px; }
+
+.topbarInner{
+  padding: 0 12px;
+  gap: 10px;
+}
+
+.brand .name{
+  font-size: 18px;
+}
+.brand .name::after{
+  bottom: -6px;
+  height: 2px;
+}
+
+.nav{
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 8px;
+  padding-bottom: 2px;
+  max-width: 62vw;
+}
+.nav::-webkit-scrollbar{ display:none; }
+.nav a{
+  white-space: nowrap;
+  font-size: 12px;
+  padding: 7px 10px;
+}
+
+/* Main layout + sheet spacing */
+main{
+  padding: 16px 12px 64px;
+}
+.sheet{
+  border-radius: 24px;
+}
+.sheet::before{
+  inset: 10px;
+  border-radius: 18px;
+}
+.sheetInner{
+  padding: 16px;
+}
+
+/* Hero */
+.hero{
+  padding: 32px 6px 8px;
+}
+.kicker{
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.heroSub{
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+/* CTAs become full-width and easy to tap */
+.heroActions{
+  gap: 8px;
+}
+.heroActions .btn{
+  width: 100%;
+  justify-content: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+
+/* Section headings */
+.secTitle h2{
+  font-size: 28px;
+}
+
+/* Learn block */
+.learnGrid{
+  gap: 14px;
+}
+.featureTitle{
+  font-size: 38px;
+}
+.featureText{
+  font-size: 14.5px;
+}
+
+.bigButton{
+  border-radius: 18px;
+  padding: 16px;
+}
+.bigButton .topline{ font-size: 13px; }
+.bigButton .subline{ font-size: 12px; }
+
+/* Preview vignette: reduce height on phones */
+.vignette{
+  height: 210px;
+  border-radius: 18px;
+}
+.previewBadge{
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  padding: 9px 10px;
+  font-size: 12px;
+}
+
+/* Books carousel: slightly smaller cards so it feels great on phones */
+.bookCard{
+  width: 168px;
+}
+.bookBody h3{
+  font-size: 15px;
+}
+.bookBody p{
+  font-size: 13px;
+}
+
+/* About section stacks (your grid already stacks at 900px, but tighten spacing) */
+.aboutGrid{
+  gap: 14px;
+}
+
+/* Make the embedded portrait video feel nice on mobile */
+.portrait.portraitVideo{
+  aspect-ratio: 16 / 9;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Intro overlay sizing: keep it contained on small screens */
+.introStage{
+  width: 94vw;
+  height: 70vh;
+}
+.book3D{
+  width: 94vw;
+}
+.spreadWindow{
+  inset: 12% 8% 12% 8%;
+  border-radius: 14px;
+}
+}
+
+/* Tiny phones */
+@media (max-width: 380px){
+.nav{ max-width: 56vw; }
+.featureTitle{ font-size: 34px; }
+.bookCard{ width: 156px; }
+}
+
+       </style>
+     </head>
+     
+     <body>
+      <canvas id="glitter" aria-hidden="true"></canvas>
+
+<!-- ===== Intro Notebook Overlay (Single Cover + Flip + Final Blank Page) ===== -->
+<div id="introOverlay" aria-hidden="true">
+  <div class="introStage">
+    <div class="book3D" id="book3D">
+      <!-- Pages -->
+      <div class="spread" id="spread">
+  <div class="spreadWindow">
+    <div class="leaf left"><img id="leftImg" alt=""></div>
+    <div class="leaf right"><img id="rightImg" alt=""></div>
+    <div class="turn right" id="turnLeaf"><img id="turnImg" alt=""></div>
+
+    <div class="finalSpread" id="finalSpread">
+      <div class="finalInk">Ria Om Shandilya</div>
+    </div>
+  </div>
+</div>
+
+
+
+
+      <!-- Cover (swings open) -->
+      <img class="bookCover" src="images/notebook-cover.png" alt="" />
+    </div>
+  </div>
+</div>
+
+
+       <div class="paperTexture" aria-hidden="true"></div>
+       <div class="sparkles" aria-hidden="true"></div>
+     
+       <header class="topbar">
+         <div class="topbarInner">
+          <a class="brand" href="#top">
+            <span class="name" id="siteName">Ria Om Shandilya</span>
+            <span class="tag" id="siteTag">a golden manuscript of music ✦</span>
+          </a>
+          
+           <nav class="nav" aria-label="Primary">
+            <a class="primary"
+            href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
+            target="_blank" rel="noopener">Learn to Play</a>         
+             <a href="#books">Books</a>
+             <a href="#youtube">YouTube</a>
+             <a href="#about">About</a>
+             <a href="connect.html">Contact & Forms</a>
+             
+           </nav>
+         </div>
+       </header>
+     
+       <main id="top">
+         <section class="sheet">
+           <div class="staffBed" aria-hidden="true"></div>
+     
+           <div class="staffRibbons" aria-hidden="true">
+             <svg viewBox="0 0 1200 700" preserveAspectRatio="none">
+               <path class="ribbon" d="M-40,150 C200,110 380,210 560,180 C740,150 920,90 1240,140" />
+               <path class="ribbon" d="M-40,330 C220,280 420,380 610,340 C800,300 960,260 1240,310" />
+               <path class="ribbon" d="M-40,520 C240,480 450,580 640,540 C830,500 980,470 1240,515" />
+             </svg>
+           </div>
+     
+           <div class="watermarks" aria-hidden="true">
+             <span class="w1">𝄞</span>
+             <span class="w2">𝄢</span>
+             <span class="w3">♪</span>
+           </div>
+     
+           <div class="flourish" aria-hidden="true">
+             <span class="tl">❦</span>
+             <span class="tr">❦</span>
+             <span class="bl">❦</span>
+             <span class="br">❦</span>
+           </div>
+     
+           <div class="sheetInner">
+             <!-- HERO -->
+             <section class="hero">
+               <div class="noteCloud" aria-hidden="true">
+                 <span style="left:6%; top:8px; font-size:84px;">♪</span>
+                 <span style="left:74%; top:18px; font-size:86px;">♫</span>
+                 <span style="left:88%; top:126px; font-size:54px;">♪</span>
+                 <span style="left:10%; top:210px; font-size:46px;">♫</span>
+               </div>
+     
+               <div class="kicker" id="siteKicker">Pianist • Author • Educator • Music Creator</div>
+               <h1 id="heroName">Ria Om Shandilya</h1>
+               <p class="heroSub" id="heroSub">
+                 Romantic, magical music education and beautifully crafted sheet music for Hindi songs —
+                 designed like a glowing manuscript page.
+               </p>
+               
+               <div class="heroActions">
+                <a class="btn btnPrimary"
+                href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
+                target="_blank" rel="noopener">Learn to Play!</a>             
+                <a class="btn" id="ctaSecondary" href="#books">Explore Books</a>
+                <a class="btn" id="ctaContact" href="connect.html">Contact & Forms</a>
+              </div>
+              
+             </section>
+     
+             <!-- LEARN -->
+             <section class="section" id="learn">
+
+               <div class="learnGrid">
+                 <div>
+                  <div class="featureLabel">✨ Signature Experience</div>
+                  <div class="featureTitle">Step inside the manuscript.</div>
+                  <p class="featureText">
+                    Connect your keyboard to follow falling notes in real time, and learn through guided lessons that feel immersive, musical, and intuitive,
+                    as if the book itself is teaching you.
+                    </p>
+                    
+     
+                    <a class="bigButton"
+                    href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
+                    target="_blank" rel="noopener">                 
+                     <span class="left">
+                       <span class="topline">Enter Learn to Play</span>
+                       <span class="subline">Practice pages • Falling notes • Guided learning</span>
+                     </span>
+                     <span class="arrow">→</span>
+                   </a>
+                 </div>
+     
+                 <div class="vignette vignettePreview" aria-hidden="false">
+                  <a class="vignetteTap"
+                     href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
+                     target="_blank" rel="noopener"
+                     aria-label="Open Learn to Play"></a>
+                
+                  <div class="previewFrame" aria-hidden="true">
+                    <iframe
+                      src="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
+                      loading="lazy"
+                      title="Learn to Play preview"
+                      sandbox="allow-scripts allow-same-origin allow-forms"
+                      referrerpolicy="no-referrer"
+                    ></iframe>
+                  </div>
+                
+                  <div class="previewBadge">
+                    <span class="dot"></span>
+                    <span>Preview</span>
+                    <span class="hint">Tap to open →</span>
+                  </div>
+                </div>
+                
+                
+                
+               </div>
+             </section>
+     
+     <!-- BOOKS -->
+<section class="section" id="books">
+  <div class="secTitle">
+    <h2>Books</h2>
+  </div>
+
+  <h3 style="margin:10px 0 6px; font-size:14px; font-weight:950;">Available Worldwide</h3>
+ 
+  <div class="scrollHint" aria-hidden="true">
+    <span>Scroll</span>
+    <span class="arrow">→</span>
+  </div>
+  
+  <div class="carousel" aria-label="Worldwide books carousel" id="worldCarousel">
+    <article class="bookCard">
+      <a href="https://www.amazon.in/Soulful-Bollywood-Melodies-Piano-Sheet-ebook/dp/B0G9XDBG2L" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Soulful.jpg" alt="Soulful Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Soulful Bollywood Melodies</h3>
+          <p>Piano sheet music collection.</p>
+        </div>
+      </a>
+    </article>
+
+    <article class="bookCard">
+      <a href="https://www.amazon.in/Peppy-Bollywood-Melodies-Piano-Sheet-ebook/dp/B0DRKQPW4B" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Peppy.jpg" alt="Peppy Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Peppy Bollywood Melodies</h3>
+          <p>Piano sheet music collection.</p>
+        </div>
+      </a>
+    </article>
+
+    <article class="bookCard">
+      <a href="https://www.amazon.in/Romantic-Bollywood-Melodies-Sheet-Music-ebook/dp/B0CK4QZ3DM" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Romantic.jpg" alt="Romantic Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Romantic Bollywood Melodies</h3>
+          <p>Piano sheet music collection.</p>
+        </div>
+      </a>
+    </article>
+
+    <article class="bookCard">
+      <a href="https://www.amazon.in/Bollywood-Melodies-Piano-Sheet-music-ebook/dp/B09HN4HVJJ" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Classic.jpg" alt="Classic Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Classic Bollywood Melodies</h3>
+          <p>Piano sheet music collection.</p>
+        </div>
+      </a>
+    </article>
+  </div>
+</section>     
+              <!-- ABOUT -->
+             <section class="section" id="about">
+               <div class="secTitle">
+                 <h2>About the author</h2>
+               </div>
+     
+               <div class="aboutGrid">
+                <div class="portrait portraitVideo">
+                  <iframe
+                    src="https://www.youtube.com/embed/vUWFVOcv0V0"     
+                    title="Ria Om Shandilya performance"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+                
+                
+                
+     
+                 <div>
+                   <p style="margin:0; line-height:1.78; color:rgba(26,20,10,.80);">
+                     <strong>Ria Om Shandilya</strong> is a Pianist, Author, Educator, and Music creator who studied music at
+                     Trinity College London and is an alumna of the Delhi School of Music. Her musical journey began at the age
+                     of 8 and led her to become a professional pianist by 16.
+                     <br><br>
+                     What sets Ria apart is her commitment to bridging a gap: the lack of professionally written sheet music for
+                     Hindi songs, compared to the abundance of detailed Western notations. She creates high-quality Indian sheet music
+                     with the same precision, elegance, and accessibility expected of Western resources.
+                     <br><br>
+                     Through her work, Ria aims to make Hindi music more approachable for learners while honoring its depth and beauty.
+                   </p>           
+                 </div>
+               </div>
+             </section>
+     
+             <div class="footer">
+               Contact: <a href="mailto:riaomshandilya@gmail.com">riaomshandilya@gmail.com</a>
+               &nbsp;•&nbsp;
+               <a href="connect.html">Forms / Teacher’s Guide / Message</a>
+             </div>
+           </div>
+         </section>
+       </main>
+     
+       <script>
+  /* ===== INTRO NOTEBOOK (01–20 flip, land on blank 21) ===== */
+  (function(){
+  const overlay = document.getElementById('introOverlay');
+  const cover = document.querySelector('.bookCover');
+
+  // your pages array (keep your working path)
+  const PAGES = Array.from({ length: 20 }, (_, i) => {
+    const n = String(i + 1).padStart(2, "0");
+    return new URL(`images/pages/${n}.png`, document.baseURI).href;
+  });
+
+  const leftImg  = document.getElementById('leftImg');
+  const rightImg = document.getElementById('rightImg');
+  const turnLeaf = document.getElementById('turnLeaf');
+  const turnImg  = document.getElementById('turnImg');
+
+  const TURN_MS = 110;  // very fast
+  const GAP_MS  = 10;
+
+  function setSpread(currentOdd){
+  const rightIndex = currentOdd - 1; // 1->0
+  const leftIndex  = currentOdd;     // 2->1
+
+  rightImg.src = PAGES[rightIndex] || "";
+  leftImg.src  = PAGES[leftIndex]  || "";
+}
+
+
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+  async function flipSequence(){
+    let odd = 1;
+    setSpread(odd);
+
+    while(odd < 19){
+      turnImg.src = rightImg.src;
+
+      turnLeaf.classList.remove('flip');
+      void turnLeaf.offsetWidth;
+      turnLeaf.classList.add('flip');
+
+      await wait(TURN_MS + GAP_MS);
+
+      odd += 2;
+      setSpread(odd);
+    }
+
+    // land on page 21 (your existing final logic)
+    // after the last flip:
+const btn =
+  document.querySelector('.heroActions a[href="#books"]') ||
+  document.querySelector('.nav a[href="#books"]') ||
+  document.querySelector('a[href="#books"]');
+
+if(btn){
+  const r = btn.getBoundingClientRect();
+  const toX = r.left + r.width/2;
+  const toY = r.top + r.height/2;
+
+  const fromX = window.innerWidth/2;
+  const fromY = window.innerHeight/2;
+
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+
+  // fly + fade
+  overlay.style.transform = `translate(${dx}px, ${dy}px) scale(0.25)`;
+  overlay.style.opacity = '0';
+
+  btn.animate(
+    [
+      { boxShadow: '0 0 0 rgba(255,191,47,0)' },
+      { boxShadow: '0 0 0 10px rgba(255,191,47,0.16)' },
+      { boxShadow: '0 0 0 0 rgba(255,191,47,0)' }
+    ],
+    { duration: 450, easing: 'ease-out' }
+  );
+} else {
+  overlay.style.opacity = '0';
+}
+
+// fully remove overlay
+setTimeout(() => overlay.classList.add('isHidden'), 480);
+
+  }
+  window.addEventListener('load', () => {
+  overlay.classList.add('play');
+  overlay.classList.remove('showPages');
+
+  // Start loading page 01 & 02 immediately
+  setSpread(1);
+
+  // Wait until BOTH images are decoded (decode avoids “loaded but not painted”)
+  const decodeImg = (img) => {
+    if (!img.src) return Promise.resolve();
+    if (img.decode) return img.decode().catch(() => {});
+    return new Promise(res => img.complete ? res() : img.addEventListener('load', res, { once:true }));
+  };
+
+  Promise.all([decodeImg(rightImg), decodeImg(leftImg)]).then(() => {
+    // show pages as soon as they’re actually ready to paint
+    overlay.classList.add('showPages');
+  });
+
+  // Start flipping as soon as cover is mostly open, not after it fully finishes
+  // (tweak this number if you want: 220–280 is usually perfect)
+  setTimeout(() => {
+    flipSequence();
+  }, 240);
+});
+})();
+
+
+        /* ===== Cursor glitter (gold + white, classy) ===== */
+        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      
+        const canvas = document.getElementById('glitter');
+        const ctx = canvas.getContext('2d', { alpha: true });
+      
+        function resize(){
+          canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+          canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+          canvas.style.width = window.innerWidth + 'px';
+          canvas.style.height = window.innerHeight + 'px';
+          ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+      
+        const particles = [];
+        const MAX = 320;
+      
+        function addSpark(x, y, intensity=1){
+          if(prefersReduced) return;
+      
+          const count = Math.floor(7 * intensity);
+          for(let i=0;i<count;i++){
+            if(particles.length > MAX) particles.shift();
+      
+            const angle = Math.random() * Math.PI * 2;
+            const speed = (0.30 + Math.random() * 2.0) * intensity;
+      
+            particles.push({
+              x, y,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed - 0.20,
+              life: 34 + Math.random() * 30,
+              size: 1.0 + Math.random() * 2.8,
+              tw: Math.random() * Math.PI * 2,
+              alpha: 0.52 + Math.random() * 0.34
+            });
+          }
+        }
+      
+        let last = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        window.addEventListener('pointermove', (e) => {
+          const dx = e.clientX - last.x;
+          const dy = e.clientY - last.y;
+          const d = Math.min(34, Math.hypot(dx, dy));
+          const intensity = Math.max(0.75, d / 16);
+          addSpark(e.clientX, e.clientY, intensity);
+          last = { x: e.clientX, y: e.clientY };
+        }, { passive: true });
+      
+        window.addEventListener('pointerdown', (e) => addSpark(e.clientX, e.clientY, 1.9), { passive: true });
+      
+        function tick(){
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+      
+          for(let i=particles.length-1;i>=0;i--){
+            const p = particles[i];
+            p.life -= 1;
+            if(p.life <= 0){ particles.splice(i,1); continue; }
+      
+            p.vx *= 0.986;
+            p.vy *= 0.986;
+            p.vy += 0.018;
+      
+            p.x += p.vx;
+            p.y += p.vy;
+      
+            p.tw += 0.22;
+            const twinkle = 0.62 + Math.sin(p.tw) * 0.38;
+            const fade = Math.min(1, p.life / 44);
+            const a = p.alpha * fade * twinkle;
+      
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(255, 191, 47, ${a})`;
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+            ctx.fill();
+      
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(255, 255, 255, ${a * 0.55})`;
+            ctx.arc(p.x, p.y, p.size * 0.55, 0, Math.PI*2);
+            ctx.fill();
+      
+            if(Math.random() < 0.24){
+              ctx.save();
+              ctx.translate(p.x, p.y);
+              ctx.rotate(p.tw * 0.35);
+              ctx.globalAlpha = a * 0.90;
+              ctx.strokeStyle = `rgba(255, 255, 255, ${a})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(-p.size*2.2, 0); ctx.lineTo(p.size*2.2, 0);
+              ctx.moveTo(0, -p.size*2.2); ctx.lineTo(0, p.size*2.2);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+          requestAnimationFrame(tick);
+        }
+        tick();
+        /* ===== Personalisation fill ===== */
+(function () {
+  const S = window.SITE;
+
+  // Top + hero text
+  const set = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+  set("siteName", S.name);
+  set("heroName", S.name);
+  set("siteKicker", S.tagline);
+  set("siteTag", "a golden manuscript of music ✦");
+
+  const heroSub = document.getElementById("heroSub");
+  if (heroSub) heroSub.innerHTML = `${S.heroLine}<br>${S.heroLine2}`;
+
+  const ctaPrimary = document.getElementById("ctaPrimary");
+  if (ctaPrimary) { ctaPrimary.textContent = S.primaryCTA.label; ctaPrimary.href = S.primaryCTA.href; }
+
+  const ctaSecondary = document.getElementById("ctaSecondary");
+  if (ctaSecondary) { ctaSecondary.textContent = S.secondaryCTA.label; ctaSecondary.href = S.secondaryCTA.href; }
+
+  const ctaContact = document.getElementById("ctaContact");
+  if (ctaContact) { ctaContact.href = S.contact.contactPage; }
+
+  // YouTube links
+  const iframe = document.querySelector('#youtube iframe');
+  if (iframe) iframe.src = S.youtube.embed;
+  const aboutVid = document.getElementById("aboutVideo");
+if (aboutVid) aboutVid.src = S.youtube.embed;
+
+  const watchBtn = document.querySelector('#youtube a[href*="youtube.com/watch"]');
+  if (watchBtn) watchBtn.href = S.youtube.watch;
+
+  const sideTitle = document.querySelector('#youtube .sideCard h3');
+  if (sideTitle) sideTitle.textContent = S.youtube.title;
+
+  // Worldwide books (edit these 5 only)
+  const worldwideBooks = [
+  {
+    title: "Soulful Bollywood Melodies",
+    desc: "Piano sheet music collection.",
+    href: "https://www.amazon.com/Soulful-Bollywood-Melodies-Piano-Sheet-ebook/dp/B0G9XDBG2L",
+    cover: "soulful.jpg"
+  },
+  {
+    title: "Peppy Bollywood Melodies",
+    desc: "Piano sheet music collection.",
+    href: "https://www.amazon.com/Peppy-Bollywood-Melodies-Piano-Sheet-ebook/dp/B0DRKQPW4B",
+    cover: "peppy.jpg"
+  },
+  {
+    title: "Romantic Bollywood Melodies",
+    desc: "Piano sheet music collection.",
+    href: "https://www.amazon.com/Romantic-Bollywood-Melodies-Sheet-Music-ebook/dp/B0CK4QZ3DM",
+    cover: "romantic.jpg"
+  },
+  {
+    title: "Classic Bollywood Melodies",
+    desc: "Piano sheet music collection.",
+    href: "https://www.amazon.com/Bollywood-Melodies-Piano-Sheet-music-ebook/dp/B09HN4HVJJ",
+    cover: "classic.png"
+  },
+  {
+    title: "Meet The Notes: Beginner's Guide",
+    desc: "Beginner-friendly piano foundations.",
+    href: "https://www.amazon.com/Meet-Notes-Beginners-Guide-Piano-ebook/dp/B0BBDHHWG9",
+    cover: "kids.png" // add image if you have it
+  },
+  {
+    title: "Meet The Notes: Theory Edition",
+    desc: "Theory + activities + worksheets.",
+    href: "https://www.amazon.com/Meet-Notes-Instruments-Activities-Worksheets/dp/B0FGTZXWZH",
+    cover: "kids2.png" // add image if you have it
+  },
+  {
+    title: "Write Your Own Melodies (100 pages)",
+    desc: "Blank 12-stave music journal (100 pages / 50 sheets).",
+    href: "https://www.amazon.com/Write-your-Own-Melodies-Instruments/dp/B0CKN6YBR7",
+    cover: "wyom.png" // add image if you have it
+  },
+  {
+    title: "Write Your Own Melodies (72 pages)",
+    desc: "Blank 12-stave music journal (72 pages / 36 sheets).",
+    href: "https://www.amazon.in/Write-Your-Own-Melodies-Manuscript/dp/B0DHVXF5GR",
+    cover: "wyom2.png" // add image if you have it
+  },
+  {
+    title: "Track Your Journey",
+    desc: "Music log book for all instruments.",
+    href: "https://www.amazon.in/Track-Your-Journey-Instruments-Techniques/dp/B0D7SGJ171",
+    cover: "logbook.png" // add image if you have it
+  },
+
+];
+
+  const worldCarousel = document.getElementById("worldCarousel");
+  if (worldCarousel) {
+    if (!worldwideBooks.length) {
+  worldCarousel.innerHTML = `
+    <article class="bookCard">
+      <div class="cover">
+        <div class="coverPlaceholder">Add book links in JS (worldwideBooks)</div>
+      </div>
+      <div class="bookBody">
+        <h3>Books will appear here</h3>
+        <p>Tap a cover to buy.</p>
+      </div>
+    </article>
+  `;
+  return;
+}
+
+worldCarousel.innerHTML = worldwideBooks.map(b => `
+  <article class="bookCard">
+    <a href="${b.href}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+      <div class="cover">
+        ${b.cover ? `<img src="${b.cover}" alt="${b.title}">` : `<div class="coverPlaceholder">${b.title}</div>`}
+      </div>
+      <div class="bookBody">
+        <h3>${b.title}</h3>
+        <p>${b.desc || ""}</p>
+      </div>
+    </a>
+  </article>
+`).join("");
+
+  }
+
+  // Footer email
+  const mail = document.querySelector('.footer a[href^="mailto:"]');
+  if (mail) {
+    mail.href = `mailto:${S.contact.email}`;
+    mail.textContent = S.contact.email;
+  }
+})();
+
+      </script>
+      
+     </body>
+     </html>
+     
