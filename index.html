@@ -223,13 +223,18 @@ body{ padding-top: 68px; }
          }
          @media (min-width: 900px){ .brand .tag{ display:inline; } }
      
-         .nav{
+   .nav{
            display:flex;
            gap: 10px;
            align-items:center;
-           flex-wrap: wrap;
+           flex-wrap: nowrap; /* CHANGED: don't wrap */
            justify-content: flex-end;
+           overflow-x: auto; /* allow horizontal scroll if needed */
+           overflow-y: hidden;
+           -webkit-overflow-scrolling: touch;
+           scrollbar-width: none; /* hide scrollbar */
          }
+         .nav::-webkit-scrollbar{ display:none; } /* hide scrollbar on webkit */
          .nav a{
            text-decoration:none;
            font-size: 12.5px;
