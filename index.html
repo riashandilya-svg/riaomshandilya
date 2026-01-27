@@ -32,8 +32,8 @@
        <link rel="preconnect" href="https://fonts.googleapis.com">
        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-       <link rel="preload" as="image" href="images/pages/01.png">
-       <link rel="preload" as="image" href="images/pages/02.png">
+       <link rel="preload" as="image" href="01.png">
+       <link rel="preload" as="image" href="02.png">
        <link rel="preload" as="image" href="images/notebook-cover.png">
        
        <style>
@@ -1685,7 +1685,7 @@ main{
   // your pages array (keep your working path)
   const PAGES = Array.from({ length: 20 }, (_, i) => {
     const n = String(i + 1).padStart(2, "0");
-    return new URL(`images/pages/${n}.png`, document.baseURI).href;
+return new URL(`${n}.png`, document.baseURI).href;
   });
 
   const leftImg  = document.getElementById('leftImg');
