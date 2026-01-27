@@ -253,7 +253,76 @@ body{ padding-top: 68px; }
            color: #2A1A00;
            box-shadow: 0 18px 50px rgba(255,191,47,0.34);
          }
-     
+     /* ===== Social icon buttons (real icons) ===== */
+.socialNav{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+}
+
+.socialBtn{
+  width: 38px;
+  height: 38px;
+  display:grid;
+  place-items:center;
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.66);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(26,20,10,.08);
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  text-decoration:none;
+}
+/* ===== Brand SVG rendering (for REAL logo SVGs) ===== */
+.socialBtn svg{
+  width: 18px;
+  height: 18px;
+  display:block;
+}
+
+/* Most official brand SVGs are filled */
+.socialBtn svg,
+.socialBtn svg *{
+  fill: rgba(26,20,10,.90);
+  stroke: none;
+}
+
+/* If you paste an outline SVG that uses stroke, add class="strokeIcon" on the <svg> */
+.socialBtn svg.strokeIcon,
+.socialBtn svg.strokeIcon *{
+  fill: none !important;
+  stroke: rgba(26,20,10,.92) !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.socialBtn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 16px 40px rgba(26,20,10,.12);
+}
+
+.socialBtn svg{
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: rgba(26,20,10,.92);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.socialBtn .fill{
+  fill: rgba(26,20,10,.92);
+  stroke: none;
+}
+
+
+@media (max-width: 720px){
+  .socialBtn{ width: 36px; height: 36px; }
+  .socialBtn svg{ width: 17px; height: 17px; }
+}
+
          /* ===== Layout ===== */
          main{
            width: min(1140px, 100%);
@@ -1530,35 +1599,6 @@ body{
   .bgBase{ top: 60px; }
 }
 
-.socialRow{
-
-  margin-top: 12px;
-  display:flex;
-  gap: 10px;
-  justify-content:center;
-  flex-wrap:wrap;
-  position: relative;
-  z-index: 3;
-}
-
-.socialBtn{
-  text-decoration:none;
-  font-size: 12.5px;
-  font-weight: 950;
-  color: rgba(26,20,10,.86);
-  padding: 9px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(26,20,10,.14);
-  background: rgba(255,255,255,.66);
-  backdrop-filter: blur(10px);
-  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-}
-
-.socialBtn:hover{
-  transform: translateY(-1px);
-  filter: brightness(1.03);
-  box-shadow: 0 16px 40px rgba(26,20,10,.12);
-}
 
 /* ===== Sticky Social Rail (right side) ===== */
 .socialRail{
@@ -1634,7 +1674,111 @@ body{
   opacity: 1;
 }
 
-/* Mobile: move to bottom as a compact row */
+/* Mobile: HIDE social rail completely to avoid covering skip button */
+@media (max-width: 720px){
+  .socialRail{
+    display: none;
+  }
+}
+/* ===== FORCE SVG ICONS TO SHOW (fix invisible icons) ===== */
+.socialBtn svg{
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+/* Default: make everything FILLED and visible */
+.socialBtn svg,
+.socialBtn svg *{
+  fill: rgba(26,20,10,.92) !important;
+  stroke: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* If your SVG is a stroke-only icon, add class="strokeIcon" on the <svg> */
+.socialBtn svg.strokeIcon,
+.socialBtn svg.strokeIcon *{
+  fill: none !important;
+  stroke: rgba(26,20,10,.92) !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+/* ===== FINAL SOCIAL ICON FIX (paste at END of <style>) ===== */
+
+/* Topbar social buttons (right side) */
+.socialNav{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+}
+
+/* ===== Sticky Social Rail (right side) ===== */
+.socialRail{
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9;  /* CHANGED FROM 99998 - now sits BELOW the intro overlay */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Button base (top + rail share the same look) */
+.socialBtn,
+.socialIcon{
+  width: 40px;
+  height: 40px;
+  display:grid;
+  place-items:center;
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.74);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(26,20,10,.08);
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  text-decoration:none;
+}
+
+.socialBtn:hover,
+.socialIcon:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 16px 40px rgba(26,20,10,.12);
+}
+
+/* IMPORTANT: default to FILLED icons (brand logos are usually filled) */
+.socialBtn svg,
+.socialIcon svg{
+  width: 20px;
+  height: 20px;
+  display:block;
+}
+
+.socialBtn svg,
+.socialBtn svg *,
+.socialIcon svg,
+.socialIcon svg *{
+  fill: rgba(26,20,10,.92) !important;
+  stroke: none !important;
+}
+
+/* If your SVG is outline-only, add class="strokeIcon" on the <svg> */
+.socialBtn svg.strokeIcon,
+.socialBtn svg.strokeIcon *,
+.socialIcon svg.strokeIcon,
+.socialIcon svg.strokeIcon *{
+  fill: none !important;
+  stroke: rgba(26,20,10,.92) !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Mobile: rail becomes bottom row */
 @media (max-width: 720px){
   .socialRail{
     top: auto;
@@ -1645,7 +1789,16 @@ body{
     flex-direction: row;
     gap: 10px;
   }
-  .socialIcon[data-tip]::before{ display:none; }
+}
+/* FINAL FIX: show filled SVG logos (prevents the "empty circle" look) */
+.socialBtn svg, .socialIcon svg{
+  width: 20px;
+  height: 20px;
+  display:block;
+}
+.socialBtn svg, .socialBtn svg *, .socialIcon svg, .socialIcon svg *{
+  fill: rgba(26,20,10,.92) !important;
+  stroke: none !important;
 }
 
        </style>
@@ -1657,40 +1810,49 @@ body{
       <canvas id="glitter" aria-hidden="true"></canvas>
 <!-- ===== Sticky Social Rail ===== -->
 <div class="socialRail" aria-label="Social links">
-  <a class="socialIcon" id="railYoutube" target="_blank" rel="noopener" aria-label="YouTube" data-tip="YouTube">
-    <!-- YouTube icon -->
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21.5 7.3s-.2-1.6-.8-2.3c-.8-.8-1.7-.8-2.1-.9C15.7 3.8 12 3.8 12 3.8h0s-3.7 0-6.6.3c-.4.1-1.3.1-2.1.9C2.7 5.7 2.5 7.3 2.5 7.3S2.2 9.2 2.2 11v1.7c0 1.8.3 3.7.3 3.7s.2 1.6.8 2.3c.8.8 1.9.8 2.4.9 1.7.2 6.3.3 6.3.3s3.7 0 6.6-.3c.4-.1 1.3-.1 2.1-.9.6-.7.8-2.3.8-2.3s.3-1.9.3-3.7V11c0-1.8-.3-3.7-.3-3.7Z" class="fill" opacity=".10"></path>
-      <path d="M10 9.5v5l5-2.5-5-2.5Z" class="fill"></path>
-      <path d="M21.5 7.3s-.2-1.6-.8-2.3c-.8-.8-1.7-.8-2.1-.9C15.7 3.8 12 3.8 12 3.8s-3.7 0-6.6.3c-.4.1-1.3.1-2.1.9C2.7 5.7 2.5 7.3 2.5 7.3S2.2 9.2 2.2 11v1.7c0 1.8.3 3.7.3 3.7s.2 1.6.8 2.3c.8.8 1.9.8 2.4.9 1.7.2 6.3.3 6.3.3s3.7 0 6.6-.3c.4-.1 1.3-.1 2.1-.9.6-.7.8-2.3.8-2.3s.3-1.9.3-3.7V11c0-1.8-.3-3.7-.3-3.7Z"></path>
+
+  <!-- YouTube - Official filled icon -->
+  <a class="socialIcon" id="railYoutube"
+     href="https://www.youtube.com/riashandilya"
+     target="_blank" rel="noopener"
+     aria-label="YouTube" data-tip="YouTube">
+    <svg viewBox="0 0 461.001 461.001" aria-hidden="true">
+      <path d="M365.257,67.393H95.744C42.866,67.393,0,110.259,0,163.137v134.728c0,52.878,42.866,95.744,95.744,95.744h269.513c52.878,0,95.744-42.866,95.744-95.744V163.137C461.001,110.259,418.135,67.393,365.257,67.393z M300.506,237.056l-126.06,60.123c-3.359,1.602-7.239-0.847-7.239-4.568V168.607c0-3.774,3.982-6.22,7.348-4.514l126.06,63.881C304.363,229.873,304.298,235.248,300.506,237.056z"/>
     </svg>
   </a>
 
-  <a class="socialIcon" id="railInstagram" target="_blank" rel="noopener" aria-label="Instagram" data-tip="Instagram">
-    <!-- Instagram icon -->
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="6.5" y="6.5" width="11" height="11" rx="3"></rect>
-      <path d="M10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"></path>
-      <path d="M15.8 8.2h.01"></path>
+  <!-- Instagram - Official filled icon -->
+  <a class="socialIcon" id="railInstagram"
+     href="https://www.instagram.com/riaomshandilya/"
+     target="_blank" rel="noopener"
+     aria-label="Instagram" data-tip="Instagram">
+    <svg viewBox="0 0 551.034 551.034" aria-hidden="true">
+      <path d="M386.878,0H164.156C73.64,0,0,73.64,0,164.156v222.722c0,90.516,73.64,164.156,164.156,164.156h222.722c90.516,0,164.156-73.64,164.156-164.156V164.156C551.033,73.64,477.393,0,386.878,0z M495.6,386.878c0,60.045-48.677,108.722-108.722,108.722H164.156c-60.045,0-108.722-48.677-108.722-108.722V164.156c0-60.046,48.677-108.722,108.722-108.722h222.722c60.045,0,108.722,48.676,108.722,108.722L495.6,386.878L495.6,386.878z"/>
+      <path d="M275.517,133C196.933,133,133,196.933,133,275.516s63.933,142.517,142.517,142.517S418.034,354.1,418.034,275.516S354.101,133,275.517,133z M275.517,362.6c-48.095,0-87.083-38.988-87.083-87.083s38.989-87.083,87.083-87.083c48.095,0,87.083,38.988,87.083,87.083C362.6,323.611,323.611,362.6,275.517,362.6z"/>
+      <circle cx="418.31" cy="134.07" r="34.15"/>
     </svg>
   </a>
 
-  <a class="socialIcon" id="railLinktree" target="_blank" rel="noopener" aria-label="Linktree" data-tip="Linktree">
-    <!-- Link icon (clean + universal) -->
+  <!-- Linktree - Official filled icon -->
+  <a class="socialIcon" id="railLinktree"
+     href="https://linktr.ee/riashandilya"
+     target="_blank" rel="noopener"
+     aria-label="Linktree" data-tip="Linktree">
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1"></path>
-      <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1"></path>
+      <path d="m13.736 5.853 4.005-4.117 2.325 2.38-4.2 4.005h5.908v3.305h-5.937l4.229 4.108-2.325 2.334-5.74-5.769-5.741 5.769-2.325-2.325 4.229-4.108H2.226V8.121h5.909l-4.2-4.004 2.324-2.381 4.005 4.117V0h3.472v5.853zM10.229 24v-6.3h3.473V24h-3.473z"/>
     </svg>
   </a>
 
-  <a class="socialIcon" id="railAmazon" target="_blank" rel="noopener" aria-label="Amazon Store" data-tip="Amazon Store">
-    <!-- Shopping bag icon -->
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 8h12l-1 12H7L6 8Z"></path>
-      <path d="M9 8a3 3 0 0 1 6 0"></path>
-      <path d="M9.5 12h5"></path>
-    </svg>
-  </a>
+<!-- Amazon Store - Shopping bag icon -->
+<a class="socialIcon" id="railAmazon"
+href="https://www.amazon.com/stores/Ria-Om-Shandilya/author/B09QN8NFFD"
+target="_blank" rel="noopener"
+aria-label="Amazon Store" data-tip="Amazon Store">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+ <path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5zm10 15H4V9h2v2c0 .55.45 1 1 1s1-.45 1-1V9h8v2c0 .55.45 1 1 1s1-.45 1-1V9h2v11z"/>
+</svg>
+</a>
+
 </div>
 
 <!-- ===== Intro Notebook Overlay (Single Cover + Flip + Final Blank Page) ===== -->
@@ -1731,17 +1893,16 @@ body{
             <span class="tag" id="siteTag">a golden manuscript of music ✦</span>
           </a>
           
-           <nav class="nav" aria-label="Primary">
+          <nav class="nav" aria-label="Primary">
             <a class="primary"
-            href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
-            target="_blank" rel="noopener">Learn to Play</a>         
-             <a href="#books">Books</a>
-             <a href="#youtube">YouTube</a>
-             <a href="#about">About</a>
-             <a href="connect.html">Contact & Forms</a>
-             
-           </nav>
-         </div>
+               href="https://riashandilya-svg.github.io/classicbollywoodmelodies/"
+               target="_blank" rel="noopener">Learn to Play</a>
+            <a href="#books">Books</a>
+            <a href="#youtube">YouTube</a>
+            <a href="#about">About</a>
+            <a href="connect.html">Contact & Forms</a>
+          </nav>
+          
        </header>
      
        <main id="top">
@@ -1793,12 +1954,7 @@ body{
                 <a class="btn" id="ctaSecondary" href="#books">Explore Books</a>
                 <a class="btn" id="ctaContact" href="connect.html">Contact & Forms</a>
               </div>
-              <div class="socialRow" aria-label="Social links">
-                <a class="socialBtn" id="socialYoutube" target="_blank" rel="noopener">YouTube</a>
-                <a class="socialBtn" id="socialInstagram" target="_blank" rel="noopener">Instagram</a>
-                <a class="socialBtn" id="socialLinktree" target="_blank" rel="noopener">Linktree</a>
-                <a class="socialBtn" id="socialAmazon" target="_blank" rel="noopener">Amazon Store</a>
-              </div>
+        
               
              </section>
      
@@ -2265,19 +2421,6 @@ const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-
   const ctaContact = document.getElementById("ctaContact");
   if (ctaContact) { ctaContact.href = S.contact.contactPage; }
 
-  // YouTube links
-    // Social links (Hero buttons)
-    const y = document.getElementById("socialYoutube");
-  if (y) y.href = S.youtube.channel;
-
-  const ig = document.getElementById("socialInstagram");
-  if (ig) ig.href = S.socials.instagram;
-
-  const lt = document.getElementById("socialLinktree");
-  if (lt) lt.href = S.socials.linktree;
-
-  const amz = document.getElementById("socialAmazon");
-  if (amz) amz.href = S.socials.amazonStore;
 
   const iframe = document.querySelector('#youtube iframe');
   if (iframe) iframe.src = S.youtube.embed;
@@ -2397,6 +2540,13 @@ worldCarousel.innerHTML = worldwideBooks.map(b => `
 
 
       </script>
+      <div style="padding:20px;">
+        <a class="socialBtn" href="#" aria-label="Test Icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 4h16v16H4z"></path>
+          </svg>
+        </a>
+      </div>
       
      </body>
      </html>
