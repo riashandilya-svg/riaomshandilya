@@ -179,22 +179,25 @@ body{
   padding-top: 68px;
   scroll-padding-top: 80px; /* Prevents content from hiding under topbar when scrolling */
 }
- .topbarInner{
-           width: min(1140px, 100%);
-           padding: 0 16px;
-           display:flex;
-           align-items:center;
-           justify-content: space-between;
-           gap: 14px;
-         }
+.topbarInner{
+  width: min(1140px, 100%);
+  padding: 0 16px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
        .brand{
-           display:flex;
-           align-items: baseline;
-           gap: 10px;
-           text-decoration:none;
-           color: inherit;
-           white-space: nowrap;
-         }
+  display:flex;
+  align-items: baseline;
+  gap: 10px;
+  text-decoration:none;
+  color: inherit;
+  white-space: nowrap;
+  flex-shrink: 0; /* Keep brand from shrinking too much */
+  min-width: 0; /* Allow some flexibility */
+}
          .brand .name{
            font-family: "Cormorant Garamond", serif;
            font-weight: 700;
@@ -225,25 +228,28 @@ body{
          }
          @media (min-width: 900px){ .brand .tag{ display:inline; } }
      
-       .nav{
-           display:flex;
-           gap: 10px;
-           align-items:center;
-           flex-wrap: wrap;
-           justify-content: flex-end;
-         }
-         .nav a{
-           text-decoration:none;
-           font-size: 12.5px;
-           font-weight: 950;
-           color: rgba(26,20,10,.86);
-           padding: 8px 10px;
-           border-radius: 999px;
-           border: 1px solid rgba(26,20,10,.14);
-           background: rgba(255,255,255,.66);
-           backdrop-filter: blur(10px);
-           transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-         }
+     .nav{
+  display:flex;
+  gap: 6px;
+  align-items:center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 1; /* Allow nav to shrink */
+  min-width: 0; /* Important for flexbox shrinking */
+}
+.nav a{
+  text-decoration:none;
+  font-size: 11.5px; /* Slightly smaller */
+  font-weight: 950;
+  color: rgba(26,20,10,.86);
+  padding: 7px 9px; /* Slightly tighter */
+  border-radius: 999px;
+  border: 1px solid rgba(26,20,10,.14);
+  background: rgba(255,255,255,.66);
+  backdrop-filter: blur(10px);
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  white-space: nowrap; /* Prevent text wrapping inside buttons */
+}
          .nav a:hover{
            transform: translateY(-1px);
            filter: brightness(1.03);
