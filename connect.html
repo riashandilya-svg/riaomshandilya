@@ -299,7 +299,7 @@
                  <p>Open in a new tab.</p>
      
                  <div style="display:flex; flex-direction:column; gap:10px;">
-                   <a class="rowLink" href="https://forms.gle/YOUR_SONG_REQUEST_FORM" target="_blank" rel="noopener">
+                   <a class="rowLink" href="https://forms.gle/X9BiDhCfYzDVuDoz6" target="_blank" rel="noopener">
                      <div>
                        <strong>Request a Song</strong><br>
                        <span>Suggest a Hindi song you want arranged</span>
@@ -307,9 +307,9 @@
                      <strong>→</strong>
                    </a>
      
-                   <a class="rowLink" href="https://forms.gle/YOUR_TEACHERS_GUIDE_FORM" target="_blank" rel="noopener">
+                   <a class="rowLink" href="https://forms.gle/NoLmke26NEnpgdxv6" target="_blank" rel="noopener">
                      <div>
-                       <strong>Teacher’s Guide Form</strong><br>
+                       <strong>Teacher's Guide Form</strong><br>
                        <span>For teachers / educators / access</span>
                      </div>
                      <strong>→</strong>
@@ -318,14 +318,14 @@
                </div>
      
                <div class="card">
-                 <h3>Teacher’s Guide Downloads</h3>
+                 <h3>Teacher's Guide Downloads</h3>
                  <p>Update file paths to match your site.</p>
      
                  <div style="display:flex; flex-direction:column; gap:10px;">
                    <a class="rowLink" href="downloads/MeetTheNotes-TeachersGuide.pdf" download>
                      <div>
                        <strong>Download PDF</strong><br>
-                       <span>Meet the Notes: Teacher’s Guide</span>
+                       <span>Meet the Notes: Teacher's Guide</span>
                      </div>
                      <strong>↓</strong>
                    </a>
@@ -359,18 +359,39 @@
      
                <div class="card">
                  <h3>Message</h3>
-                 <p>This sends via your email app (no backend needed).</p>
+                 <p>Send a message directly through the site.</p>
      
-                 <form id="contactForm">
-                   <input id="cName" type="text" placeholder="Your name" required>
-                   <input id="cEmail" type="email" placeholder="Your email" required>
-                   <textarea id="cMsg" placeholder="Your message" required></textarea>
-                   <button class="submit" type="submit">Send Email</button>
+                 <form
+                   action="https://formspree.io/f/mgolwbdp"
+                   method="POST"
+                 >
+                   <input
+                     id="cName"
+                     name="name"
+                     type="text"
+                     placeholder="Your name"
+                     required
+                   >
+
+                   <input
+                     id="cEmail"
+                     name="email"
+                     type="email"
+                     placeholder="Your email"
+                     required
+                   >
+
+                   <textarea
+                     id="cMsg"
+                     name="message"
+                     placeholder="Your message"
+                     required
+                   ></textarea>
+
+                   <button class="submit" type="submit">
+                     Send Message
+                   </button>
                  </form>
-     
-                 <p style="margin:10px 0 0; color:rgba(26,20,10,.58); font-size:12.5px;">
-                   If you want “send inside the site”, you’ll need a backend or a form service.
-                 </p>
                </div>
              </div>
      
