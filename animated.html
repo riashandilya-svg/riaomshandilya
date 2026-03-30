@@ -318,21 +318,40 @@
 
         #glitter { position:fixed; inset:0; z-index:9998; pointer-events:none; mix-blend-mode:screen; }
 
-        .scroll-hint { display:flex; flex-direction:column; align-items:center; gap:8px; padding-bottom:30px; }
+        .scroll-hint {
+            display:flex; flex-direction:column; align-items:center; gap:10px; padding-bottom:36px;
+        }
         .scroll-hint-text {
-            font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
-            letter-spacing:0.30em; text-transform:uppercase;
-            color:rgba(255,255,255,0.40);
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; font-style:italic;
+            letter-spacing:0.28em; text-transform:uppercase;
+            color:rgba(212,175,55,0.90);
+            text-shadow: 0 0 18px rgba(212,175,55,0.5), 0 1px 6px rgba(0,0,0,0.95);
+            animation: scrollTextPulse 2.2s ease-in-out infinite;
         }
-        .scroll-line {
-            width:1px; height:44px;
-            background:linear-gradient(to bottom, var(--gold), transparent);
-            animation:scrollDrop 1.9s ease-in-out infinite;
+        @keyframes scrollTextPulse {
+            0%,100% { opacity:0.7; }
+            50%      { opacity:1; }
         }
-        @keyframes scrollDrop {
-            0%,100% { opacity:0.5; transform:scaleY(1); }
-            50%      { opacity:1;   transform:scaleY(0.6); }
+        /* Animated chevrons */
+        .scroll-chevrons {
+            display:flex; flex-direction:column; align-items:center; gap:2px;
+        }
+        .scroll-chevrons span {
+            display:block; width:18px; height:18px;
+            border-right: 2px solid var(--gold);
+            border-bottom: 2px solid var(--gold);
+            transform: rotate(45deg);
+            animation: chevronDrop 1.6s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px rgba(212,175,55,0.7));
+        }
+        .scroll-chevrons span:nth-child(1) { animation-delay: 0s;    opacity: 1; }
+        .scroll-chevrons span:nth-child(2) { animation-delay: 0.18s; opacity: 0.7; }
+        .scroll-chevrons span:nth-child(3) { animation-delay: 0.36s; opacity: 0.4; }
+        @keyframes chevronDrop {
+            0%   { opacity:0; transform: rotate(45deg) translateY(-6px); }
+            40%  { opacity:1; }
+            80%  { opacity:0; transform: rotate(45deg) translateY(6px); }
+            100% { opacity:0; }
         }
 
         @media (max-width: 720px) {
@@ -423,7 +442,7 @@
                 <!-- Kicker pill -->
                 <div class="kicker-pill">
                     <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>
-                    Interactive Piano &nbsp;✦&nbsp; Falling Notes
+                    Piano Lessons &nbsp;✦&nbsp; Riaaz
                 </div>
 
                 <!-- Main title -->
@@ -440,7 +459,7 @@
                 </p>
 
                 <!-- CTA -->
-                <a href="https://riaomshandilya.com/" target="_blank" class="hero-btn mt-4 pointer-events-auto border-2 px-12 py-4 rounded-full inline-block">
+                <a href="https://app.riaomshandilya.com/" target="_blank" class="hero-btn mt-4 pointer-events-auto border-2 px-12 py-4 rounded-full inline-block">
                     Begin Your Journey
                 </a>
             </div>
@@ -448,8 +467,12 @@
 
         <!-- Scroll hint -->
         <div class="scroll-hint">
-            <span class="scroll-hint-text">Scroll</span>
-            <div class="scroll-line"></div>
+            <span class="scroll-hint-text">Scroll to explore</span>
+            <div class="scroll-chevrons">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
 
         <div class="absolute bottom-0 left-0 right-0 h-32 md:h-48 pointer-events-none"
