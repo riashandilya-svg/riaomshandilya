@@ -251,6 +251,32 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
+        /* ── Glowing website button ── */
+        @keyframes btnGlow {
+            0%,100% { box-shadow: 0 0 18px rgba(212,175,55,0.55), 0 0 40px rgba(212,175,55,0.30), 0 0 80px rgba(212,175,55,0.12); }
+            50%      { box-shadow: 0 0 28px rgba(212,175,55,0.90), 0 0 60px rgba(212,175,55,0.55), 0 0 110px rgba(212,175,55,0.25); }
+        }
+        .website-glow-btn {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #1a0e00;
+            background: linear-gradient(135deg, #f0d060, #d4af37, #b8960c);
+            padding: 13px 34px;
+            border-radius: 999px;
+            animation: btnGlow 2.5s ease-in-out infinite;
+            transition: transform 0.2s, filter 0.2s;
+            margin-bottom: 16px;
+        }
+        .website-glow-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.12);
+        }
+
         /* ── CTA button ── */
         .hero-btn {
             font-family: 'Cormorant Garamond', serif !important;
@@ -403,14 +429,14 @@
                 </p>
 
                 <!-- Tagline -->
-                <p class="hero-tagline-main" style="margin-top:12px;margin-bottom:36px;">
+                <p class="hero-tagline-main" style="margin-top:12px;margin-bottom:28px;">
                     Master. Perform. Inspire.
                 </p>
 
                 <!-- CTA -->
-                <button class="hero-btn mt-2 pointer-events-auto border-2 px-12 py-4 rounded-full hidden md:inline-block">
+                <a href="https://riaomshandilya.com/" target="_blank" class="hero-btn mt-4 pointer-events-auto border-2 px-12 py-4 rounded-full inline-block">
                     Begin Your Journey
-                </button>
+                </a>
             </div>
         </div>
 
