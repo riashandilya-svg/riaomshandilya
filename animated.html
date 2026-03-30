@@ -15,8 +15,6 @@
             }
         }
     </script>
-
-    <!-- Same fonts as riaomshandilya.com -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -30,7 +28,6 @@
             overflow-x: hidden;
         }
 
-        /* ── Floating animations (kept exactly from original) ── */
         @keyframes float {
             0%   { transform: translateY(0px) rotate(0deg); }
             50%  { transform: translateY(-20px) rotate(5deg); }
@@ -39,13 +36,19 @@
         .floating         { animation: float 6s ease-in-out infinite; }
         .floating-delayed { animation: float 8s ease-in-out infinite; animation-delay: 2s; }
 
-        /* ── Gold shimmer (same as riaomshandilya.com h1) ── */
+        @keyframes floatH {
+            0%   { transform: translateX(0px); }
+            50%  { transform: translateX(10px); }
+            100% { transform: translateX(0px); }
+        }
+        .floating-h { animation: floatH 7s ease-in-out infinite; }
+
+        /* Gold shimmer — lighter stop palette so dark bg doesn't eat the letters */
         @keyframes shimmer {
             0%,100% { background-position: 0% 50%; }
             50%      { background-position: 100% 50%; }
         }
 
-        /* ── Staff ribbons drifting ── */
         @keyframes drift {
             from { stroke-dashoffset: 0; }
             to   { stroke-dashoffset: 260; }
@@ -74,8 +77,7 @@
             font-size: clamp(28px, 5vw, 52px);
             letter-spacing: 0.35em;
             background: linear-gradient(100deg,
-                #2a1a00 0%, #2a1a00 20%, #d4af37 38%,
-                #fff 50%, #d4af37 62%, #2a1a00 80%, #2a1a00 100%);
+                #7a5a10 0%, #d4af37 30%, #fff8e0 50%, #d4af37 70%, #7a5a10 100%);
             background-size: 220% 100%;
             -webkit-background-clip: text; background-clip: text; color: transparent;
             animation: shimmer 3s ease-in-out infinite;
@@ -96,7 +98,6 @@
         }
         @keyframes loadSlide { from { left: -60%; } to { left: 110%; } }
 
-        /* ── Staff ribbons layer ── */
         .staff-ribbons {
             position: fixed; inset: 0;
             pointer-events: none; z-index: 1; opacity: 0.07;
@@ -107,7 +108,6 @@
             fill: none; stroke-dasharray: 8 14;
         }
 
-        /* ── Ambient glow ── */
         .bg-ambient {
             position: fixed; inset: 0; pointer-events: none; z-index: 1;
             background:
@@ -115,7 +115,6 @@
                 radial-gradient(700px 500px at 85% 20%, rgba(212,175,55,0.04), transparent 70%);
         }
 
-        /* ── Watermark clefs ── */
         .watermark {
             position: fixed; font-family: 'Cormorant Garamond', serif; font-weight: 700;
             color: rgba(212,175,55,0.033); user-select: none; pointer-events: none;
@@ -165,51 +164,119 @@
             transform: translateY(-2px); box-shadow: 0 0 36px rgba(212,175,55,0.50); filter: brightness(1.08);
         }
 
-        /* ── Hero title — Cormorant shimmer ── */
+        /* ── Hero title — FIXED: lighter stops + strong shadow so it reads over any bg ── */
         h1.hero-title {
             font-family: 'Cormorant Garamond', serif !important;
             font-weight: 700 !important;
-            font-size: clamp(72px, 12vw, 160px) !important;
+            font-size: clamp(38px, 5.5vw, 76px) !important;
             line-height: 1 !important; letter-spacing: -0.02em !important;
+            /* Swap dark-brown stops (#2a1a00) for rich-gold (#8a6500) so letters 
+               are always visible against both light & dark areas of the piano image */
             background: linear-gradient(100deg,
-                #2a1a00 0%, #2a1a00 18%, #d4af37 34%,
-                #ffffff 48%, #d4af37 62%, #2a1a00 82%, #2a1a00 100%) !important;
+                #c8960a 0%, #c8960a 16%,
+                #d4af37 30%, #fff8d6 48%,
+                #d4af37 66%, #c8960a 84%,
+                #c8960a 100%) !important;
             background-size: 240% 100% !important;
             -webkit-background-clip: text !important; background-clip: text !important;
             color: transparent !important;
-            filter: drop-shadow(0 0 44px rgba(212,175,55,0.22));
+            /* Multi-layer shadow: dark outline first, then gold glow — 
+               gives contrast on BOTH light and dark parts of the bg */
+            filter:
+                drop-shadow(0 2px 0px rgba(0,0,0,0.95))
+                drop-shadow(0 4px 12px rgba(0,0,0,0.90))
+                drop-shadow(0 0 60px rgba(212,175,55,0.35));
             animation: shimmer 7s ease-in-out infinite !important;
         }
 
-        /* ── Taglines ── */
-        .hero-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; }
+        /* ── Text backdrop — frosted dark veil behind the hero copy block ── */
+        .hero-text-backdrop {
+            position: relative;
+            padding: 40px 52px 44px;
+            border-radius: 24px;
+            /* Layered: subtle dark blur + faint gold border */
+            background: radial-gradient(ellipse at 50% 60%,
+                rgba(0,0,0,0.62) 0%,
+                rgba(0,0,0,0.44) 60%,
+                transparent 100%);
+            backdrop-filter: blur(2px);
+        }
+        /* optional outer glow ring */
+        .hero-text-backdrop::before {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 24px;
+            border: 1px solid rgba(212,175,55,0.10);
+            pointer-events: none;
+        }
+
+        /* ── Subtitle ── */
+        .hero-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: normal;
+            font-weight: 500;
+            letter-spacing: 0.30em;
+            color: rgba(255, 243, 195, 0.80); /* warm cream, not grey */
+            text-transform: uppercase;
+            /* Dark drop so cream reads on bright piano highlights */
+            text-shadow:
+                0 1px 0 rgba(0,0,0,0.9),
+                0 2px 8px rgba(0,0,0,0.85);
+        }
+
+        /* ── Tagline ── */
         .hero-tagline-main {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(22px,3.5vw,42px); font-weight:600; font-style:italic;
-            letter-spacing:0.06em; color:rgba(255,255,255,0.85);
-            text-shadow:0 0 60px rgba(212,175,55,0.18);
+            font-size: clamp(22px, 3.5vw, 42px);
+            font-weight: 600;
+            font-style: italic;
+            letter-spacing: 0.06em;
+            color: rgba(255, 243, 195, 0.95);
+            text-shadow:
+                0 1px 0 rgba(0,0,0,0.95),
+                0 3px 14px rgba(0,0,0,0.85),
+                0 0 40px rgba(212,175,55,0.20);
+        }
+
+        /* ── Kicker pill ── */
+        .kicker-pill {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 8px 18px; border-radius: 999px; margin-bottom: 18px;
+            border: 1px solid rgba(212,175,55,0.45);
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(8px);
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(--gold);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         /* ── CTA button ── */
         .hero-btn {
             font-family: 'Cormorant Garamond', serif !important;
-            font-size: clamp(14px,1.6vw,18px) !important; font-style: italic;
+            font-size: clamp(14px, 1.6vw, 18px) !important; font-style: italic;
             font-weight: 600 !important; letter-spacing: 0.18em !important;
-            border-color: rgba(212,175,55,0.55) !important;
-            color: rgba(212,175,55,0.90) !important;
-            box-shadow: 0 0 20px rgba(212,175,55,0.15), inset 0 0 20px rgba(212,175,55,0.04) !important;
+            border-color: rgba(212,175,55,0.65) !important;
+            color: rgba(212,175,55,0.95) !important;
+            background: rgba(0,0,0,0.55) !important;
+            backdrop-filter: blur(8px);
+            box-shadow:
+                0 0 22px rgba(0,0,0,0.6),
+                0 0 20px rgba(212,175,55,0.15),
+                inset 0 0 20px rgba(212,175,55,0.04) !important;
             transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s !important;
         }
         .hero-btn:hover {
             background: var(--gold) !important; color: #1a0e00 !important;
-            box-shadow: 0 0 40px rgba(212,175,55,0.50) !important;
+            box-shadow: 0 0 40px rgba(212,175,55,0.55) !important;
         }
 
         /* ── Decorative notes ── */
         .deco-note {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 700; color: var(--gold);
-            opacity: 0.13; user-select: none; pointer-events: none;
+            opacity: 0.18; user-select: none; pointer-events: none;
+            text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 0 60px rgba(212,175,55,0.3);
         }
 
         /* ── Corner ornaments ── */
@@ -223,14 +290,14 @@
         .co-bl { bottom: 22px; left: 22px; transform: scaleY(-1); }
         .co-br { bottom: 22px; right: 22px; transform: scale(-1,-1); }
 
-        /* ── Glitter cursor ── */
         #glitter { position:fixed; inset:0; z-index:9998; pointer-events:none; mix-blend-mode:screen; }
 
-        /* ── Scroll hint ── */
         .scroll-hint { display:flex; flex-direction:column; align-items:center; gap:8px; padding-bottom:30px; }
         .scroll-hint-text {
             font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
-            letter-spacing:0.30em; text-transform:uppercase; color:rgba(255,255,255,0.30);
+            letter-spacing:0.30em; text-transform:uppercase;
+            color:rgba(255,255,255,0.40);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
         }
         .scroll-line {
             width:1px; height:44px;
@@ -246,29 +313,24 @@
             nav.riaaz-nav { padding: 16px 20px; }
             .wm1, .wm2 { display: none; }
             .corner-ornament { opacity: 0.12; }
+            .hero-text-backdrop { padding: 28px 24px 32px; }
         }
     </style>
 </head>
 <body class="font-sans antialiased bg-black overflow-x-hidden">
 
-    <!-- Glitter cursor canvas -->
     <canvas id="glitter" aria-hidden="true"></canvas>
 
-    <!-- Loading Screen -->
     <div id="loading" aria-hidden="true">
         <div class="load-word">RIAAZ</div>
         <div class="load-sub">Tuning the Piano…</div>
         <div class="load-bar"></div>
     </div>
 
-    <!-- Ambient glow -->
     <div class="bg-ambient" aria-hidden="true"></div>
-
-    <!-- Watermark clefs -->
     <span class="watermark wm1" aria-hidden="true">𝄞</span>
     <span class="watermark wm2" aria-hidden="true">𝄢</span>
 
-    <!-- Staff ribbons -->
     <div class="staff-ribbons" aria-hidden="true">
         <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
             <path class="staff-ribbon ribbon" d="M-60,180 C200,140 480,260 720,210 C960,160 1200,100 1500,160"/>
@@ -278,7 +340,6 @@
         </svg>
     </div>
 
-    <!-- Corner ornaments -->
     <div class="corner-ornament co-tl" aria-hidden="true">
         <svg viewBox="0 0 56 56" fill="none" stroke="#d4af37" stroke-width="1.2">
             <path d="M3 3 L3 26 M3 3 L26 3"/><path d="M9 9 L9 20 M9 9 L20 9" opacity="0.5"/>
@@ -300,7 +361,6 @@
         </svg>
     </div>
 
-    <!-- Navbar -->
     <nav class="riaaz-nav pointer-events-auto">
         <a class="brand-name" href="#">RIAAZ</a>
         <div class="md:hidden text-3xl font-bold cursor-pointer" style="color:var(--gold)">&#9776;</div>
@@ -311,15 +371,12 @@
         </div>
     </nav>
 
-    <!-- Scroll Stage (UNTOUCHED) -->
     <main class="relative h-[500vh]">
         <canvas id="video-scrubber" class="sticky top-0 w-full h-screen object-cover"></canvas>
     </main>
 
-    <!-- Fixed Overlay UI -->
     <div class="fixed inset-0 pointer-events-none z-20 flex flex-col justify-between overflow-hidden">
 
-        <!-- Floating music notes -->
         <div class="absolute top-1/4 left-10 md:left-32 parallax-el z-0 deco-note text-7xl md:text-9xl">
             <div class="floating-delayed">♪</div>
         </div>
@@ -328,11 +385,11 @@
         </div>
 
         <!-- Hero Content -->
-        <div class="flex-grow flex flex-col items-center justify-center text-center parallax-el w-full px-4 relative z-10">
-            <div class="floating cursor-default">
+        <div class="flex-grow flex flex-col items-center justify-center text-center w-full px-4 relative z-10">
+            <div class="floating-h cursor-default hero-text-backdrop">
 
                 <!-- Kicker pill -->
-                <div style="display:inline-flex;align-items:center;gap:10px;padding:8px 18px;border-radius:999px;margin-bottom:22px;border:1px solid rgba(212,175,55,0.28);background:rgba(212,175,55,0.07);font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);">
+                <div class="kicker-pill">
                     <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>
                     Piano Lessons &nbsp;✦&nbsp; Riaaz
                 </div>
@@ -341,17 +398,17 @@
                 <h1 class="hero-title">RIAAZ</h1>
 
                 <!-- Subtitle -->
-                <p class="hero-sub" style="font-size:clamp(14px,2vw,22px);letter-spacing:0.30em;color:rgba(255,255,255,0.50);text-transform:uppercase;margin-top:10px;">
+                <p class="hero-sub" style="font-size:clamp(12px,1.8vw,20px);margin-top:10px;">
                     Piano &nbsp;•&nbsp; Lessons &nbsp;•&nbsp; Mastery
                 </p>
 
                 <!-- Tagline -->
-                <p class="hero-tagline-main" style="margin-top:10px;margin-bottom:36px;">
+                <p class="hero-tagline-main" style="margin-top:12px;margin-bottom:36px;">
                     Master. Perform. Inspire.
                 </p>
 
                 <!-- CTA -->
-                <button class="hero-btn mt-2 pointer-events-auto bg-transparent border-2 px-12 py-4 rounded-full hidden md:inline-block">
+                <button class="hero-btn mt-2 pointer-events-auto border-2 px-12 py-4 rounded-full hidden md:inline-block">
                     Begin Your Journey
                 </button>
             </div>
@@ -363,17 +420,15 @@
             <div class="scroll-line"></div>
         </div>
 
-        <!-- Bottom fade -->
         <div class="absolute bottom-0 left-0 right-0 h-32 md:h-48 pointer-events-none"
              style="background:linear-gradient(to top,rgba(0,0,0,0.88),transparent);"></div>
     </div>
 
     <script>
-        // --- 1. Canvas Video Scrubber (UNTOUCHED from Antigravity) ---
         const canvas = document.getElementById("video-scrubber");
         const context = canvas.getContext("2d", { alpha: false });
         const frameCount = 200;
-        const currentFrame = index => `ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+        const currentFrame = index => `frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
         const images = [];
         const loader = document.getElementById('loading');
 
@@ -408,7 +463,6 @@
             }
         }, { passive: true });
 
-        // --- 2. Mouse Parallax (UNTOUCHED from Antigravity) ---
         document.addEventListener('mousemove', (e) => {
             const moveX = (e.clientX - window.innerWidth  / 2) * 0.01;
             const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
@@ -417,7 +471,6 @@
             });
         });
 
-        // --- 3. Gold Glitter Cursor (same as riaomshandilya.com) ---
         const gc = document.getElementById('glitter');
         const gx = gc.getContext('2d', { alpha: true });
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
