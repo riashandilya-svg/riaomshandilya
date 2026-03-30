@@ -419,6 +419,7 @@
     <div id="mobile-menu" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:rgba(0,0,0,0.96);backdrop-filter:blur(12px);flex-direction:column;align-items:center;justify-content:center;gap:36px;">
         <button onclick="toggleMenu()" style="position:absolute;top:24px;right:28px;font-size:32px;color:var(--gold);background:none;border:none;cursor:pointer;">✕</button>
         <a href="https://riaomshandilya.com/" target="_blank" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;letter-spacing:0.15em;color:rgba(255,255,255,0.85);text-decoration:none;">About</a>
+        <a href="https://riaomshandilya.com/connect.html" target="_blank" onclick="toggleMenu()" style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;letter-spacing:0.15em;color:rgba(255,255,255,0.85);text-decoration:none;">Contact</a>
         <a href="https://app.riaomshandilya.com/" target="_blank" onclick="toggleMenu()" style="font-family:'Inter',sans-serif;font-size:13px;font-weight:900;letter-spacing:0.22em;background:linear-gradient(135deg,#f0d060,#d4af37,#b8960c);color:#1a0e00;padding:14px 36px;border-radius:999px;text-decoration:none;box-shadow:0 0 28px rgba(212,175,55,0.40);">START LEARNING</a>
     </div>
 
@@ -480,6 +481,13 @@
     </div>
 
     <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = menu.style.display === 'flex';
+            menu.style.display = isOpen ? 'none' : 'flex';
+        }
+
         const canvas = document.getElementById("video-scrubber");
         const context = canvas.getContext("2d", { alpha: false });
         const frameCount = 200;
