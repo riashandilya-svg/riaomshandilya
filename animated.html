@@ -170,8 +170,6 @@
             font-weight: 700 !important;
             font-size: clamp(38px, 5.5vw, 76px) !important;
             line-height: 1 !important; letter-spacing: -0.02em !important;
-            /* Swap dark-brown stops (#2a1a00) for rich-gold (#8a6500) so letters 
-               are always visible against both light & dark areas of the piano image */
             background: linear-gradient(100deg,
                 #c8960a 0%, #c8960a 16%,
                 #d4af37 30%, #fff8d6 48%,
@@ -180,8 +178,6 @@
             background-size: 240% 100% !important;
             -webkit-background-clip: text !important; background-clip: text !important;
             color: transparent !important;
-            /* Multi-layer shadow: dark outline first, then gold glow — 
-               gives contrast on BOTH light and dark parts of the bg */
             filter:
                 drop-shadow(0 2px 0px rgba(0,0,0,0.95))
                 drop-shadow(0 4px 12px rgba(0,0,0,0.90))
@@ -191,15 +187,15 @@
 
         /* ── Text backdrop — frosted dark veil behind the hero copy block ── */
         .hero-text-backdrop {
-    position: relative;
-    padding: 40px 52px 28px;
+            position: relative;
+            padding: 40px 52px 28px;
             border-radius: 24px;
-            /* Layered: subtle dark blur + faint gold border */
             background: radial-gradient(ellipse at 50% 60%,
                 rgba(0,0,0,0.62) 0%,
                 rgba(0,0,0,0.44) 60%,
                 transparent 100%);
             backdrop-filter: blur(2px);
+            /* Default (desktop): 52px top margin from inline style */
         }
         /* optional outer glow ring */
         .hero-text-backdrop::before {
@@ -216,9 +212,8 @@
             font-style: normal;
             font-weight: 500;
             letter-spacing: 0.30em;
-            color: rgba(255, 243, 195, 0.80); /* warm cream, not grey */
+            color: rgba(255, 243, 195, 0.80);
             text-transform: uppercase;
-            /* Dark drop so cream reads on bright piano highlights */
             text-shadow:
                 0 1px 0 rgba(0,0,0,0.9),
                 0 2px 8px rgba(0,0,0,0.85);
@@ -363,7 +358,10 @@
             nav.riaaz-nav { padding: 16px 20px; }
             .wm1, .wm2 { display: none; }
             .corner-ornament { opacity: 0.12; }
-            .hero-text-backdrop { padding: 28px 24px 32px; }
+            .hero-text-backdrop {
+                padding: 28px 24px 32px;
+                margin-top: 8px !important; /* override the inline 52px on mobile */
+            }
         }
     </style>
 </head>
@@ -444,7 +442,7 @@
 
         <!-- Hero Content -->
         <div class="flex-grow flex flex-col items-center justify-center text-center w-full px-4 relative z-10">
-<div class="floating-h cursor-default hero-text-backdrop" style="margin-top: 52px;">
+            <div class="floating-h cursor-default hero-text-backdrop" style="margin-top: 52px;">
 
                 <!-- Kicker pill -->
                 <div class="kicker-pill">
