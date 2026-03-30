@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riaaz | Piano Lessons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { gold: '#d4af37' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Same fonts as riaomshandilya.com -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --gold: #d4af37; }
+
+        body {
+            background-color: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* ── Floating animations (kept exactly from original) ── */
+        @keyframes float {
+            0%   { transform: translateY(0px) rotate(0deg); }
+            50%  { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating         { animation: float 6s ease-in-out infinite; }
+        .floating-delayed { animation: float 8s ease-in-out infinite; animation-delay: 2s; }
+
+        /* ── Gold shimmer (same as riaomshandilya.com h1) ── */
+        @keyframes shimmer {
+            0%,100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+
+        /* ── Staff ribbons drifting ── */
+        @keyframes drift {
+            from { stroke-dashoffset: 0; }
+            to   { stroke-dashoffset: 260; }
+        }
+        .ribbon           { animation: drift 18s linear infinite; }
+        .ribbon:nth-child(2) { animation-duration: 24s; }
+        .ribbon:nth-child(3) { animation-duration: 20s; animation-direction: reverse; }
+        .ribbon:nth-child(4) { animation-duration: 28s; }
+
+        @keyframes pulse {
+            0%,100% { opacity: 0.5; }
+            50%      { opacity: 1; }
+        }
+
+        /* ── Loading screen ── */
+        #loading {
+            position: fixed; inset: 0;
+            background: black; z-index: 9999;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 18px;
+            transition: opacity 0.6s ease;
+        }
+        #loading .load-word {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: clamp(28px, 5vw, 52px);
+            letter-spacing: 0.35em;
+            background: linear-gradient(100deg,
+                #2a1a00 0%, #2a1a00 20%, #d4af37 38%,
+                #fff 50%, #d4af37 62%, #2a1a00 80%, #2a1a00 100%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        #loading .load-sub {
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.30em; text-transform: uppercase;
+            color: rgba(212,175,55,0.55); animation: pulse 1.8s ease-in-out infinite;
+        }
+        #loading .load-bar {
+            width: 160px; height: 1.5px;
+            background: rgba(212,175,55,0.15); border-radius: 999px; overflow: hidden; position: relative;
+        }
+        #loading .load-bar::after {
+            content: ''; position: absolute; left: -60%; top: 0; bottom: 0; width: 60%;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            animation: loadSlide 1.4s ease-in-out infinite;
+        }
+        @keyframes loadSlide { from { left: -60%; } to { left: 110%; } }
+
+        /* ── Staff ribbons layer ── */
+        .staff-ribbons {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 1; opacity: 0.07;
+        }
+        .staff-ribbons svg { width: 100%; height: 100%; display: block; }
+        .staff-ribbon {
+            stroke: var(--gold); stroke-width: 1;
+            fill: none; stroke-dasharray: 8 14;
+        }
+
+        /* ── Ambient glow ── */
+        .bg-ambient {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1;
+            background:
+                radial-gradient(900px 600px at 15% 10%, rgba(212,175,55,0.05), transparent 70%),
+                radial-gradient(700px 500px at 85% 20%, rgba(212,175,55,0.04), transparent 70%);
+        }
+
+        /* ── Watermark clefs ── */
+        .watermark {
+            position: fixed; font-family: 'Cormorant Garamond', serif; font-weight: 700;
+            color: rgba(212,175,55,0.033); user-select: none; pointer-events: none;
+            line-height: 1; z-index: 1;
+        }
+        .wm1 { left: -40px; top: 60px;    font-size: 320px; transform: rotate(-8deg); }
+        .wm2 { right:-50px; bottom: 80px; font-size: 280px; transform: rotate(10deg); }
+
+        /* ── Navbar ── */
+        nav.riaaz-nav {
+            position: fixed !important; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 20px 44px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+            backdrop-filter: blur(6px);
+        }
+        .brand-name {
+            font-family: 'Cormorant Garamond', serif; font-weight: 700;
+            font-size: clamp(20px, 2.5vw, 28px); letter-spacing: 0.22em;
+            text-decoration: none; display: inline-block; position: relative;
+            background: linear-gradient(100deg,
+                rgba(255,255,255,0.7) 0%, #d4af37 30%, #f5e270 46%,
+                #ffffff 52%, #f5e270 58%, #d4af37 74%, rgba(255,255,255,0.7) 100%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: shimmer 7s ease-in-out infinite;
+            filter: drop-shadow(0 0 18px rgba(212,175,55,0.18));
+        }
+        .brand-name::after {
+            content: ''; position: absolute; left: 0; right: 0; bottom: -5px;
+            height: 1.5px; border-radius: 999px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.6;
+        }
+        .nav-links a {
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.20em; text-transform: uppercase;
+            color: rgba(255,255,255,0.70); text-decoration: none; transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links .cta {
+            background: linear-gradient(135deg, #f0d060, #d4af37, #b8960c);
+            color: #1a0e00 !important; padding: 10px 24px; border-radius: 999px;
+            font-weight: 900; box-shadow: 0 0 22px rgba(212,175,55,0.30);
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+        }
+        .nav-links .cta:hover {
+            transform: translateY(-2px); box-shadow: 0 0 36px rgba(212,175,55,0.50); filter: brightness(1.08);
+        }
+
+        /* ── Hero title — Cormorant shimmer ── */
+        h1.hero-title {
+            font-family: 'Cormorant Garamond', serif !important;
+            font-weight: 700 !important;
+            font-size: clamp(72px, 12vw, 160px) !important;
+            line-height: 1 !important; letter-spacing: -0.02em !important;
+            background: linear-gradient(100deg,
+                #2a1a00 0%, #2a1a00 18%, #d4af37 34%,
+                #ffffff 48%, #d4af37 62%, #2a1a00 82%, #2a1a00 100%) !important;
+            background-size: 240% 100% !important;
+            -webkit-background-clip: text !important; background-clip: text !important;
+            color: transparent !important;
+            filter: drop-shadow(0 0 44px rgba(212,175,55,0.22));
+            animation: shimmer 7s ease-in-out infinite !important;
+        }
+
+        /* ── Taglines ── */
+        .hero-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; }
+        .hero-tagline-main {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(22px,3.5vw,42px); font-weight:600; font-style:italic;
+            letter-spacing:0.06em; color:rgba(255,255,255,0.85);
+            text-shadow:0 0 60px rgba(212,175,55,0.18);
+        }
+
+        /* ── CTA button ── */
+        .hero-btn {
+            font-family: 'Cormorant Garamond', serif !important;
+            font-size: clamp(14px,1.6vw,18px) !important; font-style: italic;
+            font-weight: 600 !important; letter-spacing: 0.18em !important;
+            border-color: rgba(212,175,55,0.55) !important;
+            color: rgba(212,175,55,0.90) !important;
+            box-shadow: 0 0 20px rgba(212,175,55,0.15), inset 0 0 20px rgba(212,175,55,0.04) !important;
+            transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s !important;
+        }
+        .hero-btn:hover {
+            background: var(--gold) !important; color: #1a0e00 !important;
+            box-shadow: 0 0 40px rgba(212,175,55,0.50) !important;
+        }
+
+        /* ── Decorative notes ── */
+        .deco-note {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700; color: var(--gold);
+            opacity: 0.13; user-select: none; pointer-events: none;
+        }
+
+        /* ── Corner ornaments ── */
+        .corner-ornament {
+            position: fixed; width: 56px; height: 56px;
+            opacity: 0.22; pointer-events: none; z-index: 5;
+        }
+        .corner-ornament svg { width: 100%; height: 100%; }
+        .co-tl { top: 80px; left: 22px; }
+        .co-tr { top: 80px; right: 22px; transform: scaleX(-1); }
+        .co-bl { bottom: 22px; left: 22px; transform: scaleY(-1); }
+        .co-br { bottom: 22px; right: 22px; transform: scale(-1,-1); }
+
+        /* ── Glitter cursor ── */
+        #glitter { position:fixed; inset:0; z-index:9998; pointer-events:none; mix-blend-mode:screen; }
+
+        /* ── Scroll hint ── */
+        .scroll-hint { display:flex; flex-direction:column; align-items:center; gap:8px; padding-bottom:30px; }
+        .scroll-hint-text {
+            font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
+            letter-spacing:0.30em; text-transform:uppercase; color:rgba(255,255,255,0.30);
+        }
+        .scroll-line {
+            width:1px; height:44px;
+            background:linear-gradient(to bottom, var(--gold), transparent);
+            animation:scrollDrop 1.9s ease-in-out infinite;
+        }
+        @keyframes scrollDrop {
+            0%,100% { opacity:0.5; transform:scaleY(1); }
+            50%      { opacity:1;   transform:scaleY(0.6); }
+        }
+
+        @media (max-width: 720px) {
+            nav.riaaz-nav { padding: 16px 20px; }
+            .wm1, .wm2 { display: none; }
+            .corner-ornament { opacity: 0.12; }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased bg-black overflow-x-hidden">
+
+    <!-- Glitter cursor canvas -->
+    <canvas id="glitter" aria-hidden="true"></canvas>
+
+    <!-- Loading Screen -->
+    <div id="loading" aria-hidden="true">
+        <div class="load-word">RIAAZ</div>
+        <div class="load-sub">Tuning the Piano…</div>
+        <div class="load-bar"></div>
+    </div>
+
+    <!-- Ambient glow -->
+    <div class="bg-ambient" aria-hidden="true"></div>
+
+    <!-- Watermark clefs -->
+    <span class="watermark wm1" aria-hidden="true">𝄞</span>
+    <span class="watermark wm2" aria-hidden="true">𝄢</span>
+
+    <!-- Staff ribbons -->
+    <div class="staff-ribbons" aria-hidden="true">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
+            <path class="staff-ribbon ribbon" d="M-60,180 C200,140 480,260 720,210 C960,160 1200,100 1500,160"/>
+            <path class="staff-ribbon ribbon" d="M-60,360 C260,310 520,420 760,370 C1000,320 1220,270 1500,330"/>
+            <path class="staff-ribbon ribbon" d="M-60,540 C280,490 560,610 800,550 C1040,490 1240,450 1500,510"/>
+            <path class="staff-ribbon ribbon" d="M-60,720 C300,680 580,780 820,730 C1060,680 1260,650 1500,700"/>
+        </svg>
+    </div>
+
+    <!-- Corner ornaments -->
+    <div class="corner-ornament co-tl" aria-hidden="true">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#d4af37" stroke-width="1.2">
+            <path d="M3 3 L3 26 M3 3 L26 3"/><path d="M9 9 L9 20 M9 9 L20 9" opacity="0.5"/>
+        </svg>
+    </div>
+    <div class="corner-ornament co-tr" aria-hidden="true">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#d4af37" stroke-width="1.2">
+            <path d="M3 3 L3 26 M3 3 L26 3"/><path d="M9 9 L9 20 M9 9 L20 9" opacity="0.5"/>
+        </svg>
+    </div>
+    <div class="corner-ornament co-bl" aria-hidden="true">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#d4af37" stroke-width="1.2">
+            <path d="M3 3 L3 26 M3 3 L26 3"/><path d="M9 9 L9 20 M9 9 L20 9" opacity="0.5"/>
+        </svg>
+    </div>
+    <div class="corner-ornament co-br" aria-hidden="true">
+        <svg viewBox="0 0 56 56" fill="none" stroke="#d4af37" stroke-width="1.2">
+            <path d="M3 3 L3 26 M3 3 L26 3"/><path d="M9 9 L9 20 M9 9 L20 9" opacity="0.5"/>
+        </svg>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="riaaz-nav pointer-events-auto">
+        <a class="brand-name" href="#">RIAAZ</a>
+        <div class="md:hidden text-3xl font-bold cursor-pointer" style="color:var(--gold)">&#9776;</div>
+        <div class="nav-links hidden md:flex space-x-10 items-center">
+            <a href="#">Lessons</a>
+            <a href="#">About</a>
+            <a href="#" class="cta">BOOK NOW</a>
+        </div>
+    </nav>
+
+    <!-- Scroll Stage (UNTOUCHED) -->
+    <main class="relative h-[500vh]">
+        <canvas id="video-scrubber" class="sticky top-0 w-full h-screen object-cover"></canvas>
+    </main>
+
+    <!-- Fixed Overlay UI -->
+    <div class="fixed inset-0 pointer-events-none z-20 flex flex-col justify-between overflow-hidden">
+
+        <!-- Floating music notes -->
+        <div class="absolute top-1/4 left-10 md:left-32 parallax-el z-0 deco-note text-7xl md:text-9xl">
+            <div class="floating-delayed">♪</div>
+        </div>
+        <div class="absolute bottom-1/4 right-10 md:right-32 parallax-el z-0 deco-note text-6xl md:text-8xl">
+            <div class="floating">♫</div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="flex-grow flex flex-col items-center justify-center text-center parallax-el w-full px-4 relative z-10">
+            <div class="floating cursor-default">
+
+                <!-- Kicker pill -->
+                <div style="display:inline-flex;align-items:center;gap:10px;padding:8px 18px;border-radius:999px;margin-bottom:22px;border:1px solid rgba(212,175,55,0.28);background:rgba(212,175,55,0.07);font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);">
+                    <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>
+                    Piano Lessons &nbsp;✦&nbsp; Riaaz
+                </div>
+
+                <!-- Main title -->
+                <h1 class="hero-title">RIAAZ</h1>
+
+                <!-- Subtitle -->
+                <p class="hero-sub" style="font-size:clamp(14px,2vw,22px);letter-spacing:0.30em;color:rgba(255,255,255,0.50);text-transform:uppercase;margin-top:10px;">
+                    Piano &nbsp;•&nbsp; Lessons &nbsp;•&nbsp; Mastery
+                </p>
+
+                <!-- Tagline -->
+                <p class="hero-tagline-main" style="margin-top:10px;margin-bottom:36px;">
+                    Master. Perform. Inspire.
+                </p>
+
+                <!-- CTA -->
+                <button class="hero-btn mt-2 pointer-events-auto bg-transparent border-2 px-12 py-4 rounded-full hidden md:inline-block">
+                    Begin Your Journey
+                </button>
+            </div>
+        </div>
+
+        <!-- Scroll hint -->
+        <div class="scroll-hint">
+            <span class="scroll-hint-text">Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+
+        <!-- Bottom fade -->
+        <div class="absolute bottom-0 left-0 right-0 h-32 md:h-48 pointer-events-none"
+             style="background:linear-gradient(to top,rgba(0,0,0,0.88),transparent);"></div>
+    </div>
+
+    <script>
+        // --- 1. Canvas Video Scrubber (UNTOUCHED from Antigravity) ---
+        const canvas = document.getElementById("video-scrubber");
+        const context = canvas.getContext("2d", { alpha: false });
+        const frameCount = 200;
+        const currentFrame = index => `ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+        const images = [];
+        const loader = document.getElementById('loading');
+
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = () => {
+                if (i === 0) {
+                    canvas.width  = img.width || 1920;
+                    canvas.height = img.height || 1080;
+                    context.drawImage(img, 0, 0);
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        setTimeout(() => loader.style.display = 'none', 500);
+                    }, 500);
+                }
+            };
+            images.push(img);
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop    = document.documentElement.scrollTop;
+            const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollFraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
+            const frameIndex = Math.min(frameCount - 1, Math.floor(scrollFraction * frameCount));
+            if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth) {
+                requestAnimationFrame(() => {
+                    canvas.width  = images[frameIndex].naturalWidth;
+                    canvas.height = images[frameIndex].naturalHeight;
+                    context.drawImage(images[frameIndex], 0, 0);
+                });
+            }
+        }, { passive: true });
+
+        // --- 2. Mouse Parallax (UNTOUCHED from Antigravity) ---
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth  / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+            document.querySelectorAll('.parallax-el').forEach(el => {
+                el.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+        });
+
+        // --- 3. Gold Glitter Cursor (same as riaomshandilya.com) ---
+        const gc = document.getElementById('glitter');
+        const gx = gc.getContext('2d', { alpha: true });
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function resizeGlitter() {
+            gc.width  = Math.floor(window.innerWidth  * devicePixelRatio);
+            gc.height = Math.floor(window.innerHeight * devicePixelRatio);
+            gc.style.width  = window.innerWidth  + 'px';
+            gc.style.height = window.innerHeight + 'px';
+            gx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        }
+        window.addEventListener('resize', resizeGlitter);
+        resizeGlitter();
+
+        const sparks = [];
+        function addSpark(x, y, intensity = 1) {
+            if (reduced) return;
+            for (let i = 0; i < Math.floor(7 * intensity); i++) {
+                if (sparks.length >= 300) sparks.shift();
+                const angle = Math.random() * Math.PI * 2;
+                const speed = (0.3 + Math.random() * 2.0) * intensity;
+                sparks.push({
+                    x, y,
+                    vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 0.2,
+                    life: 34 + Math.random() * 28, size: 1.0 + Math.random() * 2.7,
+                    tw: Math.random() * Math.PI * 2, alpha: 0.52 + Math.random() * 0.34
+                });
+            }
+        }
+
+        let lastPos = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        window.addEventListener('pointermove', e => {
+            const d = Math.min(36, Math.hypot(e.clientX - lastPos.x, e.clientY - lastPos.y));
+            addSpark(e.clientX, e.clientY, Math.max(0.7, d/16));
+            lastPos = { x: e.clientX, y: e.clientY };
+        }, { passive: true });
+        window.addEventListener('pointerdown', e => addSpark(e.clientX, e.clientY, 2.0), { passive: true });
+
+        (function tickGlitter() {
+            gx.clearRect(0, 0, gc.width, gc.height);
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                const p = sparks[i];
+                if (--p.life <= 0) { sparks.splice(i,1); continue; }
+                p.vx *= 0.985; p.vy *= 0.985; p.vy += 0.017;
+                p.x += p.vx; p.y += p.vy; p.tw += 0.21;
+                const a = p.alpha * Math.min(1, p.life/44) * (0.62 + Math.sin(p.tw)*0.38);
+                gx.beginPath(); gx.fillStyle = `rgba(212,175,55,${a})`;
+                gx.arc(p.x, p.y, p.size, 0, Math.PI*2); gx.fill();
+                gx.beginPath(); gx.fillStyle = `rgba(255,255,255,${a*0.52})`;
+                gx.arc(p.x, p.y, p.size*0.52, 0, Math.PI*2); gx.fill();
+                if (Math.random() < 0.22) {
+                    gx.save(); gx.translate(p.x, p.y); gx.rotate(p.tw*0.32);
+                    gx.globalAlpha = a*0.88; gx.strokeStyle = `rgba(255,255,255,${a})`;
+                    gx.lineWidth = 0.9; gx.beginPath();
+                    gx.moveTo(-p.size*2.1,0); gx.lineTo(p.size*2.1,0);
+                    gx.moveTo(0,-p.size*2.1); gx.lineTo(0,p.size*2.1);
+                    gx.stroke(); gx.restore();
+                }
+            }
+            requestAnimationFrame(tickGlitter);
+        })();
+    </script>
+</body>
+</html>
