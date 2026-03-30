@@ -319,34 +319,39 @@
         #glitter { position:fixed; inset:0; z-index:9998; pointer-events:none; mix-blend-mode:screen; }
 
         .scroll-hint {
-            display:flex; flex-direction:column; align-items:center; gap:10px; padding-bottom:36px;
+            display:flex; flex-direction:column; align-items:center; gap:10px; padding-bottom:160px;
+            /* Dark pill backdrop so it always reads over the piano image */
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(8px);
+            padding: 14px 28px 20px;
+            border-radius: 999px;
+            border: 1px solid rgba(212,175,55,0.25);
+            box-shadow: 0 0 24px rgba(0,0,0,0.6);
+            margin-bottom: 24px;
         }
         .scroll-hint-text {
             font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; font-style:italic;
             letter-spacing:0.28em; text-transform:uppercase;
-            color:rgba(212,175,55,0.90);
-            text-shadow: 0 0 18px rgba(212,175,55,0.5), 0 1px 6px rgba(0,0,0,0.95);
+            color:rgba(212,175,55,1);
             animation: scrollTextPulse 2.2s ease-in-out infinite;
         }
         @keyframes scrollTextPulse {
-            0%,100% { opacity:0.7; }
+            0%,100% { opacity:0.75; }
             50%      { opacity:1; }
         }
-        /* Animated chevrons */
         .scroll-chevrons {
             display:flex; flex-direction:column; align-items:center; gap:2px;
         }
         .scroll-chevrons span {
-            display:block; width:18px; height:18px;
+            display:block; width:16px; height:16px;
             border-right: 2px solid var(--gold);
             border-bottom: 2px solid var(--gold);
             transform: rotate(45deg);
             animation: chevronDrop 1.6s ease-in-out infinite;
-            filter: drop-shadow(0 0 6px rgba(212,175,55,0.7));
         }
-        .scroll-chevrons span:nth-child(1) { animation-delay: 0s;    opacity: 1; }
-        .scroll-chevrons span:nth-child(2) { animation-delay: 0.18s; opacity: 0.7; }
-        .scroll-chevrons span:nth-child(3) { animation-delay: 0.36s; opacity: 0.4; }
+        .scroll-chevrons span:nth-child(1) { animation-delay: 0s; }
+        .scroll-chevrons span:nth-child(2) { animation-delay: 0.18s; }
+        .scroll-chevrons span:nth-child(3) { animation-delay: 0.36s; }
         @keyframes chevronDrop {
             0%   { opacity:0; transform: rotate(45deg) translateY(-6px); }
             40%  { opacity:1; }
@@ -411,6 +416,7 @@
         <div class="md:hidden text-3xl font-bold cursor-pointer" style="color:var(--gold)" onclick="toggleMenu()">&#9776;</div>
         <div class="nav-links hidden md:flex space-x-10 items-center">
             <a href="https://riaomshandilya.com/" target="_blank">About</a>
+            <a href="https://riaomshandilya.com/connect.html" target="_blank">Contact</a>
             <a href="https://app.riaomshandilya.com/" target="_blank" class="cta">START LEARNING</a>
         </div>
     </nav>
@@ -460,7 +466,7 @@
                 </p>
 
                 <!-- CTA -->
-                <a href="https://app.riaomshandilya.com/" target="_blank" class="hero-btn mt-4 pointer-events-auto border-2 px-12 py-4 rounded-full inline-block">
+                <a href="https://riaomshandilya.com/" target="_blank" class="hero-btn mt-4 pointer-events-auto border-2 px-12 py-4 rounded-full inline-block">
                     Begin Your Journey
                 </a>
             </div>
