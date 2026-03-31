@@ -514,19 +514,17 @@
             images.push(img);
         }
 
-        window.addEventListener('scroll', () => {
-            const scrollTop    = document.documentElement.scrollTop;
-            const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollFraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
-            const frameIndex = Math.min(frameCount - 1, Math.floor(scrollFraction * frameCount));
-            if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth) {
-                requestAnimationFrame(() => {
-                    canvas.width  = images[frameIndex].naturalWidth;
-                    canvas.height = images[frameIndex].naturalHeight;
-                    context.drawImage(images[frameIndex], 0, 0);
-                });
-            }
-        }, { passive: true });
+ window.addEventListener('scroll', () => {
+    const scrollTop    = document.documentElement.scrollTop;
+    const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollFraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
+    const frameIndex = Math.min(frameCount - 1, Math.floor(scrollFraction * frameCount));
+    if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth) {
+        requestAnimationFrame(() => {
+            context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+        });
+    }
+}, { passive: true });
 
         document.addEventListener('mousemove', (e) => {
             const moveX = (e.clientX - window.innerWidth  / 2) * 0.01;
