@@ -482,121 +482,138 @@
         </div>
     </div>
 
-    <script>
-        // Mobile menu toggle
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const isOpen = menu.style.display === 'flex';
-            menu.style.display = isOpen ? 'none' : 'flex';
+  <script>
+    // Mobile menu toggle
+    function toggleMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = menu.style.display === 'flex';
+        menu.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    const canvas = document.getElementById("video-scrubber");
+    const context = canvas.getContext("2d", { alpha: false });
+    const frameCount = 200;
+    const currentFrame = index => `frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+    const images = [];
+    const loader = document.getElementById('loading');
+
+    // Set canvas size once to match viewport
+    function resizeCanvas() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        // Redraw current frame after resize
+        if (images[lastFrameIndex] && images[lastFrameIndex].complete) {
+            context.drawImage(images[lastFrameIndex], 0, 0, canvas.width, canvas.height);
         }
+    }
+    window.addEventListener('resize', resizeCanvas);
 
-        const canvas = document.getElementById("video-scrubber");
-        const context = canvas.getContext("2d", { alpha: false });
-        const frameCount = 200;
-        const currentFrame = index => `frames/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
-        const images = [];
-        const loader = document.getElementById('loading');
+    let lastFrameIndex = 0;
 
-        for (let i = 0; i < frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i);
-            img.onload = () => {
-                if (i === 0) {
-                    canvas.width  = img.width || 1920;
-                    canvas.height = img.height || 1080;
-                    context.drawImage(img, 0, 0);
-                    setTimeout(() => {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.style.display = 'none', 500);
-                    }, 500);
-                }
-            };
-            images.push(img);
-        }
-
-        window.addEventListener('scroll', () => {
-            const scrollTop    = document.documentElement.scrollTop;
-            const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollFraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
-            const frameIndex = Math.min(frameCount - 1, Math.floor(scrollFraction * frameCount));
-            if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth) {
-                requestAnimationFrame(() => {
-                    canvas.width  = images[frameIndex].naturalWidth;
-                    canvas.height = images[frameIndex].naturalHeight;
-                    context.drawImage(images[frameIndex], 0, 0);
-                });
+    for (let i = 0; i < frameCount; i++) {
+        const img = new Image();
+        img.src = currentFrame(i);
+        img.onload = () => {
+            if (i === 0) {
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 500);
+                }, 500);
             }
-        }, { passive: true });
+        };
+        images.push(img);
+    }
 
-        document.addEventListener('mousemove', (e) => {
-            const moveX = (e.clientX - window.innerWidth  / 2) * 0.01;
-            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
-            document.querySelectorAll('.parallax-el').forEach(el => {
-                el.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    window.addEventListener('scroll', () => {
+        const scrollTop     = document.documentElement.scrollTop;
+        const maxScrollTop  = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollFraction = maxScrollTop > 0 ? scrollTop / maxScrollTop : 0;
+        const frameIndex    = Math.min(frameCount - 1, Math.floor(scrollFraction * frameCount));
+
+        if (frameIndex === lastFrameIndex) return; // no change, skip
+        lastFrameIndex = frameIndex;
+
+        if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth) {
+            requestAnimationFrame(() => {
+                context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
             });
+        }
+    }, { passive: true });
+
+    // Parallax on mouse move
+    document.addEventListener('mousemove', (e) => {
+        const moveX = (e.clientX - window.innerWidth  / 2) * 0.01;
+        const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+        document.querySelectorAll('.parallax-el').forEach(el => {
+            el.style.transform = `translate(${moveX}px, ${moveY}px)`;
         });
+    });
 
-        const gc = document.getElementById('glitter');
-        const gx = gc.getContext('2d', { alpha: true });
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Glitter canvas
+    const gc = document.getElementById('glitter');
+    const gx = gc.getContext('2d', { alpha: true });
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        function resizeGlitter() {
-            gc.width  = Math.floor(window.innerWidth  * devicePixelRatio);
-            gc.height = Math.floor(window.innerHeight * devicePixelRatio);
-            gc.style.width  = window.innerWidth  + 'px';
-            gc.style.height = window.innerHeight + 'px';
-            gx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    function resizeGlitter() {
+        gc.width  = Math.floor(window.innerWidth  * devicePixelRatio);
+        gc.height = Math.floor(window.innerHeight * devicePixelRatio);
+        gc.style.width  = window.innerWidth  + 'px';
+        gc.style.height = window.innerHeight + 'px';
+        gx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    window.addEventListener('resize', resizeGlitter);
+    resizeGlitter();
+
+    const sparks = [];
+    function addSpark(x, y, intensity = 1) {
+        if (reduced) return;
+        for (let i = 0; i < Math.floor(7 * intensity); i++) {
+            if (sparks.length >= 300) sparks.shift();
+            const angle = Math.random() * Math.PI * 2;
+            const speed = (0.3 + Math.random() * 2.0) * intensity;
+            sparks.push({
+                x, y,
+                vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 0.2,
+                life: 34 + Math.random() * 28, size: 1.0 + Math.random() * 2.7,
+                tw: Math.random() * Math.PI * 2, alpha: 0.52 + Math.random() * 0.34
+            });
         }
-        window.addEventListener('resize', resizeGlitter);
-        resizeGlitter();
+    }
 
-        const sparks = [];
-        function addSpark(x, y, intensity = 1) {
-            if (reduced) return;
-            for (let i = 0; i < Math.floor(7 * intensity); i++) {
-                if (sparks.length >= 300) sparks.shift();
-                const angle = Math.random() * Math.PI * 2;
-                const speed = (0.3 + Math.random() * 2.0) * intensity;
-                sparks.push({
-                    x, y,
-                    vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 0.2,
-                    life: 34 + Math.random() * 28, size: 1.0 + Math.random() * 2.7,
-                    tw: Math.random() * Math.PI * 2, alpha: 0.52 + Math.random() * 0.34
-                });
+    let lastPos = { x: window.innerWidth/2, y: window.innerHeight/2 };
+    window.addEventListener('pointermove', e => {
+        const d = Math.min(36, Math.hypot(e.clientX - lastPos.x, e.clientY - lastPos.y));
+        addSpark(e.clientX, e.clientY, Math.max(0.7, d/16));
+        lastPos = { x: e.clientX, y: e.clientY };
+    }, { passive: true });
+    window.addEventListener('pointerdown', e => addSpark(e.clientX, e.clientY, 2.0), { passive: true });
+
+    (function tickGlitter() {
+        gx.clearRect(0, 0, gc.width, gc.height);
+        for (let i = sparks.length - 1; i >= 0; i--) {
+            const p = sparks[i];
+            if (--p.life <= 0) { sparks.splice(i,1); continue; }
+            p.vx *= 0.985; p.vy *= 0.985; p.vy += 0.017;
+            p.x += p.vx; p.y += p.vy; p.tw += 0.21;
+            const a = p.alpha * Math.min(1, p.life/44) * (0.62 + Math.sin(p.tw)*0.38);
+            gx.beginPath(); gx.fillStyle = `rgba(212,175,55,${a})`;
+            gx.arc(p.x, p.y, p.size, 0, Math.PI*2); gx.fill();
+            gx.beginPath(); gx.fillStyle = `rgba(255,255,255,${a*0.52})`;
+            gx.arc(p.x, p.y, p.size*0.52, 0, Math.PI*2); gx.fill();
+            if (Math.random() < 0.22) {
+                gx.save(); gx.translate(p.x, p.y); gx.rotate(p.tw*0.32);
+                gx.globalAlpha = a*0.88; gx.strokeStyle = `rgba(255,255,255,${a})`;
+                gx.lineWidth = 0.9; gx.beginPath();
+                gx.moveTo(-p.size*2.1,0); gx.lineTo(p.size*2.1,0);
+                gx.moveTo(0,-p.size*2.1); gx.lineTo(0,p.size*2.1);
+                gx.stroke(); gx.restore();
             }
         }
-
-        let lastPos = { x: window.innerWidth/2, y: window.innerHeight/2 };
-        window.addEventListener('pointermove', e => {
-            const d = Math.min(36, Math.hypot(e.clientX - lastPos.x, e.clientY - lastPos.y));
-            addSpark(e.clientX, e.clientY, Math.max(0.7, d/16));
-            lastPos = { x: e.clientX, y: e.clientY };
-        }, { passive: true });
-        window.addEventListener('pointerdown', e => addSpark(e.clientX, e.clientY, 2.0), { passive: true });
-
-        (function tickGlitter() {
-            gx.clearRect(0, 0, gc.width, gc.height);
-            for (let i = sparks.length - 1; i >= 0; i--) {
-                const p = sparks[i];
-                if (--p.life <= 0) { sparks.splice(i,1); continue; }
-                p.vx *= 0.985; p.vy *= 0.985; p.vy += 0.017;
-                p.x += p.vx; p.y += p.vy; p.tw += 0.21;
-                const a = p.alpha * Math.min(1, p.life/44) * (0.62 + Math.sin(p.tw)*0.38);
-                gx.beginPath(); gx.fillStyle = `rgba(212,175,55,${a})`;
-                gx.arc(p.x, p.y, p.size, 0, Math.PI*2); gx.fill();
-                gx.beginPath(); gx.fillStyle = `rgba(255,255,255,${a*0.52})`;
-                gx.arc(p.x, p.y, p.size*0.52, 0, Math.PI*2); gx.fill();
-                if (Math.random() < 0.22) {
-                    gx.save(); gx.translate(p.x, p.y); gx.rotate(p.tw*0.32);
-                    gx.globalAlpha = a*0.88; gx.strokeStyle = `rgba(255,255,255,${a})`;
-                    gx.lineWidth = 0.9; gx.beginPath();
-                    gx.moveTo(-p.size*2.1,0); gx.lineTo(p.size*2.1,0);
-                    gx.moveTo(0,-p.size*2.1); gx.lineTo(0,p.size*2.1);
-                    gx.stroke(); gx.restore();
-                }
-            }
-            requestAnimationFrame(tickGlitter);
-        })();
-    </script>
+        requestAnimationFrame(tickGlitter);
+    })();
+</script>
 </body>
 </html>
