@@ -598,14 +598,13 @@ window.addEventListener('scroll', () => {
             requestAnimationFrame(tickGlitter);
         })();
     </script>
-    
 <!-- ── Background Music ── -->
-<audio id="bg-music" loop preload="auto">
+<audio id="bg-music" loop preload="auto" muted>
     <source src="ekladki.mp3" type="audio/mpeg">
 </audio>
 
 <!-- Music Control Button -->
-<div id="music-btn" onclick="toggleMusic()" title="Toggle music" style="
+<div id="music-btn" onclick="toggleMute()" title="Toggle music" style="
     position: fixed;
     bottom: 32px;
     right: 32px;
@@ -619,11 +618,10 @@ window.addEventListener('scroll', () => {
     background: rgba(0,0,0,0.70);
     backdrop-filter: blur(10px);
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
     box-shadow: 0 0 18px rgba(0,0,0,0.5);
     user-select: none;
 ">
-    <span id="music-icon" style="font-size:16px;">♪</span>
+    <span id="music-icon" style="font-size:16px; color:var(--gold);">🔇</span>
     <span id="music-label" style="
         font-family: 'Cormorant Garamond', serif;
         font-size: 12px;
@@ -631,25 +629,17 @@ window.addEventListener('scroll', () => {
         letter-spacing: 0.20em;
         text-transform: uppercase;
         color: rgba(212,175,55,0.85);
-    ">Music</span>
+    ">Click to unmute</span>
 </div>
 
 <style>
     #music-btn { animation: btnGlow 2.5s ease-in-out infinite; }
     #music-btn:hover { border-color: rgba(212,175,55,0.80) !important; }
-    #music-icon {
-        color: var(--gold);
-        animation: pulse 2s ease-in-out infinite;
-        display: inline-block;
-    }
     #music-btn.playing #music-icon { animation: musicBounce 0.6s ease-in-out infinite alternate; }
     @keyframes musicBounce {
         from { transform: translateY(0px) scale(1); }
         to   { transform: translateY(-2px) scale(1.15); }
     }
-    #music-btn.muted { border-color: rgba(255,255,255,0.15) !important; box-shadow: none !important; animation: none !important; }
-    #music-btn.muted #music-icon { color: rgba(255,255,255,0.30); animation: none; }
-    #music-btn.muted #music-label { color: rgba(255,255,255,0.30); }
 </style>
 
 <script>
@@ -657,31 +647,45 @@ window.addEventListener('scroll', () => {
     const btn   = document.getElementById('music-btn');
     const icon  = document.getElementById('music-icon');
     const label = document.getElementById('music-label');
-    let started = false;
 
     audio.volume = 0.45;
 
-    function startMusic() {
-        if (started) return;
+    // Autoplay muted immediately — browsers allow this
+    audio.play().catch(() => {});
+
+    let unmuted = false;
+
+    function unmuteOnce() {
+        if (unmuted) return;
+        unmuted = true;
         audio.muted = false;
-        audio.play().then(() => {
-            started = true;
-            btn.classList.add('playing');
-            btn.classList.remove('muted');
-            icon.textContent  = '♪';
-            label.textContent = 'Music';
-        }).catch(() => {
-            // Browser still blocked it — will retry on next gesture
-        });
+        icon.textContent  = '♪';
+        label.textContent = 'Music';
+        btn.classList.add('playing');
+        ['click','touchstart','mousedown','keydown','scroll'].forEach(e =>
+            document.removeEventListener(e, unmuteOnce)
+        );
     }
 
-    function toggleMusic() {
-        if (!started) { startMusic(); return; }
-        if (audio.paused) {
-            audio.play();
-            btn.classList.add('playing');
-            btn.classList.remove('muted');
+    function toggleMute() {
+        if (!unmuted) { unmuteOnce(); return; }
+        if (audio.muted) {
+            audio.muted = false;
             icon.textContent  = '♪';
-            label.textContent
+            label.textContent = 'Music';
+            btn.classList.add('playing');
+        } else {
+            audio.muted = true;
+            icon.textContent  = '🔇';
+            label.textContent = 'Muted';
+            btn.classList.remove('playing');
+        }
+    }
+
+    // Unmute on any first interaction
+    ['click','touchstart','mousedown','keydown','scroll'].forEach(e =>
+        document.addEventListener(e, unmuteOnce, { passive: true })
+    );
+</script>
 </body>
 </html>
