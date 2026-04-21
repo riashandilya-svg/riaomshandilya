@@ -598,7 +598,8 @@ window.addEventListener('scroll', () => {
             requestAnimationFrame(tickGlitter);
         })();
     </script>
-    <!-- ── Background Music ── -->
+    
+<!-- ── Background Music ── -->
 <audio id="bg-music" loop preload="auto">
     <source src="ekladki.mp3" type="audio/mpeg">
 </audio>
@@ -656,20 +657,22 @@ window.addEventListener('scroll', () => {
     const btn   = document.getElementById('music-btn');
     const icon  = document.getElementById('music-icon');
     const label = document.getElementById('music-label');
-    let   started = false;
+    let started = false;
 
     audio.volume = 0.45;
 
     function startMusic() {
         if (started) return;
-        started = true;
         audio.muted = false;
         audio.play().then(() => {
+            started = true;
             btn.classList.add('playing');
             btn.classList.remove('muted');
             icon.textContent  = '♪';
             label.textContent = 'Music';
-        }).catch(() => {});
+        }).catch(() => {
+            // Browser still blocked it — will retry on next gesture
+        });
     }
 
     function toggleMusic() {
@@ -679,20 +682,6 @@ window.addEventListener('scroll', () => {
             btn.classList.add('playing');
             btn.classList.remove('muted');
             icon.textContent  = '♪';
-            label.textContent = 'Music';
-        } else {
-            audio.pause();
-            btn.classList.remove('playing');
-            btn.classList.add('muted');
-            icon.textContent  = '⏸';
-            label.textContent = 'Paused';
-        }
-    }
-
-    // Start on first interaction anywhere on the page
-    ['pointerdown','keydown','scroll'].forEach(evt =>
-        window.addEventListener(evt, startMusic, { once: true, passive: true })
-    );
-</script>
+            label.textContent
 </body>
 </html>
