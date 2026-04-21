@@ -598,5 +598,101 @@ window.addEventListener('scroll', () => {
             requestAnimationFrame(tickGlitter);
         })();
     </script>
+    <!-- ── Background Music ── -->
+<audio id="bg-music" loop preload="auto">
+    <source src="ekladki.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Music Control Button -->
+<div id="music-btn" onclick="toggleMusic()" title="Toggle music" style="
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(212,175,55,0.45);
+    background: rgba(0,0,0,0.70);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 18px rgba(0,0,0,0.5);
+    user-select: none;
+">
+    <span id="music-icon" style="font-size:16px;">♪</span>
+    <span id="music-label" style="
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.20em;
+        text-transform: uppercase;
+        color: rgba(212,175,55,0.85);
+    ">Music</span>
+</div>
+
+<style>
+    #music-btn { animation: btnGlow 2.5s ease-in-out infinite; }
+    #music-btn:hover { border-color: rgba(212,175,55,0.80) !important; }
+    #music-icon {
+        color: var(--gold);
+        animation: pulse 2s ease-in-out infinite;
+        display: inline-block;
+    }
+    #music-btn.playing #music-icon { animation: musicBounce 0.6s ease-in-out infinite alternate; }
+    @keyframes musicBounce {
+        from { transform: translateY(0px) scale(1); }
+        to   { transform: translateY(-2px) scale(1.15); }
+    }
+    #music-btn.muted { border-color: rgba(255,255,255,0.15) !important; box-shadow: none !important; animation: none !important; }
+    #music-btn.muted #music-icon { color: rgba(255,255,255,0.30); animation: none; }
+    #music-btn.muted #music-label { color: rgba(255,255,255,0.30); }
+</style>
+
+<script>
+    const audio = document.getElementById('bg-music');
+    const btn   = document.getElementById('music-btn');
+    const icon  = document.getElementById('music-icon');
+    const label = document.getElementById('music-label');
+    let   started = false;
+
+    audio.volume = 0.45;
+
+    function startMusic() {
+        if (started) return;
+        started = true;
+        audio.muted = false;
+        audio.play().then(() => {
+            btn.classList.add('playing');
+            btn.classList.remove('muted');
+            icon.textContent  = '♪';
+            label.textContent = 'Music';
+        }).catch(() => {});
+    }
+
+    function toggleMusic() {
+        if (!started) { startMusic(); return; }
+        if (audio.paused) {
+            audio.play();
+            btn.classList.add('playing');
+            btn.classList.remove('muted');
+            icon.textContent  = '♪';
+            label.textContent = 'Music';
+        } else {
+            audio.pause();
+            btn.classList.remove('playing');
+            btn.classList.add('muted');
+            icon.textContent  = '⏸';
+            label.textContent = 'Paused';
+        }
+    }
+
+    // Start on first interaction anywhere on the page
+    ['pointerdown','keydown','scroll'].forEach(evt =>
+        window.addEventListener(evt, startMusic, { once: true, passive: true })
+    );
+</script>
 </body>
 </html>
