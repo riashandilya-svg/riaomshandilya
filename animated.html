@@ -598,71 +598,36 @@ window.addEventListener('scroll', () => {
             requestAnimationFrame(tickGlitter);
         })();
     </script>
-<!-- ── Background Music ── -->
-<audio id="bg-music" loop preload="auto" muted>
-    <source src="ekladki.mp3" type="audio/mpeg">
-</audio>
-
-<!-- Music Control Button -->
-<div id="music-btn" onclick="toggleMute()" title="Toggle music" style="
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    z-index: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    border: 1px solid rgba(212,175,55,0.45);
-    background: rgba(0,0,0,0.70);
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    box-shadow: 0 0 18px rgba(0,0,0,0.5);
-    user-select: none;
-">
-    <span id="music-icon" style="font-size:16px; color:var(--gold);">🔇</span>
-    <span id="music-label" style="
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.20em;
-        text-transform: uppercase;
-        color: rgba(212,175,55,0.85);
-    ">Click to unmute</span>
-</div>
-
-<style>
-    #music-btn { animation: btnGlow 2.5s ease-in-out infinite; }
-    #music-btn:hover { border-color: rgba(212,175,55,0.80) !important; }
-    #music-btn.playing #music-icon { animation: musicBounce 0.6s ease-in-out infinite alternate; }
-    @keyframes musicBounce {
-        from { transform: translateY(0px) scale(1); }
-        to   { transform: translateY(-2px) scale(1.15); }
-    }
-</style>
-
-<script>
+    <script>
     const audio = document.getElementById('bg-music');
     const btn   = document.getElementById('music-btn');
     const icon  = document.getElementById('music-icon');
     const label = document.getElementById('music-label');
+    let unmuted = false;
 
     audio.volume = 0.45;
 
-    // Autoplay muted immediately — browsers allow this
-    audio.play().catch(() => {});
-
-    let unmuted = false;
+    // Try to play — autoplay + muted attributes handle most browsers,
+    // but we also call .play() manually as a belt-and-suspenders
+    function tryPlay() {
+        const p = audio.play();
+        if (p !== undefined) p.catch(() => {});
+    }
+    // Attempt immediately
+    tryPlay();
+    // Also attempt once DOM is fully ready, in case audio wasn't ready yet
+    window.addEventListener('load', tryPlay);
 
     function unmuteOnce() {
         if (unmuted) return;
         unmuted = true;
         audio.muted = false;
+        // If play somehow hadn't started, start it now
+        if (audio.paused) tryPlay();
         icon.textContent  = '♪';
         label.textContent = 'Music';
         btn.classList.add('playing');
-        ['click','touchstart','mousedown','keydown','scroll'].forEach(e =>
+        ['click','touchstart','pointerdown','keydown','scroll'].forEach(e =>
             document.removeEventListener(e, unmuteOnce)
         );
     }
@@ -682,10 +647,11 @@ window.addEventListener('scroll', () => {
         }
     }
 
-    // Unmute on any first interaction
-    ['click','touchstart','mousedown','keydown','scroll'].forEach(e =>
+    // Unmute on ANY first interaction — scroll, click, touch, keypress
+    ['click','touchstart','pointerdown','keydown','scroll'].forEach(e =>
         document.addEventListener(e, unmuteOnce, { passive: true })
     );
 </script>
+
 </body>
 </html>
