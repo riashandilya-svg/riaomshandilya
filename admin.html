@@ -642,6 +642,56 @@
     const status = document.getElementById(`status-${id}`).value;
     const tracking = document.getElementById(`tracking-${id}`).value.trim();
 
+    const order = allOrders.find(o => o.id.toString() === id.toString());
+
+    // ── If cancelling, trigger Razorpay refund via edge function first ──
+    if (status === 'cancelled' && order && order.status !== 'cancelled') {
+      if (!order.razorpay_payment_id) {
+        showToast('No payment ID on this order — cannot refund.');
+        return;
+      }
+      if (!confirm(`Cancel order and refund ₹${order.total} to customer?`)) return;
+
+      showToast('Initiating refund…');
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-refund-order`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ order_id: id }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          showToast('Refund failed: ' + (data.error || 'Unknown error'));
+          return;
+        }
+
+        showToast(`Refund initiated ✓ (${data.refund_id})`);
+
+        // DB is already updated by the edge function — just sync local state
+        const idx = allOrders.findIndex(o => o.id.toString() === id.toString());
+        if (idx > -1) {
+          allOrders[idx].status = 'cancelled';
+          allOrders[idx].razorpay_refund_id = data.refund_id;
+          allOrders[idx].tracking_number = tracking;
+        }
+        updateStats();
+        renderTable();
+        return;
+
+      } catch (err) {
+        showToast('Network error during refund. Please try again.');
+        return;
+      }
+    }
+
+    // ── Normal save (non-cancel) ──
     const { error } = await db
       .from('orders')
       .update({ status, tracking_number: tracking })
