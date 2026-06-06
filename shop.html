@@ -1050,6 +1050,10 @@
       theme: { color: '#c9973a' },
 
       handler: async function(response) {
+        const savedTotal = cartTotal() + SHIPPING_FEE;
+        const savedItems = [...orderItems];
+        const savedAddress = `${address.line1}${address.line2 ? ', ' + address.line2 : ''}, ${address.city}, ${address.state} - ${address.pin}`;
+
         // Save order to Supabase
         const { data, error } = await db.from('orders').insert([{
           razorpay_payment_id: response.razorpay_payment_id,
@@ -1064,39 +1068,39 @@
           items: orderItems,
           subtotal: cartTotal(),
           shipping: SHIPPING_FEE,
-          total: cartTotal() + SHIPPING_FEE,
+          total: savedTotal,
           status: 'paid',
         }]).select().single();
 
         if (error) {
           console.error('Supabase error:', error);
-          showToast('Payment received but order save failed. Email us!');
-          return;
+          // Still send email — payment went through even if DB had an issue
         }
 
-        // Send confirmation email via Resend
-        const shortId = data.id.toString().slice(0, 8).toUpperCase();
+        // Send confirmation email via Resend (always fires)
+        const shortId = data ? data.id.toString().slice(0, 8).toUpperCase() : response.razorpay_payment_id.slice(-8).toUpperCase();
         try {
-          await fetch(SEND_EMAIL_URL, {
+          const emailRes = await fetch(SEND_EMAIL_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              name:     name,
-              email:    email,
-              orderId:  shortId,
-              items:    orderItems,
-              total:    `₹${cartTotal() + SHIPPING_FEE}`,
-              address:  `${address.line1}${address.line2 ? ', ' + address.line2 : ''}, ${address.city}, ${address.state} - ${address.pin}`,
+              name:    name,
+              email:   email,
+              orderId: shortId,
+              items:   savedItems,
+              total:   `₹${savedTotal}`,
+              address: savedAddress,
             }),
           });
+          const emailData = await emailRes.json();
+          console.log('Email result:', emailData);
         } catch (emailErr) {
           console.warn('Email send failed:', emailErr);
-          // Don't block success — order is saved, just log it
         }
 
         // show success
         document.getElementById('checkout-form-wrapper').style.display = 'none';
-        document.getElementById('success-order-id').textContent = data.id;
+        document.getElementById('success-order-id').textContent = data ? data.id : response.razorpay_payment_id;
         document.getElementById('success-state').classList.add('show');
 
         // clear cart
