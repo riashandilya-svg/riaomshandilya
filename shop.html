@@ -748,7 +748,7 @@
   const SHIPPING_FEE = 0; // ₹ flat shipping fee (set 0 for free)
 
   // Supabase
-  const SUPABASE_URL = https://bddtrwzzimdvnuzuxqvx.supabase.co/rest/v1/';       // ← your Supabase URL
+  const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';       // ← your Supabase URL
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';            // ← your anon key
 
   // ═══════════════════════════════
@@ -762,6 +762,7 @@
       price: 499,
       isbn: '9789356020655',
       symbol: '♩',
+      cover: 'https://covers.openlibrary.org/b/isbn/9789356020655-L.jpg',
     },
     {
       id: 'peppy-bollywood',
@@ -770,6 +771,7 @@
       price: 499,
       isbn: '9789334188642',
       symbol: '♪',
+      cover: 'https://covers.openlibrary.org/b/isbn/9789334188642-L.jpg',
     },
     {
       id: 'romantic-bollywood',
@@ -778,6 +780,7 @@
       price: 499,
       isbn: '9789359803243',
       symbol: '♫',
+      cover: 'https://covers.openlibrary.org/b/isbn/9789359803243-L.jpg',
     },
     {
       id: 'classic-bollywood',
@@ -786,6 +789,7 @@
       price: 499,
       isbn: 'B09GZGXMYY',
       symbol: '𝄞',
+      cover: 'https://covers.openlibrary.org/b/isbn/9789356020686-L.jpg',
     },
   ];
 
@@ -814,10 +818,19 @@
     const grid = document.getElementById('books-grid');
     grid.innerHTML = BOOKS.map(book => `
       <div class="book-card" data-id="${book.id}">
-        <div class="book-cover-placeholder">
-          <div class="music-symbol">${book.symbol}</div>
-          <div class="cover-title">${book.title}</div>
-          <div class="cover-sub">Piano Sheet Music</div>
+        <div class="book-cover-wrap" style="position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:linear-gradient(135deg,var(--ink) 0%,#2d1f0a 100%);">
+          <img
+            src="${book.cover}"
+            alt="${book.title}"
+            class="book-cover"
+            style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.3s;"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          />
+          <div class="book-cover-placeholder" style="display:none;position:absolute;inset:0;">
+            <div class="music-symbol">${book.symbol}</div>
+            <div class="cover-title">${book.title}</div>
+            <div class="cover-sub">Piano Sheet Music</div>
+          </div>
         </div>
         <div class="book-info">
           <div class="book-title">${book.title}</div>
@@ -889,7 +902,9 @@
 
     itemsEl.innerHTML = Object.values(cart).map(item => `
       <div class="cart-item">
-        <div class="cart-item-thumb">${item.symbol}</div>
+        <div class="cart-item-thumb" style="overflow:hidden;padding:0;">
+          <img src="${item.cover}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.textContent='${item.symbol}';" />
+        </div>
         <div class="cart-item-details">
           <div class="cart-item-name">${item.title}</div>
           <div class="cart-item-price">₹${item.price * item.qty}</div>
