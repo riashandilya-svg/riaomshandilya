@@ -518,7 +518,7 @@
   }
 
   // ═══════════════════════════════
-  //  LOAD ORDERS via Edge Function
+  //  LOAD ORDERS
   // ═══════════════════════════════
   async function loadOrders() {
     const tbody = document.getElementById('orders-tbody');
@@ -530,7 +530,7 @@
       .order('created_at', { ascending: false });
 
     if (error) {
-      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px">Error loading orders: ${error.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px">Error: ${error.message}</td></tr>`;
       return;
     }
 
@@ -634,7 +634,7 @@
   }
 
   // ═══════════════════════════════
-  //  SAVE ORDER via Edge Function
+  //  SAVE ORDER
   // ═══════════════════════════════
   async function saveOrder(id) {
     const status = document.getElementById(`status-${id}`).value;
