@@ -373,10 +373,12 @@
   <div class="login-box">
     <div class="brand">Ria Om Shandilya™</div>
     <div class="brand-sub">Admin Dashboard</div>
+    <label>Email</label>
+    <input type="email" id="admin-email" placeholder="your@email.com" />
     <label>Password</label>
-    <input type="password" id="admin-password" placeholder="Enter admin password" />
-    <div class="login-error" id="login-error">Incorrect password. Try again.</div>
-    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <input type="password" id="admin-password" placeholder="Enter password" />
+    <div class="login-error" id="login-error">Incorrect email or password.</div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
   </div>
 </div>
 
@@ -450,67 +452,91 @@
   // ═══════════════════════════════
   //  🔧 CONFIG
   // ═══════════════════════════════
-  const ADMIN_PASSWORD = 'ria2024admin'; // ← change this!
-
-   const SUPABASE_URL = https://bddtrwzzimdvnuzuxqvx.supabase.co/rest/v1/';       // ← your Supabase URL
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';            // ← your anon key
-
+  const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
+  const GET_ORDERS_URL  = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/get-orders';
+  const UPDATE_ORDER_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/update-order';
 
   // ═══════════════════════════════
-  //  SUPABASE INIT
+  //  SUPABASE AUTH INIT
   // ═══════════════════════════════
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   let allOrders = [];
   let currentFilter = 'all';
+  let accessToken = null;
 
   // ═══════════════════════════════
   //  LOGIN
   // ═══════════════════════════════
-  function doLogin() {
-    const pw = document.getElementById('admin-password').value;
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem('ria_admin', '1');
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-      loadOrders();
-    } else {
-      document.getElementById('login-error').style.display = 'block';
+  async function doLogin() {
+    const email = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-password').value;
+    const btn = document.getElementById('login-btn');
+    const errEl = document.getElementById('login-error');
+
+    errEl.style.display = 'none';
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+    btn.textContent = 'Sign In';
+    btn.disabled = false;
+
+    if (error) {
+      errEl.style.display = 'block';
+      return;
     }
+
+    accessToken = data.session.access_token;
+    showDashboard();
   }
-  function doLogout() {
-    sessionStorage.removeItem('ria_admin');
+
+  async function doLogout() {
+    await db.auth.signOut();
+    accessToken = null;
     location.reload();
   }
+
   document.getElementById('admin-password').addEventListener('keydown', e => {
     if (e.key === 'Enter') doLogin();
   });
-  // auto-login if session exists
-  if (sessionStorage.getItem('ria_admin')) {
+
+  // auto-restore session on page load
+  (async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) {
+      accessToken = session.access_token;
+      showDashboard();
+    }
+  })();
+
+  function showDashboard() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadOrders();
   }
 
   // ═══════════════════════════════
-  //  LOAD ORDERS
+  //  LOAD ORDERS via Edge Function
   // ═══════════════════════════════
   async function loadOrders() {
     const tbody = document.getElementById('orders-tbody');
     tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading…</td></tr>';
 
-    const { data, error } = await db
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const res = await fetch(GET_ORDERS_URL, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
 
-    if (error) {
-      tbody.innerHTML = `<tr class="loading-row"><td colspan="7" style="color:#e05252">Error: ${error.message}</td></tr>`;
+    if (res.status === 401 || res.status === 403) {
+      tbody.innerHTML = `<tr class="loading-row"><td colspan="7" style="color:#e05252">Access denied. Are you logged in with an allowed email?</td></tr>`;
       return;
     }
 
-    allOrders = data || [];
+    const data = await res.json();
+    allOrders = Array.isArray(data) ? data : [];
     updateStats();
     renderTable();
   }
@@ -549,9 +575,9 @@
     }
     if (q) {
       orders = orders.filter(o =>
-        (o.customer_name || '').toLowerCase().includes(q) ||
-        (o.customer_email || '').toLowerCase().includes(q) ||
-        (o.customer_phone || '').includes(q) ||
+        (o.name || '').toLowerCase().includes(q) ||
+        (o.email || '').toLowerCase().includes(q) ||
+        (o.phone || '').includes(q) ||
         (o.id || '').toString().includes(q)
       );
     }
@@ -566,8 +592,7 @@
     tbody.innerHTML = orders.map(order => {
       const date = new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
       const items = (order.items || []).map(i => `${i.title.split(' ')[0]}… ×${i.qty}`).join(', ');
-      const addr = order.shipping_address || {};
-      const addrStr = [addr.line1, addr.line2, addr.city, addr.state, addr.pin].filter(Boolean).join(', ');
+      const addrStr = [order.address, order.city, order.state, order.pin, order.country].filter(Boolean).join(', ');
       const shortId = (order.id || '').toString().slice(0, 8);
 
       return `
@@ -577,9 +602,9 @@
             <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">${order.razorpay_payment_id || '—'}</div>
           </td>
           <td>
-            <div class="customer-name">${order.customer_name || '—'}</div>
-            <div class="customer-email">${order.customer_email || ''}</div>
-            <div class="customer-email">${order.customer_phone || ''}</div>
+            <div class="customer-name">${order.name || '—'}</div>
+            <div class="customer-email">${order.email || ''}</div>
+            <div class="customer-email">${order.phone || ''}</div>
             <button class="expand-btn" onclick="toggleAddr(this)" style="margin-top:6px">📦 Address</button>
             <div class="address-popup">${addrStr || 'No address'}</div>
           </td>
@@ -611,24 +636,26 @@
   }
 
   // ═══════════════════════════════
-  //  SAVE ORDER UPDATE
+  //  SAVE ORDER via Edge Function
   // ═══════════════════════════════
   async function saveOrder(id) {
     const status = document.getElementById(`status-${id}`).value;
     const tracking = document.getElementById(`tracking-${id}`).value.trim();
 
-    const { error } = await db.from('orders').update({
-      status,
-      tracking_number: tracking || null,
-      updated_at: new Date().toISOString(),
-    }).eq('id', id);
+    const res = await fetch(UPDATE_ORDER_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orderId: id, status, tracking })
+    });
 
-    if (error) {
-      showToast('Error saving: ' + error.message);
+    if (!res.ok) {
+      showToast('Error saving order');
       return;
     }
 
-    // update local
     const idx = allOrders.findIndex(o => o.id.toString() === id.toString());
     if (idx > -1) {
       allOrders[idx].status = status;
