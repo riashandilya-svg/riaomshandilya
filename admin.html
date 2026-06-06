@@ -454,8 +454,6 @@
   // ═══════════════════════════════
   const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
-  const GET_ORDERS_URL  = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/get-orders';
-  const UPDATE_ORDER_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/update-order';
 
   // ═══════════════════════════════
   //  SUPABASE AUTH INIT
@@ -526,17 +524,16 @@
     const tbody = document.getElementById('orders-tbody');
     tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading…</td></tr>';
 
-    const res = await fetch(GET_ORDERS_URL, {
-      headers: { 'Authorization': `Bearer ${accessToken}` }
-    });
+    const { data, error } = await db
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    if (res.status === 401 || res.status === 403) {
-      await db.auth.signOut();
-      window.location.href = 'index.html';
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px">Error loading orders: ${error.message}</td></tr>`;
       return;
     }
 
-    const data = await res.json();
     allOrders = Array.isArray(data) ? data : [];
     updateStats();
     renderTable();
@@ -643,17 +640,13 @@
     const status = document.getElementById(`status-${id}`).value;
     const tracking = document.getElementById(`tracking-${id}`).value.trim();
 
-    const res = await fetch(UPDATE_ORDER_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ orderId: id, status, tracking })
-    });
+    const { error } = await db
+      .from('orders')
+      .update({ status, tracking_number: tracking })
+      .eq('id', id);
 
-    if (!res.ok) {
-      showToast('Error saving order');
+    if (error) {
+      showToast('Error saving order: ' + error.message);
       return;
     }
 
