@@ -454,9 +454,9 @@
     const isPhone = /^\d{10}$/.test(val);
     let query = db.from('orders').select('*').order('created_at', { ascending: false });
     if (isPhone) {
-      query = query.eq('customer_phone', val);
+      query = query.eq('phone', val);
     } else {
-      query = query.eq('customer_email', val);
+      query = query.eq('email', val);
     }
 
     const { data, error } = await query;
@@ -514,7 +514,7 @@
             <div class="order-items">${itemsHtml}</div>
             <div class="order-totals">
               <div class="total-row"><span>Subtotal</span><span>₹${order.subtotal || 0}</span></div>
-              <div class="total-row"><span>Shipping</span><span>₹${order.shipping_fee || 0}</span></div>
+              <div class="total-row"><span>Shipping</span><span>₹${order.shipping || 0}</span></div>
               <div class="total-row bold"><span>Total</span><span>₹${order.total || 0}</span></div>
             </div>
             ${renderTimeline(order.status)}
