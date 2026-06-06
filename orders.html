@@ -867,7 +867,11 @@
     try {
       const res = await fetch(SEND_OTP_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
         body: JSON.stringify({ order_id: cancelState.orderId, email }),
       });
 
@@ -917,7 +921,11 @@
     try {
       const res = await fetch(VERIFY_OTP_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
         body: JSON.stringify({
           order_id: cancelState.orderId,
           email: cancelState.verifiedEmail,
