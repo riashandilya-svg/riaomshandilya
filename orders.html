@@ -497,11 +497,6 @@
         </div>
       `).join('');
 
-      const trackingHtml = order.tracking_number
-        ? `<div class="tracking-info">📦 Tracking Number: <strong>${order.tracking_number}</strong></div>`
-        : '';
-
-      
       return `
         <div class="order-card">
           <div class="order-card-header">
@@ -515,11 +510,21 @@
             <div class="order-items">${itemsHtml}</div>
             <div class="order-totals">
               <div class="total-row"><span>Subtotal</span><span>₹${order.subtotal || 0}</span></div>
-              <div class="total-row"><span>Shipping</span><span>₹${order.shipping || 0}</span></div>
+              <div class="total-row"><span>Shipping</span><span>${order.shipping === 0 ? 'Free' : '₹' + order.shipping}</span></div>
               <div class="total-row bold"><span>Total</span><span>₹${order.total || 0}</span></div>
             </div>
             ${renderTimeline(order.status)}
-            ${trackingHtml}
+            ${order.tracking_number ? `
+              <div class="tracking-info">
+                📦 <strong>Tracking Number:</strong> ${order.tracking_number}<br>
+                <span style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;display:block;">
+                  Track on 
+                  <a href="https://www.indiapost.gov.in/_layouts/15/DOP.Portal.Tracking/TrackConsignment.aspx" target="_blank" style="color:var(--rust);">India Post</a> · 
+                  <a href="https://www.bluedart.com/tracking" target="_blank" style="color:var(--rust);">BlueDart</a> · 
+                  <a href="https://www.delhivery.com/track/" target="_blank" style="color:var(--rust);">Delhivery</a>
+                </span>
+              </div>` : ''
+            }
           </div>
         </div>
       `;
