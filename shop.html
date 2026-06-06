@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Books — Ria Om Shandilya™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* ── CONFIG: fill these in ── */
+    /* RAZORPAY_KEY_ID and SUPABASE details set in JS below */
+
+    :root {
+      --ink: #1a1208;
+      --parchment: #fdf6e3;
+      --gold: #c9973a;
+      --gold-light: #e8c87a;
+      --gold-pale: #f5e9c8;
+      --rust: #8b3a1a;
+      --cream: #faf2dc;
+      --border: rgba(201,151,58,0.25);
+      --shadow: rgba(26,18,8,0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--parchment);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--ink);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--gold);
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .logo span { color: #fff; font-weight: 400; font-style: italic; }
+    .header-links { display: flex; gap: 28px; align-items: center; }
+    .header-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .header-links a:hover { color: var(--gold-light); }
+    #cart-btn {
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      padding: 8px 18px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+    }
+    #cart-btn:hover { background: var(--gold-light); }
+    #cart-count {
+      position: absolute;
+      top: -7px; right: -7px;
+      background: var(--rust);
+      color: #fff;
+      border-radius: 50%;
+      width: 18px; height: 18px;
+      font-size: 0.7rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      display: none;
+    }
+
+    /* ── HERO ── */
+    .shop-hero {
+      background: var(--ink);
+      padding: 60px 40px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .shop-hero::before {
+      content: '𝄞 ♪ ♫ ♪ 𝄢';
+      position: absolute;
+      top: 12px; left: 0; right: 0;
+      text-align: center;
+      color: rgba(201,151,58,0.2);
+      font-size: 1.4rem;
+      letter-spacing: 12px;
+    }
+    .shop-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      color: var(--gold-light);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .shop-hero p {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ── BOOKS GRID ── */
+    .books-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 40px;
+    }
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 40px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 32px;
+    }
+
+    .book-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px var(--shadow);
+    }
+    .book-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+    }
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      background: var(--gold-pale);
+    }
+    .book-cover-placeholder {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, var(--ink) 0%, #2d1f0a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+    .book-cover-placeholder .music-symbol {
+      font-size: 2.5rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .book-cover-placeholder .cover-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--gold-light);
+      line-height: 1.3;
+      font-weight: 600;
+    }
+    .book-cover-placeholder .cover-sub {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .book-info {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .book-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .book-subtitle {
+      font-size: 0.78rem;
+      color: rgba(26,18,8,0.55);
+      line-height: 1.4;
+    }
+    .book-price {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--rust);
+      margin-top: auto;
+      padding-top: 12px;
+    }
+    .book-price span {
+      font-size: 0.75rem;
+      color: rgba(26,18,8,0.45);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .add-to-cart {
+      width: 100%;
+      padding: 11px;
+      background: var(--ink);
+      color: var(--gold-light);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      margin-top: 12px;
+    }
+    .add-to-cart:hover { background: var(--gold); color: var(--ink); }
+    .add-to-cart.added {
+      background: #2d5a1b;
+      color: #a8e68a;
+    }
+
+    /* ── CART DRAWER ── */
+    .cart-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,18,8,0.6);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -440px; bottom: 0;
+      width: min(440px, 100vw);
+      background: var(--parchment);
+      z-index: 201;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: -8px 0 40px rgba(26,18,8,0.2);
+    }
+    .cart-drawer.open { right: 0; }
+
+    .cart-header {
+      background: var(--ink);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--gold);
+    }
+    .cart-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+    #close-cart {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s;
+    }
+    #close-cart:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(26,18,8,0.4);
+    }
+    .cart-empty .symbol { font-size: 3rem; margin-bottom: 12px; }
+    .cart-empty p { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; }
+
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .cart-item-thumb {
+      width: 52px;
+      height: 68px;
+      background: var(--ink);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.4rem;
+    }
+    .cart-item-details { flex: 1; }
+    .cart-item-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .cart-item-price { font-size: 0.85rem; color: var(--rust); margin-top: 4px; font-weight: 600; }
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .qty-btn {
+      width: 26px; height: 26px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink);
+      transition: background 0.15s;
+    }
+    .qty-btn:hover { background: var(--gold-pale); }
+    .qty-num { font-size: 0.9rem; font-weight: 600; min-width: 20px; text-align: center; }
+    .remove-item { color: rgba(139,58,26,0.6); font-size: 0.75rem; cursor: pointer; background: none; border: none; letter-spacing: 0.06em; text-transform: uppercase; }
+    .remove-item:hover { color: var(--rust); }
+
+    .cart-footer {
+      padding: 20px 24px;
+      background: var(--cream);
+      border-top: 1px solid var(--border);
+    }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .cart-total-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(26,18,8,0.5);
+    }
+    .cart-total-amt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .cart-note {
+      font-size: 0.72rem;
+      color: rgba(26,18,8,0.45);
+      margin-bottom: 16px;
+    }
+    #checkout-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #checkout-btn:hover { background: var(--gold-light); }
+    #checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* ── CHECKOUT MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,18,8,0.7);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--parchment);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: scale(0.95);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal { transform: scale(1); }
+
+    .modal-header {
+      background: var(--ink);
+      padding: 22px 28px;
+      border-bottom: 2px solid var(--gold);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold-light);
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    #close-modal {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #close-modal:hover { border-color: var(--gold); }
+
+    .modal-body { padding: 28px; }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(26,18,8,0.55);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.92rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--gold); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .order-summary-mini {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .order-summary-mini h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--ink);
+    }
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 3px 0;
+      color: rgba(26,18,8,0.7);
+    }
+    .summary-total {
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 8px;
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+
+    #pay-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    #pay-btn:hover { background: var(--gold-light); }
+    #pay-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* ── SUCCESS ── */
+    .success-state {
+      text-align: center;
+      padding: 48px 28px;
+      display: none;
+    }
+    .success-state.show { display: block; }
+    .success-icon { font-size: 3rem; margin-bottom: 16px; color: var(--gold); }
+    .success-state h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .success-state p { color: rgba(26,18,8,0.6); font-size: 0.9rem; line-height: 1.6; }
+    .order-id-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      margin: 16px 0;
+      font-size: 0.85rem;
+      color: var(--ink);
+    }
+    .order-id-box strong { color: var(--rust); font-family: monospace; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--ink);
+      color: var(--gold-light);
+      padding: 12px 24px;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      z-index: 500;
+      transition: transform 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 600px) {
+      header { padding: 14px 18px; }
+      .logo { font-size: 1.1rem; }
+      .header-links { gap: 14px; }
+      .books-section { padding: 40px 18px; }
+      .books-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+      .shop-hero { padding: 40px 18px 34px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a class="logo" href="index.html">Ria Om Shandilya <span>™</span></a>
+  <div class="header-links">
+    <a href="index.html">Home</a>
+    <a href="orders.html">Track Order</a>
+    <button id="cart-btn">
+      🛒 Cart
+      <span id="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="shop-hero">
+  <h1>Sheet Music Books</h1>
+  <p>Handcrafted piano scores for Bollywood melodies — delivered to your door</p>
+</div>
+
+<!-- ── BOOKS ── -->
+<section class="books-section">
+  <div class="section-label">Collection</div>
+  <h2 class="section-title">Choose Your Books</h2>
+  <div class="books-grid" id="books-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── CART DRAWER ── -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h2>Your Cart</h2>
+    <button id="close-cart">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">
+      <div class="symbol">♪</div>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amt" id="cart-total">₹0</span>
+    </div>
+    <p class="cart-note">+ shipping calculated at checkout</p>
+    <button id="checkout-btn" disabled>Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- ── CHECKOUT MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Delivery Details</h2>
+      <button id="close-modal">✕</button>
+    </div>
+
+    <div id="checkout-form-wrapper">
+      <div class="modal-body">
+        <div class="order-summary-mini">
+          <h3>Order Summary</h3>
+          <div id="summary-lines"></div>
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="f-name" placeholder="Your full name" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="f-email" placeholder="you@email.com" required />
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" id="f-phone" placeholder="10-digit mobile" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Address Line 1 *</label>
+          <input type="text" id="f-addr1" placeholder="House / Flat / Building" required />
+        </div>
+        <div class="form-group">
+          <label>Address Line 2</label>
+          <input type="text" id="f-addr2" placeholder="Street / Area / Locality" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="f-city" placeholder="City" required />
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" id="f-state" placeholder="State" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>PIN Code *</label>
+            <input type="text" id="f-pin" placeholder="110001" required />
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <select id="f-country">
+              <option value="India" selected>India</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="pay-btn">Pay with Razorpay</button>
+      </div>
+    </div>
+
+    <div class="success-state" id="success-state">
+      <div class="success-icon">✦</div>
+      <h2>Order Placed!</h2>
+      <p>Thank you for your purchase. We'll dispatch your books soon.</p>
+      <div class="order-id-box">Order ID: <strong id="success-order-id">—</strong></div>
+      <p>A confirmation has been sent to your email.<br>Track your order at <a href="orders.html" style="color:var(--gold)">orders page</a>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ═══════════════════════════════
+  //  🔧 CONFIG — FILL THESE IN
+  // ═══════════════════════════════
+  const RAZORPAY_KEY_ID = 'rzp_live_XXXXXXXXXXXXXXXX'; // ← your Razorpay key
+  const SHIPPING_FEE = 60; // ₹ flat shipping fee (set 0 for free)
+
+  // Supabase
+  const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';       // ← your Supabase URL
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';            // ← your anon key
+
+  // ═══════════════════════════════
+  //  BOOKS CATALOG
+  // ═══════════════════════════════
+  const BOOKS = [
+    {
+      id: 'soulful-bollywood',
+      title: 'Soulful Bollywood Melodies',
+      subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',
+      price: 499,
+      isbn: '9789356020655',
+      symbol: '♩',
+    },
+    {
+      id: 'peppy-bollywood',
+      title: 'Peppy Bollywood Melodies',
+      subtitle: 'Señorita, Naina Da Kya Kasoor, and more lively tunes',
+      price: 499,
+      isbn: '9789334188642',
+      symbol: '♪',
+    },
+    {
+      id: 'romantic-bollywood',
+      title: 'Romantic Bollywood Melodies',
+      subtitle: 'Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, and more',
+      price: 499,
+      isbn: '9789359803243',
+      symbol: '♫',
+    },
+    {
+      id: 'classic-bollywood',
+      title: 'Classic Bollywood Melodies',
+      subtitle: 'Ek Ladki Bheegi Bhaagi Si, Kal Ho Na Ho, and timeless classics',
+      price: 499,
+      isbn: 'B09GZGXMYY',
+      symbol: '𝄞',
+    },
+  ];
+
+  // ═══════════════════════════════
+  //  SUPABASE INIT
+  // ═══════════════════════════════
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ═══════════════════════════════
+  //  CART STATE
+  // ═══════════════════════════════
+  let cart = {};
+
+  function cartTotal() {
+    return Object.values(cart).reduce((s, item) => s + item.price * item.qty, 0);
+  }
+  function cartCount() {
+    return Object.values(cart).reduce((s, item) => s + item.qty, 0);
+  }
+
+  // ═══════════════════════════════
+  //  RENDER BOOKS
+  // ═══════════════════════════════
+  function renderBooks() {
+    const grid = document.getElementById('books-grid');
+    grid.innerHTML = BOOKS.map(book => `
+      <div class="book-card" data-id="${book.id}">
+        <div class="book-cover-placeholder">
+          <div class="music-symbol">${book.symbol}</div>
+          <div class="cover-title">${book.title}</div>
+          <div class="cover-sub">Piano Sheet Music</div>
+        </div>
+        <div class="book-info">
+          <div class="book-title">${book.title}</div>
+          <div class="book-subtitle">${book.subtitle}</div>
+          <div class="book-price">₹${book.price} <span>+ shipping</span></div>
+          <button class="add-to-cart" onclick="addToCart('${book.id}')">
+            + Add to Cart
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════════════════════
+  //  CART ACTIONS
+  // ═══════════════════════════════
+  function addToCart(id) {
+    const book = BOOKS.find(b => b.id === id);
+    if (!book) return;
+    if (cart[id]) {
+      cart[id].qty++;
+    } else {
+      cart[id] = { ...book, qty: 1 };
+    }
+    updateCartUI();
+
+    // flash button
+    const btns = document.querySelectorAll(`.book-card[data-id="${id}"] .add-to-cart`);
+    btns.forEach(btn => {
+      btn.textContent = '✓ Added';
+      btn.classList.add('added');
+      setTimeout(() => {
+        btn.textContent = '+ Add to Cart';
+        btn.classList.remove('added');
+      }, 1400);
+    });
+
+    showToast(`${book.title.split(' ')[0]}… added to cart`);
+    openCart();
+  }
+
+  function removeFromCart(id) {
+    delete cart[id];
+    updateCartUI();
+  }
+
+  function changeQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const count = cartCount();
+    const total = cartTotal();
+    const countEl = document.getElementById('cart-count');
+    countEl.textContent = count;
+    countEl.style.display = count > 0 ? 'flex' : 'none';
+
+    document.getElementById('cart-total').textContent = `₹${total}`;
+    document.getElementById('checkout-btn').disabled = count === 0;
+
+    const itemsEl = document.getElementById('cart-items');
+    if (count === 0) {
+      itemsEl.innerHTML = `<div class="cart-empty"><div class="symbol">♪</div><p>Your cart is empty</p></div>`;
+      return;
+    }
+
+    itemsEl.innerHTML = Object.values(cart).map(item => `
+      <div class="cart-item">
+        <div class="cart-item-thumb">${item.symbol}</div>
+        <div class="cart-item-details">
+          <div class="cart-item-name">${item.title}</div>
+          <div class="cart-item-price">₹${item.price * item.qty}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', +1)">+</button>
+            <button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ═══════════════════════════════
+  //  CART DRAWER
+  // ═══════════════════════════════
+  function openCart() {
+    document.getElementById('cart-drawer').classList.add('open');
+    document.getElementById('cart-overlay').classList.add('open');
+  }
+  function closeCart() {
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+  }
+
+  document.getElementById('cart-btn').addEventListener('click', openCart);
+  document.getElementById('close-cart').addEventListener('click', closeCart);
+  document.getElementById('cart-overlay').addEventListener('click', closeCart);
+
+  // ═══════════════════════════════
+  //  CHECKOUT MODAL
+  // ═══════════════════════════════
+  function openCheckout() {
+    closeCart();
+
+    // populate summary
+    const lines = Object.values(cart).map(item =>
+      `<div class="summary-line"><span>${item.title} × ${item.qty}</span><span>₹${item.price * item.qty}</span></div>`
+    ).join('');
+    const shippingLine = SHIPPING_FEE > 0
+      ? `<div class="summary-line"><span>Shipping</span><span>₹${SHIPPING_FEE}</span></div>` : '';
+    document.getElementById('summary-lines').innerHTML = lines + shippingLine;
+    document.getElementById('summary-total').textContent = `₹${cartTotal() + SHIPPING_FEE}`;
+
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  document.getElementById('checkout-btn').addEventListener('click', openCheckout);
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+
+  // ═══════════════════════════════
+  //  RAZORPAY + SUPABASE
+  // ═══════════════════════════════
+  document.getElementById('pay-btn').addEventListener('click', async () => {
+    // validate
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    const addr1 = document.getElementById('f-addr1').value.trim();
+    const city  = document.getElementById('f-city').value.trim();
+    const state = document.getElementById('f-state').value.trim();
+    const pin   = document.getElementById('f-pin').value.trim();
+
+    if (!name || !email || !phone || !addr1 || !city || !state || !pin) {
+      showToast('Please fill in all required fields');
+      return;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      showToast('Enter a valid 10-digit phone number');
+      return;
+    }
+    if (!/^\d{6}$/.test(pin)) {
+      showToast('Enter a valid 6-digit PIN code');
+      return;
+    }
+
+    const amountPaise = (cartTotal() + SHIPPING_FEE) * 100;
+
+    const address = {
+      line1: addr1,
+      line2: document.getElementById('f-addr2').value.trim(),
+      city, state, pin,
+      country: document.getElementById('f-country').value,
+    };
+
+    const orderItems = Object.values(cart).map(item => ({
+      id: item.id,
+      title: item.title,
+      qty: item.qty,
+      price: item.price,
+    }));
+
+    const rzp = new Razorpay({
+      key: RAZORPAY_KEY_ID,
+      amount: amountPaise,
+      currency: 'INR',
+      name: 'Ria Om Shandilya™',
+      description: 'Piano Sheet Music Books',
+      prefill: { name, email, contact: phone },
+      theme: { color: '#c9973a' },
+
+      handler: async function(response) {
+        // Save order to Supabase
+        const { data, error } = await db.from('orders').insert([{
+          razorpay_payment_id: response.razorpay_payment_id,
+          customer_name: name,
+          customer_email: email,
+          customer_phone: phone,
+          shipping_address: address,
+          items: orderItems,
+          subtotal: cartTotal(),
+          shipping_fee: SHIPPING_FEE,
+          total: cartTotal() + SHIPPING_FEE,
+          status: 'paid',
+          created_at: new Date().toISOString(),
+        }]).select().single();
+
+        if (error) {
+          console.error('Supabase error:', error);
+          showToast('Payment received but order save failed. Email us!');
+          return;
+        }
+
+        // show success
+        document.getElementById('checkout-form-wrapper').style.display = 'none';
+        document.getElementById('success-order-id').textContent = data.id;
+        document.getElementById('success-state').classList.add('show');
+
+        // clear cart
+        cart = {};
+        updateCartUI();
+      },
+
+      modal: { ondismiss: () => showToast('Payment cancelled') }
+    });
+
+    rzp.open();
+  });
+
+  // ═══════════════════════════════
+  //  TOAST
+  // ═══════════════════════════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ═══════════════════════════════
+  //  INIT
+  // ═══════════════════════════════
+  renderBooks();
+  updateCartUI();
+</script>
+</body>
+</html>

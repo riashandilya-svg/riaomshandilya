@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Ria Om Shandilya™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --ink: #0f0d0a;
+      --panel: #161410;
+      --surface: #1f1c17;
+      --surface2: #2a261f;
+      --gold: #c9973a;
+      --gold-light: #e8c87a;
+      --gold-pale: rgba(201,151,58,0.12);
+      --border: rgba(201,151,58,0.15);
+      --text: #e8dfc8;
+      --text-muted: rgba(232,223,200,0.45);
+      --green: #4caf7d;
+      --green-bg: rgba(76,175,125,0.12);
+      --blue: #5ba3d9;
+      --blue-bg: rgba(91,163,217,0.12);
+      --orange: #e07b39;
+      --orange-bg: rgba(224,123,57,0.12);
+      --red: #e05252;
+      --red-bg: rgba(224,82,82,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ink);
+      padding: 20px;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
+    }
+    .login-box .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .login-box .brand-sub {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+    .login-box label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .login-box input:focus { border-color: var(--gold); }
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-btn:hover { background: var(--gold-light); }
+    .login-error {
+      color: var(--red);
+      font-size: 0.8rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display: none; }
+
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+    .topbar-brand span { color: var(--text-muted); font-style: italic; font-weight: 400; font-size: 0.85rem; margin-left: 8px; }
+    .topbar-actions { display: flex; gap: 12px; align-items: center; }
+    .topbar-actions button {
+      padding: 7px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .topbar-actions button:hover { border-color: var(--gold); color: var(--gold-light); }
+    .topbar-actions .refresh-btn {
+      background: var(--gold-pale);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    .dashboard-body { padding: 28px; max-width: 1300px; margin: 0 auto; }
+
+    /* ── STATS ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+    .stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── FILTERS ── */
+    .filters-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn.active {
+      background: var(--gold-pale);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .search-input {
+      padding: 7px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      min-width: 220px;
+      margin-left: auto;
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus { border-color: var(--gold); }
+
+    /* ── ORDERS TABLE ── */
+    .table-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(201,151,58,0.07);
+      font-size: 0.85rem;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(201,151,58,0.03); }
+
+    .order-id { font-family: monospace; font-size: 0.75rem; color: var(--text-muted); }
+    .customer-name { font-weight: 600; color: var(--text); }
+    .customer-email { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-radius: 2px;
+    }
+    .badge-paid { background: var(--green-bg); color: var(--green); }
+    .badge-shipped { background: var(--blue-bg); color: var(--blue); }
+    .badge-delivered { background: rgba(201,151,58,0.15); color: var(--gold-light); }
+    .badge-pending { background: var(--orange-bg); color: var(--orange); }
+    .badge-cancelled { background: var(--red-bg); color: var(--red); }
+
+    .items-list { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+    .amount { font-weight: 600; color: var(--gold-light); }
+
+    .action-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .status-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      cursor: pointer;
+      outline: none;
+    }
+    .tracking-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      outline: none;
+      width: 130px;
+      transition: border-color 0.2s;
+    }
+    .tracking-input:focus { border-color: var(--gold); }
+    .save-btn {
+      padding: 5px 14px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .save-btn:hover { background: var(--gold-light); }
+
+    .expand-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all 0.15s;
+    }
+    .expand-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .address-popup {
+      display: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .address-popup.show { display: block; }
+
+    /* ── EMPTY / LOADING ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-muted);
+    }
+    .empty-state .symbol { font-size: 2.5rem; margin-bottom: 12px; color: var(--gold); opacity: 0.3; }
+    .loading-row td { text-align: center; padding: 40px; color: var(--text-muted); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--gold);
+      color: var(--ink);
+      padding: 10px 22px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      z-index: 500;
+      transition: transform 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 700px) {
+      .dashboard-body { padding: 16px; }
+      .topbar { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="brand">Ria Om Shandilya™</div>
+    <div class="brand-sub">Admin Dashboard</div>
+    <label>Password</label>
+    <input type="password" id="admin-password" placeholder="Enter admin password" />
+    <div class="login-error" id="login-error">Incorrect password. Try again.</div>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-brand">Orders Dashboard <span>Admin</span></div>
+    <div class="topbar-actions">
+      <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
+      <button onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="dashboard-body">
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value" id="stat-total">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Revenue</div>
+        <div class="stat-value" id="stat-revenue">—</div>
+        <div class="stat-sub">incl. shipping</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">To Ship</div>
+        <div class="stat-value" id="stat-toship">—</div>
+        <div class="stat-sub">awaiting dispatch</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Shipped</div>
+        <div class="stat-value" id="stat-shipped">—</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter(this, 'all')">All</button>
+      <button class="filter-btn" data-filter="paid" onclick="setFilter(this, 'paid')">Paid</button>
+      <button class="filter-btn" data-filter="shipped" onclick="setFilter(this, 'shipped')">Shipped</button>
+      <button class="filter-btn" data-filter="delivered" onclick="setFilter(this, 'delivered')">Delivered</button>
+      <input class="search-input" id="search-input" placeholder="Search name, email, phone…" oninput="renderTable()" />
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Books</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Update</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody">
+          <tr class="loading-row"><td colspan="7">Loading orders…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ═══════════════════════════════
+  //  🔧 CONFIG
+  // ═══════════════════════════════
+  const ADMIN_PASSWORD = 'ria2024admin'; // ← change this!
+
+  const SUPABASE_URL     = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  // ═══════════════════════════════
+  //  SUPABASE INIT
+  // ═══════════════════════════════
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let allOrders = [];
+  let currentFilter = 'all';
+
+  // ═══════════════════════════════
+  //  LOGIN
+  // ═══════════════════════════════
+  function doLogin() {
+    const pw = document.getElementById('admin-password').value;
+    if (pw === ADMIN_PASSWORD) {
+      sessionStorage.setItem('ria_admin', '1');
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadOrders();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+  function doLogout() {
+    sessionStorage.removeItem('ria_admin');
+    location.reload();
+  }
+  document.getElementById('admin-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  // auto-login if session exists
+  if (sessionStorage.getItem('ria_admin')) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadOrders();
+  }
+
+  // ═══════════════════════════════
+  //  LOAD ORDERS
+  // ═══════════════════════════════
+  async function loadOrders() {
+    const tbody = document.getElementById('orders-tbody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading…</td></tr>';
+
+    const { data, error } = await db
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      tbody.innerHTML = `<tr class="loading-row"><td colspan="7" style="color:#e05252">Error: ${error.message}</td></tr>`;
+      return;
+    }
+
+    allOrders = data || [];
+    updateStats();
+    renderTable();
+  }
+
+  // ═══════════════════════════════
+  //  STATS
+  // ═══════════════════════════════
+  function updateStats() {
+    const total = allOrders.length;
+    const revenue = allOrders.reduce((s, o) => s + (o.total || 0), 0);
+    const toship = allOrders.filter(o => o.status === 'paid').length;
+    const shipped = allOrders.filter(o => o.status === 'shipped').length;
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-revenue').textContent = `₹${revenue.toLocaleString('en-IN')}`;
+    document.getElementById('stat-toship').textContent = toship;
+    document.getElementById('stat-shipped').textContent = shipped;
+  }
+
+  // ═══════════════════════════════
+  //  FILTER + RENDER
+  // ═══════════════════════════════
+  function setFilter(btn, filter) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = filter;
+    renderTable();
+  }
+
+  function renderTable() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+
+    let orders = allOrders;
+    if (currentFilter !== 'all') {
+      orders = orders.filter(o => o.status === currentFilter);
+    }
+    if (q) {
+      orders = orders.filter(o =>
+        (o.customer_name || '').toLowerCase().includes(q) ||
+        (o.customer_email || '').toLowerCase().includes(q) ||
+        (o.customer_phone || '').includes(q) ||
+        (o.id || '').toString().includes(q)
+      );
+    }
+
+    const tbody = document.getElementById('orders-tbody');
+
+    if (orders.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="symbol">♪</div><p>No orders found</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = orders.map(order => {
+      const date = new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
+      const items = (order.items || []).map(i => `${i.title.split(' ')[0]}… ×${i.qty}`).join(', ');
+      const addr = order.shipping_address || {};
+      const addrStr = [addr.line1, addr.line2, addr.city, addr.state, addr.pin].filter(Boolean).join(', ');
+      const shortId = (order.id || '').toString().slice(0, 8);
+
+      return `
+        <tr>
+          <td>
+            <div class="order-id">#${shortId}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">${order.razorpay_payment_id || '—'}</div>
+          </td>
+          <td>
+            <div class="customer-name">${order.customer_name || '—'}</div>
+            <div class="customer-email">${order.customer_email || ''}</div>
+            <div class="customer-email">${order.customer_phone || ''}</div>
+            <button class="expand-btn" onclick="toggleAddr(this)" style="margin-top:6px">📦 Address</button>
+            <div class="address-popup">${addrStr || 'No address'}</div>
+          </td>
+          <td><div class="items-list">${items || '—'}</div></td>
+          <td><div class="amount">₹${(order.total || 0).toLocaleString('en-IN')}</div></td>
+          <td style="white-space:nowrap;color:var(--text-muted);font-size:0.8rem">${date}</td>
+          <td><span class="badge badge-${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+          <td>
+            <div class="action-row">
+              <select class="status-select" id="status-${order.id}">
+                <option value="paid" ${order.status === 'paid' ? 'selected' : ''}>Paid</option>
+                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+              <input class="tracking-input" id="tracking-${order.id}" placeholder="Tracking #" value="${order.tracking_number || ''}" />
+              <button class="save-btn" onclick="saveOrder('${order.id}')">Save</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function toggleAddr(btn) {
+    const popup = btn.nextElementSibling;
+    popup.classList.toggle('show');
+    btn.textContent = popup.classList.contains('show') ? '✕ Close' : '📦 Address';
+  }
+
+  // ═══════════════════════════════
+  //  SAVE ORDER UPDATE
+  // ═══════════════════════════════
+  async function saveOrder(id) {
+    const status = document.getElementById(`status-${id}`).value;
+    const tracking = document.getElementById(`tracking-${id}`).value.trim();
+
+    const { error } = await db.from('orders').update({
+      status,
+      tracking_number: tracking || null,
+      updated_at: new Date().toISOString(),
+    }).eq('id', id);
+
+    if (error) {
+      showToast('Error saving: ' + error.message);
+      return;
+    }
+
+    // update local
+    const idx = allOrders.findIndex(o => o.id.toString() === id.toString());
+    if (idx > -1) {
+      allOrders[idx].status = status;
+      allOrders[idx].tracking_number = tracking;
+    }
+
+    updateStats();
+    renderTable();
+    showToast('Order updated ✓');
+  }
+
+  // ═══════════════════════════════
+  //  TOAST
+  // ═══════════════════════════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

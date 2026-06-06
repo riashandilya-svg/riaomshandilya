@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Order — Ria Om Shandilya™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --ink: #1a1208;
+      --parchment: #fdf6e3;
+      --gold: #c9973a;
+      --gold-light: #e8c87a;
+      --gold-pale: #f5e9c8;
+      --rust: #8b3a1a;
+      --cream: #faf2dc;
+      --border: rgba(201,151,58,0.25);
+      --shadow: rgba(26,18,8,0.12);
+      --text-muted: rgba(26,18,8,0.5);
+      --green: #2d6b3a;
+      --green-light: #a8d5b0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--parchment);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--ink);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--gold);
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+    .logo span { color: rgba(255,255,255,0.6); font-weight: 400; font-style: italic; }
+    header a.nav {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    header a.nav:hover { color: var(--gold-light); }
+
+    .page-hero {
+      background: var(--ink);
+      padding: 50px 40px 44px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '✦  ✦  ✦';
+      position: absolute;
+      top: 14px; left: 0; right: 0;
+      text-align: center;
+      color: rgba(201,151,58,0.2);
+      letter-spacing: 20px;
+      font-size: 0.7rem;
+    }
+    .page-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--gold-light);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .page-hero p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .track-container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    /* ── SEARCH BOX ── */
+    .search-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 36px;
+      position: relative;
+    }
+    .search-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+    }
+    .search-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .search-card p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .search-field {
+      flex: 1;
+      padding: 11px 16px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.92rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-field:focus { border-color: var(--gold); }
+    .search-field::placeholder { color: var(--text-muted); }
+    .track-btn {
+      padding: 11px 24px;
+      background: var(--ink);
+      color: var(--gold-light);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .track-btn:hover { background: var(--gold); color: var(--ink); }
+    .track-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
+    .search-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* ── RESULTS ── */
+    #results { display: none; }
+
+    .results-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .order-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .order-card-header {
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .order-card-id {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .order-card-date {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .badge-paid { background: rgba(76,175,125,0.12); color: #2d6b3a; border: 1px solid rgba(76,175,125,0.3); }
+    .badge-shipped { background: rgba(91,163,217,0.12); color: #1a5c8a; border: 1px solid rgba(91,163,217,0.3); }
+    .badge-delivered { background: rgba(201,151,58,0.12); color: var(--rust); border: 1px solid var(--border); }
+    .badge-cancelled { background: rgba(224,82,82,0.1); color: #8b1a1a; border: 1px solid rgba(224,82,82,0.2); }
+    .badge-pending { background: rgba(224,123,57,0.1); color: #7a3d0d; border: 1px solid rgba(224,123,57,0.2); }
+
+    .order-card-body { padding: 20px 22px; }
+
+    .order-items {
+      margin-bottom: 16px;
+    }
+    .order-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(201,151,58,0.1);
+      gap: 12px;
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .order-item-name {
+      font-size: 0.88rem;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .order-item-qty {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .order-item-price {
+      font-size: 0.88rem;
+      color: var(--rust);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .order-totals {
+      background: var(--cream);
+      padding: 12px 16px;
+      margin-top: 12px;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 3px 0;
+      color: var(--text-muted);
+    }
+    .total-row.bold {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--ink);
+      border-top: 1px solid var(--border);
+      margin-top: 6px;
+      padding-top: 6px;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .timeline-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .timeline-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+    .timeline-steps::before {
+      content: '';
+      position: absolute;
+      top: 14px; left: 20px; right: 20px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .step-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--cream);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .step-dot.done {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+    .step-dot.active {
+      background: #fff;
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(201,151,58,0.15);
+    }
+    .step-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-align: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .step-label.done { color: var(--gold); }
+    .step-label.active { color: var(--ink); font-weight: 600; }
+
+    .tracking-info {
+      margin-top: 14px;
+      background: var(--gold-pale);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      font-size: 0.82rem;
+    }
+    .tracking-info strong { color: var(--rust); font-weight: 600; }
+
+    /* ── NOT FOUND ── */
+    .not-found {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+    .not-found .symbol { font-size: 2.5rem; margin-bottom: 12px; color: var(--gold); opacity: 0.5; }
+    .not-found p { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--text-muted); font-style: italic; }
+
+    @media (max-width: 500px) {
+      header { padding: 14px 18px; }
+      .track-container { padding: 32px 16px; }
+      .search-card { padding: 22px 18px; }
+      .input-row { flex-direction: column; }
+      .timeline-steps::before { top: 13px; }
+      .step-dot { width: 24px; height: 24px; font-size: 0.65rem; }
+      .step-label { font-size: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">Ria Om Shandilya <span>™</span></a>
+  <a class="nav" href="shop.html">← Shop</a>
+</header>
+
+<div class="page-hero">
+  <h1>Track Your Order</h1>
+  <p>Enter your email or phone to see your order status</p>
+</div>
+
+<div class="track-container">
+
+  <!-- Search Card -->
+  <div class="search-card">
+    <h2>Find Your Orders</h2>
+    <p>Use the email address or phone number you provided at checkout</p>
+    <div class="input-row">
+      <input class="search-field" id="track-input" type="text" placeholder="Email or 10-digit phone number" />
+      <button class="track-btn" id="track-btn" onclick="trackOrder()">Track</button>
+    </div>
+    <p class="search-hint">Example: you@email.com or 9876543210</p>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-label" id="results-label">Your Orders</div>
+    <div id="orders-list"></div>
+  </div>
+
+  <!-- Not Found -->
+  <div class="not-found" id="not-found">
+    <div class="symbol">♩</div>
+    <p>No orders found for that email or phone.</p>
+  </div>
+
+</div>
+
+<script>
+  // ═══════════════════════════════
+  //  🔧 CONFIG
+  // ═══════════════════════════════
+  const SUPABASE_URL      = 'https://YOUR_PROJECT.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ═══════════════════════════════
+  //  STATUS TIMELINE
+  // ═══════════════════════════════
+  const STEPS = [
+    { key: 'paid',      label: 'Paid',      icon: '✓' },
+    { key: 'shipped',   label: 'Shipped',   icon: '📦' },
+    { key: 'delivered', label: 'Delivered', icon: '🎵' },
+  ];
+  const STATUS_ORDER = { paid: 0, shipped: 1, delivered: 2, cancelled: -1 };
+
+  function renderTimeline(status) {
+    if (status === 'cancelled') {
+      return `<div class="timeline"><div class="timeline-label">Status</div><span class="badge badge-cancelled">Cancelled</span></div>`;
+    }
+    const currentIdx = STATUS_ORDER[status] ?? 0;
+    const steps = STEPS.map((step, i) => {
+      const done   = i < currentIdx;
+      const active = i === currentIdx;
+      const cls    = done ? 'done' : (active ? 'active' : '');
+      return `
+        <div class="timeline-step">
+          <div class="step-dot ${cls}">${done ? '✓' : step.icon}</div>
+          <div class="step-label ${cls}">${step.label}</div>
+        </div>
+      `;
+    }).join('');
+    return `<div class="timeline"><div class="timeline-label">Order Progress</div><div class="timeline-steps">${steps}</div></div>`;
+  }
+
+  // ═══════════════════════════════
+  //  TRACK ORDER
+  // ═══════════════════════════════
+  async function trackOrder() {
+    const val = document.getElementById('track-input').value.trim().toLowerCase();
+    if (!val) return;
+
+    const btn = document.getElementById('track-btn');
+    btn.textContent = '…';
+    btn.disabled = true;
+
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('not-found').style.display = 'none';
+
+    // query by email or phone
+    const isPhone = /^\d{10}$/.test(val);
+    let query = db.from('orders').select('*').order('created_at', { ascending: false });
+    if (isPhone) {
+      query = query.eq('customer_phone', val);
+    } else {
+      query = query.eq('customer_email', val);
+    }
+
+    const { data, error } = await query;
+
+    btn.textContent = 'Track';
+    btn.disabled = false;
+
+    if (error || !data || data.length === 0) {
+      document.getElementById('not-found').style.display = 'block';
+      return;
+    }
+
+    renderOrders(data);
+  }
+
+  document.getElementById('track-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') trackOrder();
+  });
+
+  // ═══════════════════════════════
+  //  RENDER
+  // ═══════════════════════════════
+  function renderOrders(orders) {
+    const label = `${orders.length} order${orders.length > 1 ? 's' : ''} found`;
+    document.getElementById('results-label').textContent = label;
+
+    const html = orders.map(order => {
+      const date = new Date(order.created_at).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'long', year: 'numeric'
+      });
+      const shortId = (order.id || '').toString().slice(0, 8).toUpperCase();
+      const items = (order.items || []);
+      const itemsHtml = items.map(item => `
+        <div class="order-item-row">
+          <div class="order-item-name">${item.title}</div>
+          <div class="order-item-qty">× ${item.qty}</div>
+          <div class="order-item-price">₹${item.price * item.qty}</div>
+        </div>
+      `).join('');
+
+      const trackingHtml = order.tracking_number
+        ? `<div class="tracking-info">📦 Tracking Number: <strong>${order.tracking_number}</strong></div>`
+        : '';
+
+      return `
+        <div class="order-card">
+          <div class="order-card-header">
+            <div>
+              <div class="order-card-id">Order #${shortId}</div>
+              <div class="order-card-date">${date}</div>
+            </div>
+            <span class="badge badge-${order.status || 'pending'}">${order.status || 'pending'}</span>
+          </div>
+          <div class="order-card-body">
+            <div class="order-items">${itemsHtml}</div>
+            <div class="order-totals">
+              <div class="total-row"><span>Subtotal</span><span>₹${order.subtotal || 0}</span></div>
+              <div class="total-row"><span>Shipping</span><span>₹${order.shipping_fee || 0}</span></div>
+              <div class="total-row bold"><span>Total</span><span>₹${order.total || 0}</span></div>
+            </div>
+            ${renderTimeline(order.status)}
+            ${trackingHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('orders-list').innerHTML = html;
+    document.getElementById('results').style.display = 'block';
+  }
+</script>
+</body>
+</html>
