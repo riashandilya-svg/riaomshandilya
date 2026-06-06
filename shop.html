@@ -1049,16 +1049,19 @@
         // Save order to Supabase
         const { data, error } = await db.from('orders').insert([{
           razorpay_payment_id: response.razorpay_payment_id,
-          customer_name: name,
-          customer_email: email,
-          customer_phone: phone,
-          shipping_address: address,
+          name: name,
+          email: email,
+          phone: phone,
+          address: address.line1 + (address.line2 ? ', ' + address.line2 : ''),
+          city: address.city,
+          state: address.state,
+          pin: address.pin,
+          country: address.country,
           items: orderItems,
           subtotal: cartTotal(),
-          shipping_fee: SHIPPING_FEE,
+          shipping: SHIPPING_FEE,
           total: cartTotal() + SHIPPING_FEE,
           status: 'paid',
-          created_at: new Date().toISOString(),
         }]).select().single();
 
         if (error) {
