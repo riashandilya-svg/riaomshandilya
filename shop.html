@@ -760,36 +760,72 @@
       title: 'Soulful Bollywood Melodies',
       subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',
       price: 499,
-      isbn: '9789356020655',
       symbol: '♩',
-      cover: 'https://covers.openlibrary.org/b/isbn/9789356020655-L.jpg',
+      cover: 'soulful.jpg',
     },
     {
       id: 'peppy-bollywood',
       title: 'Peppy Bollywood Melodies',
       subtitle: 'Señorita, Naina Da Kya Kasoor, and more lively tunes',
       price: 499,
-      isbn: '9789334188642',
       symbol: '♪',
-      cover: 'https://covers.openlibrary.org/b/isbn/9789334188642-L.jpg',
+      cover: 'peppy.jpg',
     },
     {
       id: 'romantic-bollywood',
       title: 'Romantic Bollywood Melodies',
       subtitle: 'Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, and more',
       price: 499,
-      isbn: '9789359803243',
       symbol: '♫',
-      cover: 'https://covers.openlibrary.org/b/isbn/9789359803243-L.jpg',
+      cover: 'romantic.jpg',
     },
     {
       id: 'classic-bollywood',
       title: 'Classic Bollywood Melodies',
       subtitle: 'Ek Ladki Bheegi Bhaagi Si, Kal Ho Na Ho, and timeless classics',
       price: 499,
-      isbn: 'B09GZGXMYY',
       symbol: '𝄞',
-      cover: 'https://covers.openlibrary.org/b/isbn/9789356020686-L.jpg',
+      cover: 'classic.png',
+    },
+    {
+      id: 'meet-notes-beginner',
+      title: "Meet The Notes: Beginner's Guide",
+      subtitle: 'Beginner-friendly piano foundations',
+      price: 399,
+      symbol: '𝄢',
+      cover: 'kids.png',
+    },
+    {
+      id: 'meet-notes-theory',
+      title: 'Meet The Notes: Theory Edition',
+      subtitle: 'Theory + activities + worksheets',
+      price: 399,
+      symbol: '𝄡',
+      cover: 'kids2.png',
+    },
+    {
+      id: 'wyom-100',
+      title: 'Write Your Own Melodies (100 pages)',
+      subtitle: 'Blank 12-stave music journal — 100 pages / 50 sheets',
+      price: 299,
+      symbol: '✦',
+      cover: 'wyom.png',
+    },
+    {
+      id: 'wyom-72',
+      title: 'Write Your Own Melodies (72 pages)',
+      subtitle: 'Blank 12-stave music journal — 72 pages / 36 sheets',
+      price: 249,
+      symbol: '✧',
+      cover: 'wyom2.png',
+    },
+    {
+      id: 'track-your-journey',
+      title: 'Track Your Journey',
+      subtitle: 'Music log book for all instruments',
+      price: 299,
+      symbol: '♬',
+      cover: 'logbook.png',
     },
   ];
 
@@ -818,12 +854,11 @@
     const grid = document.getElementById('books-grid');
     grid.innerHTML = BOOKS.map(book => `
       <div class="book-card" data-id="${book.id}">
-        <div class="book-cover-wrap" style="position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:linear-gradient(135deg,var(--ink) 0%,#2d1f0a 100%);">
+        <div style="position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:linear-gradient(135deg,var(--ink) 0%,#2d1f0a 100%);">
           <img
             src="${book.cover}"
             alt="${book.title}"
-            class="book-cover"
-            style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.3s;"
+            style="width:100%;height:100%;object-fit:cover;display:block;"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
           />
           <div class="book-cover-placeholder" style="display:none;position:absolute;inset:0;">
@@ -903,7 +938,7 @@
     itemsEl.innerHTML = Object.values(cart).map(item => `
       <div class="cart-item">
         <div class="cart-item-thumb" style="overflow:hidden;padding:0;">
-          <img src="${item.cover}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.textContent='${item.symbol}';" />
+          <img src="${item.cover}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\\'font-size:1.4rem;color:var(--gold);display:flex;align-items:center;justify-content:center;height:100%;\\'>${item.symbol}</span>';" />
         </div>
         <div class="cart-item-details">
           <div class="cart-item-name">${item.title}</div>
