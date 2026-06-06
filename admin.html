@@ -531,7 +531,8 @@
     });
 
     if (res.status === 401 || res.status === 403) {
-      tbody.innerHTML = `<tr class="loading-row"><td colspan="7" style="color:#e05252">Access denied. Are you logged in with an allowed email?</td></tr>`;
+      await db.auth.signOut();
+      window.location.href = 'index.html';
       return;
     }
 
