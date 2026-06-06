@@ -653,7 +653,7 @@
       <span class="cart-total-label">Total</span>
       <span class="cart-total-amt" id="cart-total">₹0</span>
     </div>
-    <p class="cart-note">+ shipping calculated at checkout</p>
+    <p class="cart-note">Free shipping on all orders 🎉</p>
     <button id="checkout-btn" disabled>Proceed to Checkout</button>
   </div>
 </div>
@@ -745,7 +745,7 @@
   //  🔧 CONFIG — FILL THESE IN
   // ═══════════════════════════════
   const RAZORPAY_KEY_ID = 'rzp_test_Sx9TaQAPCKRjVL'; // ← your Razorpay key
-  const SHIPPING_FEE = 0; // ₹ flat shipping fee (set 0 for free)
+  const SHIPPING_FEE = 0; // free shipping!
 
   // Supabase
   const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';       // ← your Supabase URL
@@ -870,7 +870,7 @@
         <div class="book-info">
           <div class="book-title">${book.title}</div>
           <div class="book-subtitle">${book.subtitle}</div>
-          <div class="book-price">₹${book.price} <span>+ shipping</span></div>
+          <div class="book-price">₹${book.price} <span>free shipping</span></div>
           <button class="add-to-cart" onclick="addToCart('${book.id}')">
             + Add to Cart
           </button>
