@@ -421,6 +421,7 @@
       <button class="filter-btn" data-filter="paid" onclick="setFilter(this, 'paid')">Paid</button>
       <button class="filter-btn" data-filter="shipped" onclick="setFilter(this, 'shipped')">Shipped</button>
       <button class="filter-btn" data-filter="delivered" onclick="setFilter(this, 'delivered')">Delivered</button>
+      <button class="filter-btn" data-filter="cancelled" onclick="setFilter(this, 'cancelled')">Cancelled</button>
       <input class="search-input" id="search-input" placeholder="Search name, email, phone…" oninput="renderTable()" />
     </div>
 
@@ -598,6 +599,7 @@
           <td>
             <div class="order-id">#${shortId}</div>
             <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">${order.razorpay_payment_id || '—'}</div>
+            ${order.razorpay_refund_id ? `<div style="font-size:0.68rem;color:var(--red);margin-top:2px">Refund: ${order.razorpay_refund_id}</div>` : ''}
           </td>
           <td>
             <div class="customer-name">${order.name || '—'}</div>
