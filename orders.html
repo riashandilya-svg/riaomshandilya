@@ -347,6 +347,128 @@
     .not-found .symbol { font-size: 2.5rem; margin-bottom: 12px; color: var(--gold); opacity: 0.5; }
     .not-found p { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--text-muted); font-style: italic; }
 
+    /* ── CANCEL BUTTON ── */
+    .cancel-zone {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(201,151,58,0.12);
+    }
+    .cancel-btn {
+      padding: 9px 20px;
+      background: transparent;
+      border: 1px solid rgba(224,82,82,0.35);
+      color: #8b1a1a;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cancel-btn:hover:not(:disabled) { background: rgba(224,82,82,0.08); border-color: rgba(224,82,82,0.6); }
+    .cancel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .cancel-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 7px;
+    }
+
+    /* ── CANCEL MODAL ── */
+    .cancel-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,18,8,0.65);
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .cancel-overlay.open { opacity: 1; pointer-events: all; }
+    .cancel-modal {
+      background: var(--parchment);
+      border: 1px solid var(--border);
+      max-width: 420px;
+      width: 100%;
+      padding: 36px 32px;
+      position: relative;
+      transform: scale(0.95);
+      transition: transform 0.25s;
+    }
+    .cancel-overlay.open .cancel-modal { transform: scale(1); }
+    .cancel-modal h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .cancel-modal p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px; }
+    .cancel-modal .refund-note {
+      background: var(--cream);
+      border-left: 3px solid var(--gold);
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: var(--ink);
+      margin: 16px 0 24px;
+      line-height: 1.5;
+    }
+    .cancel-modal-btns { display: flex; gap: 12px; }
+    .btn-go-back {
+      flex: 1;
+      padding: 11px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: var(--ink);
+      transition: background 0.2s;
+    }
+    .btn-go-back:hover { background: var(--gold-pale); }
+    .btn-confirm-cancel {
+      flex: 1;
+      padding: 11px;
+      background: #8b1a1a;
+      border: 1px solid transparent;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-confirm-cancel:hover:not(:disabled) { background: #6b1414; }
+    .btn-confirm-cancel:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink);
+      color: var(--gold-light);
+      padding: 12px 24px;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+      z-index: 500;
+      white-space: nowrap;
+      border: 1px solid var(--border);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
     @media (max-width: 500px) {
       header { padding: 14px 18px; }
       .track-container { padding: 32px 16px; }
@@ -397,12 +519,30 @@
 
 </div>
 
+<!-- Cancel Confirmation Modal -->
+<div class="cancel-overlay" id="cancel-overlay">
+  <div class="cancel-modal">
+    <h3>Cancel Your Order?</h3>
+    <p>You're about to cancel this order and request a refund.</p>
+    <div class="refund-note">
+      💳 Your refund of <strong id="cancel-amount"></strong> will be initiated immediately and should arrive in your account within <strong>5–7 business days</strong>, depending on your bank.
+    </div>
+    <div class="cancel-modal-btns">
+      <button class="btn-go-back" onclick="closeCancelModal()">Keep Order</button>
+      <button class="btn-confirm-cancel" id="confirm-cancel-btn" onclick="confirmCancel()">Yes, Cancel & Refund</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
   // ═══════════════════════════════
   //  🔧 CONFIG
   // ═══════════════════════════════
   const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
+  const CANCEL_ORDER_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/cancel-order';
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -477,6 +617,85 @@
   });
 
   // ═══════════════════════════════
+  //  CANCEL ORDER FLOW
+  // ═══════════════════════════════
+  let pendingCancelOrderId = null;
+
+  function openCancelModal(orderId, total) {
+    pendingCancelOrderId = orderId;
+    document.getElementById('cancel-amount').textContent = `₹${total}`;
+    document.getElementById('cancel-overlay').classList.add('open');
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancel-overlay').classList.remove('open');
+    pendingCancelOrderId = null;
+  }
+
+  // Close modal on overlay click
+  document.getElementById('cancel-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeCancelModal();
+  });
+
+  async function confirmCancel() {
+    if (!pendingCancelOrderId) return;
+
+    const btn = document.getElementById('confirm-cancel-btn');
+    btn.textContent = 'Processing…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(CANCEL_ORDER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: pendingCancelOrderId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        showToast(data.error || 'Cancellation failed. Please contact us.');
+        btn.textContent = 'Yes, Cancel & Refund';
+        btn.disabled = false;
+        return;
+      }
+
+      // Update the order locally so UI reflects it immediately
+      const orderEl = document.querySelector(`[data-order-id="${pendingCancelOrderId}"]`);
+      if (orderEl) {
+        // Re-fetch and re-render orders
+        const val = document.getElementById('track-input').value.trim().toLowerCase();
+        if (val) trackOrder();
+      }
+
+      closeCancelModal();
+      showToast('Order cancelled ✓ Refund initiated — arrives in 5–7 business days');
+
+      // Re-render after short delay to show updated state
+      setTimeout(() => {
+        const val = document.getElementById('track-input').value.trim();
+        if (val) trackOrder();
+      }, 1000);
+
+    } catch (err) {
+      console.error(err);
+      showToast('Network error. Please try again.');
+      btn.textContent = 'Yes, Cancel & Refund';
+      btn.disabled = false;
+    }
+  }
+
+  // ═══════════════════════════════
+  //  TOAST
+  // ═══════════════════════════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  // ═══════════════════════════════
   //  RENDER
   // ═══════════════════════════════
   function renderOrders(orders) {
@@ -498,7 +717,7 @@
       `).join('');
 
       return `
-        <div class="order-card">
+        <div class="order-card" data-order-id="${order.id}">
           <div class="order-card-header">
             <div>
               <div class="order-card-id">Order #${shortId}</div>
@@ -523,6 +742,19 @@
                   <a href="https://www.bluedart.com/tracking" target="_blank" style="color:var(--rust);">BlueDart</a> · 
                   <a href="https://www.delhivery.com/tracking" target="_blank" style="color:var(--rust);">Delhivery</a>
                 </span>
+              </div>` : ''
+            }
+            ${order.status === 'paid' ? `
+              <div class="cancel-zone">
+                <button class="cancel-btn" onclick="openCancelModal('${order.id}', ${order.total})">
+                  Cancel Order & Refund
+                </button>
+                <p class="cancel-note">Only available before shipment. Refund takes 5–7 business days.</p>
+              </div>` : ''
+            }
+            ${order.status === 'cancelled' ? `
+              <div class="cancel-zone">
+                <p class="cancel-note" style="color:#8b1a1a;">✓ This order was cancelled. Refund will arrive in 5–7 business days if not already received.</p>
               </div>` : ''
             }
           </div>
