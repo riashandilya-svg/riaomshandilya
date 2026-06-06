@@ -22,6 +22,8 @@
       --text-muted: rgba(26,18,8,0.5);
       --green: #2d6b3a;
       --green-light: #a8d5b0;
+      --red: #8b1a1a;
+      --red-light: rgba(139,26,26,0.08);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -161,7 +163,6 @@
 
     /* ── RESULTS ── */
     #results { display: none; }
-
     .results-label {
       font-size: 0.72rem;
       letter-spacing: 0.16em;
@@ -213,9 +214,7 @@
 
     .order-card-body { padding: 20px 22px; }
 
-    .order-items {
-      margin-bottom: 16px;
-    }
+    .order-items { margin-bottom: 16px; }
     .order-item-row {
       display: flex;
       justify-content: space-between;
@@ -225,22 +224,9 @@
       gap: 12px;
     }
     .order-item-row:last-child { border-bottom: none; }
-    .order-item-name {
-      font-size: 0.88rem;
-      color: var(--ink);
-      font-weight: 500;
-    }
-    .order-item-qty {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-    .order-item-price {
-      font-size: 0.88rem;
-      color: var(--rust);
-      font-weight: 600;
-      flex-shrink: 0;
-    }
+    .order-item-name { font-size: 0.88rem; color: var(--ink); font-weight: 500; }
+    .order-item-qty { font-size: 0.78rem; color: var(--text-muted); flex-shrink: 0; }
+    .order-item-price { font-size: 0.88rem; color: var(--rust); font-weight: 600; flex-shrink: 0; }
 
     .order-totals {
       background: var(--cream);
@@ -254,23 +240,12 @@
       padding: 3px 0;
       color: var(--text-muted);
     }
-    .total-row.bold {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--ink);
-      border-top: 1px solid var(--border);
-      margin-top: 6px;
-      padding-top: 6px;
-    }
+    .total-row.bold { font-weight: 700; font-size: 0.95rem; color: var(--ink); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
 
     /* ── TIMELINE ── */
-    .timeline {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-    }
+    .timeline { margin-top: 20px; }
     .timeline-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--text-muted);
@@ -308,24 +283,9 @@
       justify-content: center;
       font-size: 0.75rem;
     }
-    .step-dot.done {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: var(--ink);
-    }
-    .step-dot.active {
-      background: #fff;
-      border-color: var(--gold);
-      color: var(--gold);
-      box-shadow: 0 0 0 4px rgba(201,151,58,0.15);
-    }
-    .step-label {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      text-align: center;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+    .step-dot.done { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+    .step-dot.active { background: #fff; border-color: var(--gold); color: var(--gold); box-shadow: 0 0 0 4px rgba(201,151,58,0.15); }
+    .step-label { font-size: 0.68rem; color: var(--text-muted); text-align: center; letter-spacing: 0.06em; text-transform: uppercase; }
     .step-label.done { color: var(--gold); }
     .step-label.active { color: var(--ink); font-weight: 600; }
 
@@ -338,16 +298,7 @@
     }
     .tracking-info strong { color: var(--rust); font-weight: 600; }
 
-    /* ── NOT FOUND ── */
-    .not-found {
-      text-align: center;
-      padding: 40px;
-      display: none;
-    }
-    .not-found .symbol { font-size: 2.5rem; margin-bottom: 12px; color: var(--gold); opacity: 0.5; }
-    .not-found p { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--text-muted); font-style: italic; }
-
-    /* ── CANCEL BUTTON ── */
+    /* ── CANCEL ZONE ── */
     .cancel-zone {
       margin-top: 18px;
       padding-top: 16px;
@@ -356,8 +307,8 @@
     .cancel-btn {
       padding: 9px 20px;
       background: transparent;
-      border: 1px solid rgba(224,82,82,0.35);
-      color: #8b1a1a;
+      border: 1px solid rgba(139,26,26,0.3);
+      color: var(--red);
       font-family: 'Jost', sans-serif;
       font-size: 0.75rem;
       font-weight: 600;
@@ -366,16 +317,22 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .cancel-btn:hover:not(:disabled) { background: rgba(224,82,82,0.08); border-color: rgba(224,82,82,0.6); }
-    .cancel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .cancel-btn:hover { background: var(--red-light); border-color: rgba(139,26,26,0.5); }
     .cancel-note {
       font-size: 0.72rem;
       color: var(--text-muted);
       margin-top: 7px;
     }
+    .cancel-done-note {
+      font-size: 0.8rem;
+      color: var(--red);
+      padding: 10px 14px;
+      background: var(--red-light);
+      border: 1px solid rgba(139,26,26,0.15);
+    }
 
     /* ── CANCEL MODAL ── */
-    .cancel-overlay {
+    .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(26,18,8,0.65);
       z-index: 400;
@@ -387,43 +344,108 @@
       pointer-events: none;
       transition: opacity 0.25s;
     }
-    .cancel-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
     .cancel-modal {
       background: var(--parchment);
       border: 1px solid var(--border);
-      max-width: 420px;
+      max-width: 440px;
       width: 100%;
-      padding: 36px 32px;
       position: relative;
       transform: scale(0.95);
       transition: transform 0.25s;
     }
-    .cancel-overlay.open .cancel-modal { transform: scale(1); }
-    .cancel-modal h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 10px;
+    .modal-overlay.open .cancel-modal { transform: scale(1); }
+
+    .cancel-modal-header {
+      background: var(--ink);
+      padding: 20px 24px;
+      border-bottom: 2px solid var(--gold);
     }
-    .cancel-modal p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px; }
-    .cancel-modal .refund-note {
+    .cancel-modal-header h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+    .cancel-modal-body { padding: 24px; }
+    .cancel-modal-body p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+
+    .refund-box {
       background: var(--cream);
       border-left: 3px solid var(--gold);
-      padding: 10px 14px;
-      font-size: 0.8rem;
+      padding: 12px 16px;
+      font-size: 0.82rem;
       color: var(--ink);
-      margin: 16px 0 24px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* Steps */
+    .otp-step { display: none; }
+    .otp-step.active { display: block; }
+
+    .modal-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .modal-input {
+      width: 100%;
+      padding: 11px 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.92rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 6px;
+    }
+    .modal-input:focus { border-color: var(--gold); }
+    .modal-input::placeholder { color: var(--text-muted); }
+
+    .otp-input {
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      color: var(--ink);
+      outline: none;
+      text-align: center;
+      transition: border-color 0.2s;
+      margin-bottom: 6px;
+    }
+    .otp-input:focus { border-color: var(--gold); }
+
+    .modal-error {
+      font-size: 0.78rem;
+      color: #8b1a1a;
+      margin-bottom: 14px;
+      min-height: 18px;
+    }
+    .modal-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
       line-height: 1.5;
     }
-    .cancel-modal-btns { display: flex; gap: 12px; }
-    .btn-go-back {
+
+    .modal-btns { display: flex; gap: 10px; }
+    .btn-secondary {
       flex: 1;
       padding: 11px;
       background: var(--cream);
       border: 1px solid var(--border);
       font-family: 'Jost', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -431,23 +453,83 @@
       color: var(--ink);
       transition: background 0.2s;
     }
-    .btn-go-back:hover { background: var(--gold-pale); }
-    .btn-confirm-cancel {
+    .btn-secondary:hover { background: var(--gold-pale); }
+    .btn-primary-danger {
       flex: 1;
       padding: 11px;
       background: #8b1a1a;
       border: 1px solid transparent;
       color: #fff;
       font-family: 'Jost', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .btn-confirm-cancel:hover:not(:disabled) { background: #6b1414; }
-    .btn-confirm-cancel:disabled { background: #aaa; cursor: not-allowed; }
+    .btn-primary-danger:hover:not(:disabled) { background: #6b1414; }
+    .btn-primary-danger:disabled { background: #bbb; cursor: not-allowed; }
+    .btn-gold {
+      flex: 1;
+      padding: 11px;
+      background: var(--gold);
+      border: 1px solid transparent;
+      color: var(--ink);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-gold:hover:not(:disabled) { background: var(--gold-light); }
+    .btn-gold:disabled { background: #bbb; cursor: not-allowed; }
+
+    .resend-link {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      text-align: center;
+    }
+    .resend-link button {
+      background: none; border: none;
+      color: var(--rust);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .resend-link button:disabled { color: var(--text-muted); cursor: not-allowed; text-decoration: none; }
+
+    /* Success step */
+    .success-step {
+      text-align: center;
+      padding: 32px 24px;
+    }
+    .success-icon {
+      font-size: 2.5rem;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .success-step h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--ink);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .success-step p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── NOT FOUND ── */
+    .not-found {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+    .not-found .symbol { font-size: 2.5rem; margin-bottom: 12px; color: var(--gold); opacity: 0.5; }
+    .not-found p { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--text-muted); font-style: italic; }
 
     /* ── TOAST ── */
     .toast {
@@ -494,7 +576,6 @@
 
 <div class="track-container">
 
-  <!-- Search Card -->
   <div class="search-card">
     <h2>Find Your Orders</h2>
     <p>Use the email address or phone number you provided at checkout</p>
@@ -505,13 +586,11 @@
     <p class="search-hint">Example: you@email.com or 9876543210</p>
   </div>
 
-  <!-- Results -->
   <div id="results">
     <div class="results-label" id="results-label">Your Orders</div>
     <div id="orders-list"></div>
   </div>
 
-  <!-- Not Found -->
   <div class="not-found" id="not-found">
     <div class="symbol">♩</div>
     <p>No orders found for that email or phone.</p>
@@ -519,17 +598,58 @@
 
 </div>
 
-<!-- Cancel Confirmation Modal -->
-<div class="cancel-overlay" id="cancel-overlay">
+<!-- ── CANCEL MODAL ── -->
+<div class="modal-overlay" id="cancel-overlay">
   <div class="cancel-modal">
-    <h3>Cancel Your Order?</h3>
-    <p>You're about to cancel this order and request a refund.</p>
-    <div class="refund-note">
-      💳 Your refund of <strong id="cancel-amount"></strong> will be initiated immediately and should arrive in your account within <strong>5–7 business days</strong>, depending on your bank.
+    <div class="cancel-modal-header">
+      <h3>Cancel Order</h3>
     </div>
-    <div class="cancel-modal-btns">
-      <button class="btn-go-back" onclick="closeCancelModal()">Keep Order</button>
-      <button class="btn-confirm-cancel" id="confirm-cancel-btn" onclick="confirmCancel()">Yes, Cancel & Refund</button>
+    <div class="cancel-modal-body">
+
+      <!-- Step 1: Confirm intent + enter email -->
+      <div class="otp-step active" id="step-confirm">
+        <p>To cancel this order and initiate a refund, we need to verify it's really you.</p>
+        <div class="refund-box">
+          💳 Refund of <strong id="cancel-amount-display"></strong> will be initiated instantly and arrive in <strong>5–7 business days</strong>.
+        </div>
+        <label class="modal-label">Your email address</label>
+        <input class="modal-input" id="cancel-email-input" type="email" placeholder="you@email.com" />
+        <div class="modal-error" id="step1-error"></div>
+        <div class="modal-btns">
+          <button class="btn-secondary" onclick="closeCancelModal()">Keep Order</button>
+          <button class="btn-gold" id="send-otp-btn" onclick="sendOtp()">Send Verification Code</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Enter OTP -->
+      <div class="otp-step" id="step-otp">
+        <p>We sent a 6-digit code to <strong id="otp-email-display"></strong>. Enter it below to confirm cancellation.</p>
+        <div style="margin: 20px 0 6px;">
+          <label class="modal-label">Verification code</label>
+          <input class="otp-input" id="otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="000000" />
+        </div>
+        <div class="modal-error" id="step2-error"></div>
+        <div class="modal-hint">Code expires in 10 minutes. Check your spam folder if you don't see it.</div>
+        <div class="modal-btns">
+          <button class="btn-secondary" onclick="closeCancelModal()">Cancel</button>
+          <button class="btn-primary-danger" id="confirm-cancel-btn" onclick="confirmCancel()">Confirm Cancellation</button>
+        </div>
+        <div class="resend-link">
+          Didn't receive it? <button id="resend-btn" onclick="resendOtp()">Resend code</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div class="otp-step" id="step-success">
+        <div class="success-step">
+          <div class="success-icon">✓</div>
+          <h4>Order Cancelled</h4>
+          <p>Your refund of <strong id="success-amount"></strong> has been initiated. It will reach your bank account in <strong>5–7 business days</strong>.</p>
+          <br />
+          <button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="closeCancelModal()">Close</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -540,9 +660,10 @@
   // ═══════════════════════════════
   //  🔧 CONFIG
   // ═══════════════════════════════
-  const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
+  const SUPABASE_URL      = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
-  const CANCEL_ORDER_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/cancel-order';
+  const SEND_OTP_URL      = `${SUPABASE_URL}/functions/v1/send-cancel-otp`;
+  const VERIFY_OTP_URL    = `${SUPABASE_URL}/functions/v1/verify-cancel-otp`;
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -586,18 +707,12 @@
     const btn = document.getElementById('track-btn');
     btn.textContent = '…';
     btn.disabled = true;
-
     document.getElementById('results').style.display = 'none';
     document.getElementById('not-found').style.display = 'none';
 
-    // query by email or phone
     const isPhone = /^\d{10}$/.test(val);
     let query = db.from('orders').select('*').order('created_at', { ascending: false });
-    if (isPhone) {
-      query = query.eq('phone', val);
-    } else {
-      query = query.eq('email', val);
-    }
+    query = isPhone ? query.eq('phone', val) : query.eq('email', val);
 
     const { data, error } = await query;
 
@@ -609,6 +724,8 @@
       return;
     }
 
+    // Store current search email for cancel pre-fill
+    lastSearchedEmail = isPhone ? '' : val;
     renderOrders(data);
   }
 
@@ -617,87 +734,10 @@
   });
 
   // ═══════════════════════════════
-  //  CANCEL ORDER FLOW
+  //  RENDER ORDERS
   // ═══════════════════════════════
-  let pendingCancelOrderId = null;
+  let lastSearchedEmail = '';
 
-  function openCancelModal(orderId, total) {
-    pendingCancelOrderId = orderId;
-    document.getElementById('cancel-amount').textContent = `₹${total}`;
-    document.getElementById('cancel-overlay').classList.add('open');
-  }
-
-  function closeCancelModal() {
-    document.getElementById('cancel-overlay').classList.remove('open');
-    pendingCancelOrderId = null;
-  }
-
-  // Close modal on overlay click
-  document.getElementById('cancel-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closeCancelModal();
-  });
-
-  async function confirmCancel() {
-    if (!pendingCancelOrderId) return;
-
-    const btn = document.getElementById('confirm-cancel-btn');
-    btn.textContent = 'Processing…';
-    btn.disabled = true;
-
-    try {
-      const res = await fetch(CANCEL_ORDER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order_id: pendingCancelOrderId }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        showToast(data.error || 'Cancellation failed. Please contact us.');
-        btn.textContent = 'Yes, Cancel & Refund';
-        btn.disabled = false;
-        return;
-      }
-
-      // Update the order locally so UI reflects it immediately
-      const orderEl = document.querySelector(`[data-order-id="${pendingCancelOrderId}"]`);
-      if (orderEl) {
-        // Re-fetch and re-render orders
-        const val = document.getElementById('track-input').value.trim().toLowerCase();
-        if (val) trackOrder();
-      }
-
-      closeCancelModal();
-      showToast('Order cancelled ✓ Refund initiated — arrives in 5–7 business days');
-
-      // Re-render after short delay to show updated state
-      setTimeout(() => {
-        const val = document.getElementById('track-input').value.trim();
-        if (val) trackOrder();
-      }, 1000);
-
-    } catch (err) {
-      console.error(err);
-      showToast('Network error. Please try again.');
-      btn.textContent = 'Yes, Cancel & Refund';
-      btn.disabled = false;
-    }
-  }
-
-  // ═══════════════════════════════
-  //  TOAST
-  // ═══════════════════════════════
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 4000);
-  }
-
-  // ═══════════════════════════════
-  //  RENDER
-  // ═══════════════════════════════
   function renderOrders(orders) {
     const label = `${orders.length} order${orders.length > 1 ? 's' : ''} found`;
     document.getElementById('results-label').textContent = label;
@@ -737,26 +777,23 @@
               <div class="tracking-info">
                 📦 <strong>Tracking Number:</strong> ${order.tracking_number}<br>
                 <span style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;display:block;">
-                  Track on 
-                  <a href="https://www.indiapost.gov.in/_layouts/15/DOP.Portal.Tracking/TrackConsignment.aspx" target="_blank" style="color:var(--rust);">India Post</a> · 
-                  <a href="https://www.bluedart.com/tracking" target="_blank" style="color:var(--rust);">BlueDart</a> · 
+                  Track on
+                  <a href="https://www.indiapost.gov.in/_layouts/15/DOP.Portal.Tracking/TrackConsignment.aspx" target="_blank" style="color:var(--rust);">India Post</a> ·
+                  <a href="https://www.bluedart.com/tracking" target="_blank" style="color:var(--rust);">BlueDart</a> ·
                   <a href="https://www.delhivery.com/tracking" target="_blank" style="color:var(--rust);">Delhivery</a>
                 </span>
-              </div>` : ''
-            }
+              </div>` : ''}
             ${order.status === 'paid' ? `
               <div class="cancel-zone">
-                <button class="cancel-btn" onclick="openCancelModal('${order.id}', ${order.total})">
+                <button class="cancel-btn" onclick="openCancelModal('${order.id}', ${order.total}, '${order.email}')">
                   Cancel Order & Refund
                 </button>
-                <p class="cancel-note">Only available before shipment. Refund takes 5–7 business days.</p>
-              </div>` : ''
-            }
+                <p class="cancel-note">Only available before shipment. Requires email verification. Refund takes 5–7 business days.</p>
+              </div>` : ''}
             ${order.status === 'cancelled' ? `
               <div class="cancel-zone">
-                <p class="cancel-note" style="color:#8b1a1a;">✓ This order was cancelled. Refund will arrive in 5–7 business days if not already received.</p>
-              </div>` : ''
-            }
+                <div class="cancel-done-note">✓ Cancelled — refund of ₹${order.total} initiated. Allow 5–7 business days.</div>
+              </div>` : ''}
           </div>
         </div>
       `;
@@ -764,6 +801,197 @@
 
     document.getElementById('orders-list').innerHTML = html;
     document.getElementById('results').style.display = 'block';
+  }
+
+  // ═══════════════════════════════
+  //  CANCEL FLOW — STATE
+  // ═══════════════════════════════
+  let cancelState = {
+    orderId: null,
+    orderTotal: null,
+    orderEmail: null,
+    verifiedEmail: null,
+  };
+
+  function openCancelModal(orderId, total, orderEmail) {
+    cancelState = { orderId, orderTotal: total, orderEmail, verifiedEmail: null };
+
+    document.getElementById('cancel-amount-display').textContent = `₹${total}`;
+
+    // Pre-fill email if we searched by email
+    const emailInput = document.getElementById('cancel-email-input');
+    emailInput.value = lastSearchedEmail || '';
+    document.getElementById('step1-error').textContent = '';
+    document.getElementById('step2-error').textContent = '';
+    document.getElementById('otp-input').value = '';
+
+    // Reset to step 1
+    showStep('step-confirm');
+    resetSendOtpBtn();
+
+    document.getElementById('cancel-overlay').classList.add('open');
+    setTimeout(() => emailInput.focus(), 300);
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancel-overlay').classList.remove('open');
+    cancelState = { orderId: null, orderTotal: null, orderEmail: null, verifiedEmail: null };
+  }
+
+  document.getElementById('cancel-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeCancelModal();
+  });
+
+  function showStep(stepId) {
+    document.querySelectorAll('.otp-step').forEach(s => s.classList.remove('active'));
+    document.getElementById(stepId).classList.add('active');
+  }
+
+  // ── STEP 1: Send OTP ────────────────────────────────────
+  let resendCooldown = null;
+
+  async function sendOtp() {
+    const email = document.getElementById('cancel-email-input').value.trim().toLowerCase();
+    const errEl = document.getElementById('step1-error');
+    errEl.textContent = '';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    const btn = document.getElementById('send-otp-btn');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(SEND_OTP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: cancelState.orderId, email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        errEl.textContent = data.error || 'Failed to send code. Please try again.';
+        resetSendOtpBtn();
+        return;
+      }
+
+      cancelState.verifiedEmail = email;
+      document.getElementById('otp-email-display').textContent = email;
+      document.getElementById('otp-input').value = '';
+      document.getElementById('step2-error').textContent = '';
+      showStep('step-otp');
+      startResendCooldown();
+      setTimeout(() => document.getElementById('otp-input').focus(), 200);
+
+    } catch (err) {
+      errEl.textContent = 'Network error. Please check your connection.';
+      resetSendOtpBtn();
+    }
+  }
+
+  function resetSendOtpBtn() {
+    const btn = document.getElementById('send-otp-btn');
+    btn.textContent = 'Send Verification Code';
+    btn.disabled = false;
+  }
+
+  // ── STEP 2: Verify OTP + Cancel ────────────────────────
+  async function confirmCancel() {
+    const otp = document.getElementById('otp-input').value.trim();
+    const errEl = document.getElementById('step2-error');
+    errEl.textContent = '';
+
+    if (!/^\d{6}$/.test(otp)) {
+      errEl.textContent = 'Please enter the 6-digit code from your email.';
+      return;
+    }
+
+    const btn = document.getElementById('confirm-cancel-btn');
+    btn.textContent = 'Verifying…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(VERIFY_OTP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: cancelState.orderId,
+          email: cancelState.verifiedEmail,
+          otp,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        errEl.textContent = data.error || 'Incorrect code. Please try again.';
+        btn.textContent = 'Confirm Cancellation';
+        btn.disabled = false;
+        return;
+      }
+
+      // ── SUCCESS ──
+      document.getElementById('success-amount').textContent = `₹${cancelState.orderTotal}`;
+      showStep('step-success');
+
+      // Re-fetch orders to update UI
+      setTimeout(() => {
+        const val = document.getElementById('track-input').value.trim();
+        if (val) trackOrder();
+      }, 1200);
+
+    } catch (err) {
+      errEl.textContent = 'Network error. Please try again.';
+      btn.textContent = 'Confirm Cancellation';
+      btn.disabled = false;
+    }
+  }
+
+  // Auto-submit when 6 digits entered
+  document.getElementById('otp-input').addEventListener('input', function() {
+    if (this.value.replace(/\D/g, '').length === 6) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+      confirmCancel();
+    }
+  });
+
+  // ── RESEND COOLDOWN ────────────────────────────────────
+  function startResendCooldown() {
+    const btn = document.getElementById('resend-btn');
+    let secs = 30;
+    btn.disabled = true;
+    btn.textContent = `Resend in ${secs}s`;
+    clearInterval(resendCooldown);
+    resendCooldown = setInterval(() => {
+      secs--;
+      if (secs <= 0) {
+        clearInterval(resendCooldown);
+        btn.disabled = false;
+        btn.textContent = 'Resend code';
+      } else {
+        btn.textContent = `Resend in ${secs}s`;
+      }
+    }, 1000);
+  }
+
+  async function resendOtp() {
+    showStep('step-confirm');
+    document.getElementById('step1-error').textContent = '';
+    resetSendOtpBtn();
+  }
+
+  // ═══════════════════════════════
+  //  TOAST
+  // ═══════════════════════════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
   }
 </script>
 </body>
