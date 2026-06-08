@@ -703,12 +703,8 @@
     }
 
     const idx = allOrders.findIndex(o => o.id.toString() === id.toString());
-    if (idx > -1) {
-      allOrders[idx].status = status;
-      allOrders[idx].tracking_number = tracking;
-    }
-
-    if (status === 'shipped' && order && order.status !== 'shipped') {
+    // ── Send shipped email BEFORE updating local state ──
+if (status === 'shipped' && order && order.status !== 'shipped') {
   fetch(`${SUPABASE_URL}/functions/v1/send-shipped-email`, {
     method: 'POST',
     headers: {
@@ -725,7 +721,18 @@
       tracking_number: tracking,
       address: [order.address, order.city, order.state, order.pin, order.country].filter(Boolean).join(', '),
     }),
-  }).catch(e => console.error('Shipped email error:', e));
+}).then(r => {
+  if (!r.ok) showToast('⚠️ Email may not have sent — check logs');
+}).catch(e => {
+  console.error('Shipped email error:', e);
+  showToast('⚠️ Email may not have sent — check logs');
+});
+}
+
+// ── THEN update local state ──
+if (idx > -1) {
+  allOrders[idx].status = status;
+  allOrders[idx].tracking_number = tracking;
 }
 
     updateStats();
