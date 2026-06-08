@@ -708,22 +708,25 @@
       allOrders[idx].tracking_number = tracking;
     }
 
-    // ── Send shipped email when status changes to shipped ──
     if (status === 'shipped' && order && order.status !== 'shipped') {
-      fetch(`${SUPABASE_URL}/functions/v1/send-shipped-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: order.name,
-          email: order.email,
-          orderId: id,
-          items: order.items,
-          total: `₹${order.total}`,
-          tracking_number: tracking,
-          address: [order.address, order.city, order.state, order.pin, order.country].filter(Boolean).join(', '),
-        }),
-      }).catch(e => console.error('Shipped email error:', e));
-    }
+  fetch(`${SUPABASE_URL}/functions/v1/send-shipped-email`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      name: order.name,
+      email: order.email,
+      orderId: id,
+      items: order.items,
+      total: `₹${order.total}`,
+      tracking_number: tracking,
+      address: [order.address, order.city, order.state, order.pin, order.country].filter(Boolean).join(', '),
+    }),
+  }).catch(e => console.error('Shipped email error:', e));
+}
 
     updateStats();
     renderTable();
