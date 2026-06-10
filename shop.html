@@ -595,6 +595,87 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
+    /* ── COMBO SECTION ── */
+    .combo-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 60px;
+    }
+    .combo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 32px;
+    }
+    .combo-card {
+      background: var(--ink);
+      border: 1px solid var(--gold);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .combo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(201,151,58,0.2);
+    }
+    .combo-badge {
+      position: absolute;
+      top: 14px; right: -28px;
+      background: var(--gold);
+      color: var(--ink);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 36px;
+      transform: rotate(45deg);
+      transform-origin: top right;
+    }
+    .combo-icon {
+      padding: 32px 28px 20px;
+      font-size: 3rem;
+      color: var(--gold);
+      text-align: center;
+    }
+    .combo-info {
+      padding: 0 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .combo-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      line-height: 1.3;
+    }
+    .combo-subtitle {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+    .combo-buy-btn {
+      display: block;
+      margin-top: auto;
+      padding: 12px 20px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .combo-buy-btn:hover { background: var(--gold-light); }
+
     @media (max-width: 600px) {
       header { padding: 14px 18px; }
       .logo { font-size: 1.1rem; }
@@ -603,6 +684,8 @@
       .books-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
       .shop-hero { padding: 40px 18px 34px; }
       .form-row { grid-template-columns: 1fr; }
+      .combo-section { padding: 0 18px 40px; }
+      .combo-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -633,6 +716,45 @@
   <h2 class="section-title">Choose Your Books</h2>
   <div class="books-grid" id="books-grid">
     <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── COMBOS ── -->
+<section class="combo-section">
+  <div class="section-label">Bundle &amp; Save</div>
+  <h2 class="section-title" style="color:var(--ink);">Combo Sets</h2>
+  <div class="combo-grid">
+
+    <div class="combo-card">
+      <div class="combo-badge">Combo</div>
+      <div class="combo-icon">♩♪</div>
+      <div class="combo-info">
+        <div class="combo-title">Bollywood Melodies Piano Sheet Bundle</div>
+        <div class="combo-subtitle">A curated collection of Bollywood piano sheet music books — perfect for beginners and intermediate players alike.</div>
+        <a class="combo-buy-btn" href="https://www.amazon.in/Bollywood-Melodies-Piano-Sheet-Bundle/dp/B0GHFRKCSN?ref_=ast_author_dp_rw&th=1&psc=1&dib=eyJ2IjoiMSJ9.R3DpHEvSftQU2HBdOE17OSjfzgKmK5ZgXZ2PgJCMCuA04vjec3RImt65WbBZO174zMn4lmtF1ixaRTtRwTyobnSg8SJe8_m0wBt_cAZ2WWfJ5EsEWr93EWnJUpBRxknWL3NQ69Q26WrQfIk36Dl1Q-BUHos1NRM2KnzWl8tG8V77dz_D19pkRnfz4m4l60Oj.rsPevEP2yPduAJPkXPf_ka8qQ-tz0w4hKIUgfqD7uDo&dib_tag=AUTHOR" target="_blank" rel="noopener">Buy on Amazon →</a>
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-badge">Combo</div>
+      <div class="combo-icon">♫𝄞</div>
+      <div class="combo-info">
+        <div class="combo-title">Bollywood Melodies Piano Sheet Bundle Vol. 2</div>
+        <div class="combo-subtitle">More beloved Bollywood melodies in piano notation — expand your repertoire with this essential bundle.</div>
+        <a class="combo-buy-btn" href="https://www.amazon.in/Bollywood-Melodies-Piano-Sheet-Bundle/dp/B0FGL245LV?ref_=ast_author_dp_rw&th=1&psc=1&dib=eyJ2IjoiMSJ9.R3DpHEvSftQU2HBdOE17OSjfzgKmK5ZgXZ2PgJCMCuA04vjec3RImt65WbBZO174zMn4lmtF1ixaRTtRwTyobnSg8SJe8_m0wBt_cAZ2WWfJ5EsEWr93EWnJUpBRxknWL3NQ69Q26WrQfIk36Dl1Q-BUHos1NRM2KnzWl8tG8V77dz_D19pkRnfz4m4l60Oj.rsPevEP2yPduAJPkXPf_ka8qQ-tz0w4hKIUgfqD7uDo&dib_tag=AUTHOR" target="_blank" rel="noopener">Buy on Amazon →</a>
+      </div>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-badge">Combo</div>
+      <div class="combo-icon">♥♫</div>
+      <div class="combo-info">
+        <div class="combo-title">Bollywood Melodies Romantic Books Bundle</div>
+        <div class="combo-subtitle">A heartfelt collection of romantic Bollywood melodies — the perfect gift for music lovers and pianists.</div>
+        <a class="combo-buy-btn" href="https://www.amazon.in/Bollywood-Melodies-Romantic-Books-Bundle/dp/B0CKBX4K4T?ref_=ast_author_dp_rw&th=1&psc=1&dib=eyJ2IjoiMSJ9.R3DpHEvSftQU2HBdOE17OSjfzgKmK5ZgXZ2PgJCMCuA04vjec3RImt65WbBZO174zMn4lmtF1ixaRTtRwTyobnSg8SJe8_m0wBt_cAZ2WWfJ5EsEWr93EWnJUpBRxknWL3NQ69Q26WrQfIk36Dl1Q-BUHos1NRM2KnzWl8tG8V77dz_D19pkRnfz4m4l60Oj.rsPevEP2yPduAJPkXPf_ka8qQ-tz0w4hKIUgfqD7uDo&dib_tag=AUTHOR" target="_blank" rel="noopener">Buy on Amazon →</a>
+      </div>
+    </div>
+
   </div>
 </section>
 
