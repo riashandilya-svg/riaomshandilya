@@ -234,7 +234,7 @@
     .hero {
       position: relative;
       min-height: 100vh;
-      padding: 68px 0 0;
+      padding: 40px 0 0;
       background:
         radial-gradient(ellipse at center top, rgba(212,175,55,.08) 0%, transparent 50%),
         linear-gradient(180deg, #0d0905 0%, #1a1208 40%, #0a0604 100%);
@@ -273,10 +273,10 @@
     /* 2-column hero grid: text LEFT, book RIGHT (inspired by shop1) */
     .hero-grid {
       position: relative; z-index: 2;
-      max-width: 1280px; margin: 0 auto; padding: 0 60px;
+      max-width: 1280px; margin: 0 auto; padding: 0 48px;
       display: grid; grid-template-columns: 1fr 1fr;
       align-items: center; gap: 48px;
-      min-height: calc(88vh - 68px);
+      min-height: calc(72vh - 68px);
     }
     .hero-text { max-width: 500px; }
     .hero-eyebrow {
@@ -296,14 +296,14 @@
     }
     .spotlight {
       position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 680px;
+      width: 460px; height: 520px;
       background: radial-gradient(ellipse at center top, rgba(255,220,140,.35) 0%, rgba(255,220,140,.12) 30%, transparent 70%);
       filter: blur(20px); pointer-events: none;
     }
     .hero-book-wrap {
       position: relative; z-index: 5;
       pointer-events: none;
-      width: clamp(180px, 20vw, 300px);
+      width: clamp(140px, 16vw, 240px);
       aspect-ratio: 3/4;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: -10px;
@@ -376,8 +376,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -52%);
-      width: clamp(360px, 40vw, 520px);
-      height: clamp(360px, 40vw, 520px);
+      width: clamp(280px, 30vw, 400px);
+      height: clamp(280px, 30vw, 400px);
       z-index: 2;
       cursor: pointer;
       border-radius: 50%;
@@ -610,7 +610,7 @@
     /* Hero text column */
     .hero-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.8rem, 4.8vw, 4.4rem);
+      font-size: clamp(2rem, 3.4vw, 3.2rem);
       font-weight: 500; line-height: 1;
       color: #fff; margin-bottom: 28px; letter-spacing: 1px;
     }
