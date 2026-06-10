@@ -83,6 +83,13 @@
       justify-content: space-between;
       gap: 14px;
     }
+    /* Right cluster: nav pills + cart button flush right */
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
 
     /* Brand / logo */
     .brand {
@@ -314,18 +321,41 @@
       0%,100% { transform: translateY(0); }
       50%      { transform: translateY(-14px); }
     }
-    /* Hero carousel nav */
+    /* Hero carousel nav — flanks the vinyl inside the stage */
     .hero-nav {
-      position: absolute; bottom: 10%; left: 0; width: 100%;
-      display: flex; justify-content: space-between; padding: 0 4rem; z-index: 30;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-52%); /* align with vinyl centre */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 6px;
+      z-index: 30;
+      pointer-events: none; /* let vinyl clicks through */
     }
     .hero-nav-btn {
-      display: flex; align-items: center; gap: 0.6rem; background: none;
-      color: rgba(255,255,255,0.5); font-family: 'Montserrat', sans-serif;
-      font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
-      transition: color 0.3s; cursor: pointer; border: none;
+      pointer-events: all;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(212,175,55,0.4);
+      background: rgba(10,8,5,0.55);
+      backdrop-filter: blur(8px);
+      color: rgba(212,175,55,0.85);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
     }
-    .hero-nav-btn:hover { color: var(--gold); }
+    .hero-nav-btn:hover {
+      background: rgba(212,175,55,0.18);
+      border-color: var(--gold);
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(212,175,55,0.25);
+      color: var(--gold-light);
+    }
+    .hero-nav-btn svg { width: 22px; height: 22px; display: block; }
     .hero-dots {
       position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
       display: flex; flex-direction: column; gap: 12px; z-index: 30;
@@ -589,14 +619,67 @@
       font-size: 14px; color: #c8c0b0;
       line-height: 1.7; margin-bottom: 36px; max-width: 340px;
     }
+    /* ── Scroll-down indicator: animated mouse ── */
     .scroll-down {
-      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      color: var(--gold); font-size: 10px; letter-spacing: 3px; z-index: 3;
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       text-decoration: none;
-      animation: bounce 2s infinite;
+      z-index: 10;
+      cursor: pointer;
     }
-    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+    .scroll-down-text {
+      font-family: Inter, sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(212,175,55,0.6);
+      animation: scrollFade 2.4s ease-in-out infinite;
+    }
+    /* Mouse shape */
+    .scroll-down-track {
+      width: 26px;
+      height: 42px;
+      border: 2px solid rgba(212,175,55,0.5);
+      border-radius: 13px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(212,175,55,0.15), inset 0 0 8px rgba(212,175,55,0.05);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .scroll-down:hover .scroll-down-track {
+      border-color: rgba(212,175,55,0.9);
+      box-shadow: 0 0 20px rgba(212,175,55,0.35), inset 0 0 10px rgba(212,175,55,0.1);
+    }
+    /* The glowing ball rolling down */
+    .scroll-down-ball {
+      position: absolute;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff8e0, #d4af37);
+      box-shadow: 0 0 8px rgba(212,175,55,0.9), 0 0 16px rgba(212,175,55,0.4);
+      animation: scrollBall 2.4s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+    }
+    @keyframes scrollBall {
+      0%   { top: 5px;  opacity: 1; }
+      60%  { top: 26px; opacity: 1; }
+      85%  { top: 30px; opacity: 0; }
+      100% { top: 5px;  opacity: 0; }
+    }
+    @keyframes scrollFade {
+      0%,100% { opacity: 0.5; }
+      50%      { opacity: 1; }
+    }
     .btn-primary {
       display: inline-block;
       padding: 14px 40px;
@@ -1900,17 +1983,19 @@
       </div>
     </a>
 
-    <nav aria-label="Primary">
-      <a href="index.html">Home</a>
-      <a href="orders.html">Track Order</a>
-      <a href="connect.html">Contact Us</a>
-    </nav>
+    <div class="topbar-right">
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="orders.html">Track Order</a>
+        <a href="connect.html">Contact Us</a>
+      </nav>
 
-    <button id="cart-btn">
-      <i class="fa-solid fa-bag-shopping"></i>
-      Cart
-      <span id="cart-count">0</span>
-    </button>
+      <button id="cart-btn">
+        <i class="fa-solid fa-bag-shopping"></i>
+        Cart
+        <span id="cart-count">0</span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -2061,28 +2146,28 @@
           <span></span><span></span><span></span><span></span><span></span>
         </div>
       </div>
+      <!-- Prev/Next flanking the vinyl -->
+      <div class="hero-nav">
+        <button class="hero-nav-btn" id="prevAct" aria-label="Previous book">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="hero-nav-btn" id="nextAct" aria-label="Next book">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
     </div>
 
-  </div>
-
-  <!-- Hero carousel nav -->
-  <div class="hero-nav">
-    <button class="hero-nav-btn" id="prevAct">
-      <svg viewBox="0 0 48 48" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1"><circle cx="24" cy="24" r="23"/><path d="M28 16l-8 8 8 8"/></svg>
-      Previous Act
-    </button>
-    <button class="hero-nav-btn" id="nextAct">
-      Next Act
-      <svg viewBox="0 0 48 48" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1"><circle cx="24" cy="24" r="23"/><path d="M20 16l8 8-8 8"/></svg>
-    </button>
   </div>
 
   <!-- Dots -->
   <div class="hero-dots" id="heroDots"></div>
 
-  <a href="#books" class="scroll-down">
-    <span>SCROLL DOWN</span>
-    <i class="fa-solid fa-chevron-down"></i>
+  <!-- Scroll indicator -->
+  <a href="#books" class="scroll-down" aria-label="Scroll to books">
+    <span class="scroll-down-text">SCROLL DOWN</span>
+    <span class="scroll-down-track">
+      <span class="scroll-down-ball"></span>
+    </span>
   </a>
 </section>
 
