@@ -765,121 +765,205 @@
       width: 100%;
       padding: 11px;
       background: transparent;
-      color: rgba(212,175,55,0.6);
-      border: 1px solid rgba(212,175,55,0.2);
+      color: rgba(212,175,55,0.65);
+      border: 1px solid rgba(212,175,55,0.22);
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.25s, color 0.25s, border-color 0.25s;
+      transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
       margin-top: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
     }
     .about-book-btn:hover {
-      background: rgba(212,175,55,0.08);
+      background: rgba(212,175,55,0.07);
       color: var(--gold-light);
-      border-color: var(--gold-border);
+      border-color: rgba(212,175,55,0.45);
+      box-shadow: 0 0 16px rgba(212,175,55,0.08);
     }
 
     /* ── BOOK POPUP ── */
     .book-popup-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.88);
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       z-index: 600;
       opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
+      transition: opacity 0.35s ease;
       display: flex; align-items: center; justify-content: center;
       padding: 20px;
     }
     .book-popup-overlay.open { opacity: 1; pointer-events: all; }
     .book-popup {
-      background: #0d0b08;
-      border: 1px solid var(--gold-border);
-      width: 100%; max-width: 860px;
-      max-height: 90vh;
+      background: linear-gradient(160deg, #0f0c08 0%, #090704 100%);
+      border: 1px solid rgba(212,175,55,0.45);
+      width: 100%; max-width: 920px;
+      max-height: 92vh;
       overflow-y: auto;
       position: relative;
-      transform: scale(0.94) translateY(24px);
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-      box-shadow: 0 0 80px rgba(212,175,55,0.15);
+      transform: scale(0.92) translateY(32px);
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+      box-shadow:
+        0 0 0 1px rgba(212,175,55,0.08),
+        0 40px 120px rgba(0,0,0,0.8),
+        0 0 80px rgba(212,175,55,0.12),
+        inset 0 1px 0 rgba(212,175,55,0.15);
+      border-radius: 2px;
     }
     .book-popup-overlay.open .book-popup { transform: scale(1) translateY(0); }
+
+    /* Header */
     .book-popup-header {
-      background: #000;
-      padding: 24px 32px;
-      border-bottom: 1px solid var(--gold-border);
+      background: linear-gradient(90deg, #0d0900 0%, #1a1205 50%, #0d0900 100%);
+      padding: 28px 36px;
+      border-bottom: 1px solid rgba(212,175,55,0.3);
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; z-index: 2;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+    }
+    .book-popup-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-light) 50%, var(--gold) 70%, transparent 100%);
+    }
+    .book-popup-header-left {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .book-popup-eyebrow {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold-dark);
     }
     .book-popup-header h2 {
       font-family: 'Cormorant Garamond', serif;
       color: var(--gold-light);
-      font-size: 1.5rem;
+      font-size: 2rem;
       font-weight: 600;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      text-shadow: 0 0 40px rgba(212,175,55,0.35);
     }
     .book-popup-close {
-      background: none; border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.5); width: 36px; height: 36px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.4); width: 40px; height: 40px;
       cursor: pointer; font-size: 1rem;
       display: flex; align-items: center; justify-content: center;
-      transition: border-color 0.2s, color 0.2s;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      flex-shrink: 0;
     }
-    .book-popup-close:hover { border-color: var(--gold); color: var(--gold-light); }
-    .book-popup-body { padding: 32px; }
+    .book-popup-close:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+      background: rgba(212,175,55,0.06);
+    }
+
+    /* Body */
+    .book-popup-body { padding: 36px; }
+
+    /* Images */
     .book-popup-images {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-      margin-bottom: 32px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+      margin-bottom: 36px;
     }
     .book-popup-img-wrap {
       aspect-ratio: 3/4;
-      background: #080604;
-      border: 1px solid var(--gold-border);
+      background: #050402;
+      border: 1px solid rgba(212,175,55,0.25);
       overflow: hidden;
       position: relative;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 0 0px rgba(212,175,55,0);
+      transition: box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+    .book-popup-img-wrap:hover {
+      border-color: rgba(212,175,55,0.55);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 24px rgba(212,175,55,0.1);
     }
     .book-popup-img-wrap img {
       width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.4s ease;
+      transition: transform 0.5s ease;
     }
-    .book-popup-img-wrap:hover img { transform: scale(1.04); }
+    .book-popup-img-wrap:hover img { transform: scale(1.05); }
     .book-popup-img-label {
       position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      background: linear-gradient(transparent 0%, rgba(0,0,0,0.85) 100%);
       color: var(--gold);
-      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em;
-      text-transform: uppercase; padding: 12px 10px 8px;
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.25em;
+      text-transform: uppercase; padding: 20px 10px 10px;
       text-align: center;
     }
-    .book-popup-desc {
-      font-size: 0.85rem; color: rgba(245,240,232,0.75);
-      line-height: 1.85;
-    }
-    .book-popup-desc p { margin-bottom: 14px; }
-    .book-popup-desc ul { padding-left: 20px; margin-bottom: 14px; }
-    .book-popup-desc ul li { margin-bottom: 6px; }
-    .book-popup-desc ol { padding-left: 20px; margin-bottom: 14px; }
-    .book-popup-desc ol li { margin-bottom: 6px; }
-    .book-popup-desc strong { color: var(--gold-light); }
+
+    /* Divider */
     .book-popup-rule {
-      height: 1px; background: var(--gold-border);
-      margin: 24px 0;
+      display: flex; align-items: center; gap: 16px;
+      margin: 28px 0;
+      color: var(--gold-dark);
+      font-size: 0.75rem;
     }
+    .book-popup-rule::before, .book-popup-rule::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.35), transparent);
+    }
+
+    /* Description */
+    .book-popup-desc {
+      font-size: 0.875rem; color: rgba(245,240,232,0.78);
+      line-height: 1.9;
+    }
+    .book-popup-desc p { margin-bottom: 16px; }
+    .book-popup-desc ul {
+      padding-left: 0; margin-bottom: 16px; list-style: none;
+    }
+    .book-popup-desc ul li {
+      margin-bottom: 8px; padding-left: 20px; position: relative;
+    }
+    .book-popup-desc ul li::before {
+      content: '♩';
+      position: absolute; left: 0;
+      color: var(--gold-dark); font-size: 0.75rem;
+    }
+    .book-popup-desc ol {
+      padding-left: 0; margin-bottom: 16px; list-style: none; counter-reset: ol-counter;
+    }
+    .book-popup-desc ol li {
+      margin-bottom: 8px; padding-left: 28px; position: relative;
+      counter-increment: ol-counter;
+    }
+    .book-popup-desc ol li::before {
+      content: counter(ol-counter);
+      position: absolute; left: 0;
+      color: var(--gold); font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem; font-weight: 700; line-height: 1.7;
+    }
+    .book-popup-desc strong { color: var(--gold-light); font-weight: 600; }
+
+    /* Add to cart */
     .book-popup-add {
-      width: 100%; padding: 15px;
-      background: var(--gold); color: var(--black);
+      width: 100%; padding: 17px;
+      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+      background-size: 200% 100%;
+      color: var(--black);
       border: none; font-family: 'Montserrat', sans-serif;
-      font-size: 0.78rem; font-weight: 800;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
-      margin-top: 24px;
+      font-size: 0.75rem; font-weight: 800;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background-position 0.4s ease, box-shadow 0.3s ease;
+      margin-top: 28px;
     }
-    .book-popup-add:hover { background: var(--gold-light); box-shadow: 0 0 24px rgba(212,175,55,0.35); }
-    @media (max-width: 600px) {
-      .book-popup-images { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .book-popup-body { padding: 20px; }
-      .book-popup-header { padding: 18px 20px; }
+    .book-popup-add:hover {
+      background-position: 100% 0;
+      box-shadow: 0 0 36px rgba(212,175,55,0.45);
+    }
+
+    @media (max-width: 640px) {
+      .book-popup-images { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .book-popup-body { padding: 22px; }
+      .book-popup-header { padding: 22px; }
+      .book-popup-header h2 { font-size: 1.5rem; }
     }
 
     /* ─── COMBO SECTION ─── */
@@ -1999,7 +2083,7 @@
           <button class="add-to-cart" onclick="addToCart('${book.id}')">
             <i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart
           </button>
-          ${BOOK_DETAILS[book.id] ? `<button class="about-book-btn" onclick="openBookPopup(${JSON.stringify({id: book.id, title: book.title}).replace(/"/g, '&quot;')})"><i class="fa-solid fa-book-open" style="margin-right:6px;font-size:0.65rem;"></i>About the Book</button>` : ''}
+          ${BOOK_DETAILS[book.id] ? `<button class="about-book-btn" data-about="${book.id}"><i class="fa-solid fa-book-open" style="font-size:0.62rem;"></i>About the Book</button>` : ''}
         </div>
       </div>
     `).join('');
@@ -2265,8 +2349,9 @@
   // ═══════════════════════════════
   //  HERO CAROUSEL + VINYL
   // ═══════════════════════════════
+  let ALL_ITEMS, heroCurrentIdx = 0;
   (function() {
-    const ALL_ITEMS = [...BOOKS, ...COMBOS];
+    ALL_ITEMS = [...BOOKS, ...COMBOS];
     let current = 0;
     let busy = false;
     const imgEl    = document.getElementById('heroProductImg');
@@ -2423,6 +2508,7 @@
 
       setTimeout(() => {
         current = (idx + ALL_ITEMS.length) % ALL_ITEMS.length;
+        heroCurrentIdx = current;
         const item = ALL_ITEMS[current];
         imgEl.src  = item.cover || '';
         imgEl.alt  = item.title;
@@ -2587,23 +2673,35 @@
 
   // Helper for hero button to get current carousel item
   function heroCarouselCurrent() {
-    return typeof heroCurrentIdx !== 'undefined' ? heroCurrentIdx : 0;
+    return heroCurrentIdx || 0;
   }
 
   renderBooks();
   renderCombos();
   updateCartUI();
+
+  // Delegated click for "About the Book" buttons (uses data-about attribute)
+  document.getElementById('books-grid').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-about]');
+    if (!btn) return;
+    const bookId = btn.getAttribute('data-about');
+    const book = BOOKS.find(b => b.id === bookId);
+    if (book) openBookPopup(book);
+  });
 </script>
 <!-- ── BOOK POPUP ── -->
 <div class="book-popup-overlay" id="bookPopupOverlay">
   <div class="book-popup" id="bookPopup">
     <div class="book-popup-header">
-      <h2 id="bookPopupTitle">About the Book</h2>
+      <div class="book-popup-header-left">
+        <span class="book-popup-eyebrow">✦ &nbsp; About the Book &nbsp; ✦</span>
+        <h2 id="bookPopupTitle">Soulful Bollywood Melodies</h2>
+      </div>
       <button class="book-popup-close" id="bookPopupClose"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="book-popup-body">
       <div class="book-popup-images" id="bookPopupImages"></div>
-      <div class="book-popup-rule"></div>
+      <div class="book-popup-rule">✦</div>
       <div class="book-popup-desc" id="bookPopupDesc"></div>
       <button class="book-popup-add" id="bookPopupAdd"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Cart</button>
     </div>
