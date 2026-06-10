@@ -931,88 +931,6 @@ body{ padding-top: 68px; }
   50%{ transform: translateX(6px); opacity:1; }
 }
 
-/* ===== Shop CTAs (below books carousel) ===== */
-.shopCTAs{
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-.shopCTA{
-  flex: 1 1 220px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
-  border-radius: 20px;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid rgba(var(--gold), 0.52);
-  background: rgba(255,255,255,0.70);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 14px 40px rgba(26,20,10,0.10);
-  transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
-  position: relative;
-  overflow: hidden;
-}
-.shopCTA::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: radial-gradient(600px 200px at 30% 50%, rgba(var(--gold),0.12), transparent 70%);
-  pointer-events:none;
-}
-.shopCTA:hover{
-  transform: translateY(-3px);
-  box-shadow: 0 22px 60px rgba(26,20,10,0.14);
-  filter: brightness(1.02);
-}
-.shopCTA--india{
-  border-color: rgba(var(--gold), 0.60);
-  background: linear-gradient(135deg, rgba(255,224,122,0.50), rgba(255,255,255,0.75));
-}
-.shopCTA--world{
-  background: rgba(255,255,255,0.65);
-}
-.shopCTA__flag{
-  font-size: 28px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.shopCTA__body{
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  flex: 1;
-  min-width: 0;
-}
-.shopCTA__label{
-  font-weight: 950;
-  font-size: 14px;
-  color: rgba(26,20,10,.94);
-  letter-spacing: -0.01em;
-}
-.shopCTA__sub{
-  font-size: 12px;
-  color: rgba(26,20,10,.62);
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.shopCTA__arrow{
-  font-size: 20px;
-  font-weight: 1000;
-  color: rgba(26,20,10,.50);
-  flex-shrink: 0;
-  transition: transform .14s ease;
-}
-.shopCTA:hover .shopCTA__arrow{ transform: translateX(4px); }
-@media (max-width: 560px){
-  .shopCTAs{ flex-direction: column; }
-  .shopCTA__sub{ white-space: normal; }
-}
-
 .bookCard{
   flex: 0 0 auto;          /* IMPORTANT: prevents wrapping/stacking */
   width: 200px;
@@ -2035,8 +1953,8 @@ aria-label="Amazon Store" data-tip="Amazon Store">
       <a class="primary"
    href="https://riaomshandilya.com/animated.html"
    target="_blank" rel="noopener">Learn to Play</a>
+            <a href="shop.html">Shop</a>
             <a href="#books">Books</a>
-            <a class="primary" href="shop.html">Shop</a>
             <a href="#about">About</a>
             <a href="connect.html">Contact</a>
        </nav>
@@ -2153,71 +2071,94 @@ src="https://riaomshandilya.com/animated.html"
     <h2>Books</h2>
   </div>
 
+  <!-- Shop destination buttons -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 22px;justify-content:flex-start;">
+    <a href="shop.html"
+       style="display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;
+              text-decoration:none;font-weight:950;font-size:13.5px;letter-spacing:.02em;
+              border:1.5px solid rgba(var(--gold),.80);
+              background:linear-gradient(135deg,#FFD35A,#FFBF2F);
+              color:#2A1A00;
+              box-shadow:0 20px 60px rgba(255,191,47,0.36),inset 0 1px 0 rgba(255,255,255,0.55);
+              transition:transform .13s ease,filter .13s ease,box-shadow .13s ease;
+              position:relative;overflow:hidden;"
+       onmouseover="this.style.transform='translateY(-3px)';this.style.filter='brightness(1.06)';this.style.boxShadow='0 28px 80px rgba(255,191,47,0.46),inset 0 1px 0 rgba(255,255,255,0.55)'"
+       onmouseout="this.style.transform='';this.style.filter='';this.style.boxShadow='0 20px 60px rgba(255,191,47,0.36),inset 0 1px 0 rgba(255,255,255,0.55)'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Shop in India
+    </a>
+    <a href="https://www.amazon.com/stores/Ria-Om-Shandilya/author/B09QN8NFFD"
+       target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;
+              text-decoration:none;font-weight:950;font-size:13.5px;letter-spacing:.02em;
+              border:1.5px solid rgba(var(--gold),.46);
+              background:rgba(255,255,255,.72);
+              color:rgba(26,20,10,.92);
+              box-shadow:0 14px 44px rgba(26,20,10,0.12),inset 0 1px 0 rgba(255,255,255,0.90);
+              backdrop-filter:blur(10px);
+              transition:transform .13s ease,filter .13s ease,box-shadow .13s ease;"
+       onmouseover="this.style.transform='translateY(-3px)';this.style.filter='brightness(1.04)';this.style.boxShadow='0 22px 60px rgba(26,20,10,0.18),inset 0 1px 0 rgba(255,255,255,0.90)'"
+       onmouseout="this.style.transform='';this.style.filter='';this.style.boxShadow='0 14px 44px rgba(26,20,10,0.12),inset 0 1px 0 rgba(255,255,255,0.90)'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Shop Worldwide
+    </a>
+  </div>
+
+  <h3 style="margin:10px 0 6px; font-size:14px; font-weight:950;">Available Worldwide</h3>
+ 
   <div class="scrollHint" aria-hidden="true">
     <span>Scroll</span>
     <span class="arrow">→</span>
   </div>
-
-  <div class="carousel" aria-label="Books carousel" id="worldCarousel">
+  
+  <div class="carousel" aria-label="Worldwide books carousel" id="worldCarousel">
     <article class="bookCard">
-      <div class="cover">
-        <img src="Soulful.jpg" alt="Soulful Bollywood Melodies">
-      </div>
-      <div class="bookBody">
-        <h3>Soulful Bollywood Melodies</h3>
-        <p>Songs like Jashn-e-bahaara, Srivalli, etc.</p>
-      </div>
+      <a href="https://www.amazon.in/Soulful-Bollywood-Melodies-Piano-Sheet/dp/9356020655" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Soulful.jpg" alt="Soulful Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Soulful Bollywood Melodies</h3>
+          <p>Songs like Jashn-e-bahaara, Srivalli, etc.</p>
+        </div>
+      </a>
     </article>
 
     <article class="bookCard">
-      <div class="cover">
-        <img src="Peppy.jpg" alt="Peppy Bollywood Melodies">
-      </div>
-      <div class="bookBody">
-        <h3>Peppy Bollywood Melodies</h3>
-        <p>Songs like Señorita, Naina Da Kya Kasoor, etc.</p>
-      </div>
+      <a href="https://www.amazon.in/Peppy-Bollywood-Melodies-Piano-Sheet/dp/9334188642" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Peppy.jpg" alt="Peppy Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Peppy Bollywood Melodies</h3>
+          <p>Songs like Señorita, Naina Da Kya Kasoor, etc.</p>
+        </div>
+      </a>
     </article>
 
     <article class="bookCard">
-      <div class="cover">
-        <img src="Romantic.jpg" alt="Romantic Bollywood Melodies">
-      </div>
-      <div class="bookBody">
-        <h3>Romantic Bollywood Melodies</h3>
-        <p>Songs like Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, etc.</p>
-      </div>
+      <a href="https://www.amazon.in/Romantic-Bollywood-Melodies-Sheet-Music/dp/9359803243" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Romantic.jpg" alt="Romantic Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Romantic Bollywood Melodies</h3>
+          <p>Songs like Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, etc.</p>
+        </div>
+      </a>
     </article>
 
     <article class="bookCard">
-      <div class="cover">
-        <img src="Classic.jpg" alt="Classic Bollywood Melodies">
-      </div>
-      <div class="bookBody">
-        <h3>Classic Bollywood Melodies</h3>
-        <p>Songs like Ek Ladki Bheegi Bhaagi Si, Kal ho na ho, etc.</p>
-      </div>
+      <a href="https://www.amazon.in/Bollywood-Melodies-Ria-Om-Shandilya/dp/B09GZGXMYY" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="cover">
+          <img src="Classic.jpg" alt="Classic Bollywood Melodies">
+        </div>
+        <div class="bookBody">
+          <h3>Classic Bollywood Melodies</h3>
+          <p>Songs like Ek Ladki Bheegi Bhaagi Si, Kal ho na ho, etc.</p>
+        </div>
+      </a>
     </article>
-  </div>
-
-  <!-- Shop CTAs -->
-  <div class="shopCTAs">
-    <a class="shopCTA shopCTA--india" href="shop.html">
-      <span class="shopCTA__flag">🇮🇳</span>
-      <span class="shopCTA__body">
-        <span class="shopCTA__label">Shop in India</span>
-        <span class="shopCTA__sub">Order direct — fast delivery • free shipping</span>
-      </span>
-      <span class="shopCTA__arrow">→</span>
-    </a>
-    <a class="shopCTA shopCTA--world" href="https://www.amazon.com/stores/Ria-Om-Shandilya/author/B09QN8NFFD" target="_blank" rel="noopener">
-      <span class="shopCTA__flag">🌍</span>
-      <span class="shopCTA__body">
-        <span class="shopCTA__label">Shop Worldwide</span>
-        <span class="shopCTA__sub">Available on Amazon • ships internationally</span>
-      </span>
-      <span class="shopCTA__arrow">→</span>
-    </a>
   </div>
 </section>     
               <!-- ABOUT -->
@@ -2258,15 +2199,13 @@ src="https://riaomshandilya.com/animated.html"
               Contact: <a href="mailto:riaomshandilya@gmail.com">riaomshandilya@gmail.com</a>
               &nbsp;•&nbsp;
               <a href="connect.html">Forms / Teacher’s Guide / Message</a>
-               • 
-              <a href="shop.html">Shop</a>
-               • 
+              &nbsp;•&nbsp;
               <a href="about.html">About Us</a>
-               • 
-              <a href="faqs.html">FAQs</a>
-               • 
+              &nbsp;•&nbsp;
+              <a href="faq.html">FAQs</a>
+              &nbsp;•&nbsp;
               <a href="privacy.html">Privacy Policy</a>
-               • 
+              &nbsp;•&nbsp;
               <a href="terms.html">Terms &amp; Conditions</a>
             
               <div class="copyright">
