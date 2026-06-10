@@ -301,8 +301,12 @@
         inset 0 0 80px rgba(0,0,0,0.4),
         0 0 0 1px rgba(212,175,55,0.12);
       animation: vinylSpin 4s linear infinite;
+      animation-play-state: paused;
       will-change: transform;
       transform-origin: center center;
+    }
+    .vinyl-disc.spinning {
+      animation-play-state: running;
     }
 
     /* Groove reflection sweep — gives it the light-catching look */
@@ -371,7 +375,7 @@
       100% { transform: rotate(var(--sa, 0deg)); }
     }
 
-    /* "Scratch me" hint */
+    /* "Click here" hint */
     .vinyl-hint {
       position: absolute;
       bottom: 14%;
@@ -1449,8 +1453,8 @@
 
       <!-- VINYL RECORD -->
       <div class="vinyl-wrap" id="vinylWrap">
-        <span class="vinyl-hint" id="vinylHint">— scratch me —</span>
-        <div class="vinyl" id="vinylDisc">
+        <span class="vinyl-hint" id="vinylHint">— click here —</span>
+        <div class="vinyl vinyl-disc" id="vinylDisc">
           <svg class="vinyl-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <!-- Base black vinyl radial -->
@@ -2149,54 +2153,66 @@
     const nowPlaying   = document.getElementById('vinylNowPlaying');
 
     // ── Audio state ──
-    let audioCtx       = null;
     let currentAudio   = null;  // HTMLAudioElement
-    let scratchBuffer  = null;  // AudioBuffer for scratch SFX
     let isPlaying      = false;
-    let scratchAngle   = 0;
 
-    // ── Build scratch SFX via Web Audio (synthesised — no file needed) ──
-    function getScratchCtx() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      return audioCtx;
-    }
+    // GitHub raw URL base — your sound-effects repo
+    const SOUND_BASE = 'https://raw.githubusercontent.com/RiaOmShandilya/sound-effects/main/';
 
-    function playScratchSFX() {
+    // ── Play recordscratch.mp3, then zoobiedoobie.mp3 ──
+    function playScratchThenSong() {
       try {
-        const ctx    = getScratchCtx();
-        const dur    = 0.28;
-        const buf    = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
-        const data   = buf.getChannelData(0);
-        for (let i = 0; i < data.length; i++) {
-          // White noise × decaying envelope → vinyl scratch
-          const t = i / ctx.sampleRate;
-          const env = Math.pow(1 - t / dur, 1.5);
-          data[i] = (Math.random() * 2 - 1) * env * 0.6;
-        }
-        const src    = ctx.createBufferSource();
-        src.buffer   = buf;
-        // Band-pass 800–4000 Hz to sound like a needle scratch
-        const bp     = ctx.createBiquadFilter();
-        bp.type      = 'bandpass';
-        bp.frequency.value = 2000;
-        bp.Q.value   = 0.8;
-        const gain   = ctx.createGain();
-        gain.gain.value = 1.4;
-        src.connect(bp); bp.connect(gain); gain.connect(ctx.destination);
-        src.start();
-      } catch(e) {}
+        const scratch = new Audio(SOUND_BASE + 'recordscratch.mp3');
+        scratch.volume = 1.0;
+        scratch.play().catch(() => { playZoobieDoobie(); });
+        scratch.addEventListener('ended',  playZoobieDoobie, { once: true });
+        scratch.addEventListener('error',  () => setTimeout(playZoobieDoobie, 400), { once: true });
+      } catch(e) {
+        setTimeout(playZoobieDoobie, 400);
+      }
     }
 
-    // ── Play/stop the book's MP3 preview ──
+    function playZoobieDoobie() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+
+      const audio = new Audio(SOUND_BASE + 'zoobiedoobie.mp3');
+      audio.volume = 0.85;
+      currentAudio = audio;
+
+      audio.play().then(() => {
+        isPlaying = true;
+        tonearm.classList.add('on-record');
+        nowPlaying.textContent = '♪ Zoobie Doobie…';
+        nowPlaying.classList.add('show');
+        vinylDisc.classList.add('spinning');
+        vinylDisc.style.animationPlayState = 'running';
+
+        audio.addEventListener('ended', () => {
+          isPlaying = false;
+          tonearm.classList.remove('on-record');
+          nowPlaying.classList.remove('show');
+          currentAudio = null;
+          vinylDisc.style.animationPlayState = 'paused';
+        }, { once: true });
+      }).catch(() => {
+        isPlaying = false;
+        vinylDisc.style.animationPlayState = 'paused';
+      });
+    }
+
+    // ── Play/stop the book's MP3 preview (used by carousel items with .audio) ──
     function playBookAudio(item) {
-      // Stop previous
+      if (!item.audio) return;
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
         isPlaying = false;
       }
-      if (!item.audio) return;
 
       const audio = new Audio(item.audio);
       audio.volume = 0.85;
@@ -2205,52 +2221,45 @@
       audio.play().then(() => {
         isPlaying = true;
         tonearm.classList.add('on-record');
-
-        // Show now-playing pill
         nowPlaying.textContent = '♪ ' + item.title.split(' ').slice(0,3).join(' ') + '…';
         nowPlaying.classList.add('show');
+        vinylDisc.style.animationPlayState = 'running';
 
         audio.addEventListener('ended', () => {
           isPlaying = false;
           tonearm.classList.remove('on-record');
           nowPlaying.classList.remove('show');
           currentAudio = null;
-          // Resume idle spin
-          vinylDisc.style.animationPlayState = 'running';
-        });
+          vinylDisc.style.animationPlayState = 'paused';
+        }, { once: true });
       }).catch(() => {
-        // File not found — still do the scratch animation visually
         isPlaying = false;
       });
     }
 
     // ── Scratch interaction ──
     function doScratch() {
-      // Capture current rotation for CSS variable
+      // Start spinning the disc
+      vinylDisc.classList.add('spinning');
+      vinylDisc.style.animationPlayState = 'running';
+
+      // Capture current rotation for scratch animation start
       const style = window.getComputedStyle(vinylDisc);
       const matrix = new DOMMatrix(style.transform);
       const angle = Math.round(Math.atan2(matrix.m12, matrix.m11) * (180 / Math.PI));
-      vinylDisc.style.setProperty('--scratch-start', angle + 'deg');
+      vinylDisc.style.setProperty('--sa', angle + 'deg');
 
-      playScratchSFX();
-
-      // Trigger scratch animation
+      // Scratch wiggle animation
       vinylDisc.classList.add('scratching');
       vinylDisc.style.animationPlayState = 'paused';
 
       vinylHint.classList.add('hidden');
 
+      // After scratch wiggle ends, play the MP3s
       vinylDisc.addEventListener('animationend', () => {
         vinylDisc.classList.remove('scratching');
-        // Resume spin only if something is playing
-        if (isPlaying) {
-          vinylDisc.style.animationPlayState = 'running';
-        }
+        playScratchThenSong();
       }, { once: true });
-
-      // Play the book audio
-      const item = ALL_ITEMS[current];
-      playBookAudio(item);
     }
 
     vinylWrap.addEventListener('click', doScratch);
