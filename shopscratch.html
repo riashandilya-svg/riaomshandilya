@@ -269,6 +269,7 @@
       height: clamp(420px, 46vw, 600px);
       z-index: 10;
       cursor: pointer;
+      border-radius: 50%;
     }
 
     /* The disc itself — pure CSS, no image */
@@ -2246,25 +2247,30 @@
 
     // ── Scratch interaction ──
     function doScratch() {
-      // Start spinning the disc
-      vinylDisc.classList.add('spinning');
-      vinylDisc.style.animationPlayState = 'running';
-
       // Capture current rotation for scratch animation start
       const style = window.getComputedStyle(vinylDisc);
       const matrix = new DOMMatrix(style.transform);
       const angle = Math.round(Math.atan2(matrix.m12, matrix.m11) * (180 / Math.PI));
       vinylDisc.style.setProperty('--sa', angle + 'deg');
 
-      // Scratch wiggle animation
-      vinylDisc.classList.add('scratching');
-      vinylDisc.style.animationPlayState = 'paused';
-
+      // Hide hint
       vinylHint.classList.add('hidden');
 
-      // After scratch wiggle ends, play the MP3s
+      // Remove scratching if already on (defensive), then re-add to re-trigger
+      vinylDisc.classList.remove('scratching');
+
+      // Force a reflow so the class removal registers before we re-add
+      void vinylDisc.offsetWidth;
+
+      // Apply scratch animation and make sure it runs
+      vinylDisc.classList.add('scratching');
+      vinylDisc.style.animationPlayState = 'running';
+
+      // After scratch wiggle ends, play the MP3s then start spinning
       vinylDisc.addEventListener('animationend', () => {
         vinylDisc.classList.remove('scratching');
+        vinylDisc.classList.add('spinning');
+        vinylDisc.style.animationPlayState = 'running';
         playScratchThenSong();
       }, { once: true });
     }
