@@ -2165,7 +2165,7 @@
     let isPlaying      = false;
 
     // GitHub raw URL base — your sound-effects repo
-    const SOUND_BASE = 'https://raw.githubusercontent.com/riaomshandilya/sound-effects/main/';
+    const SOUND_BASE = 'https://raw.githubusercontent.com/riashandilya-svg/sound-effects/main/';
 
     // ── Play recordscratch.mp3, then the current book's mp3 ──
     function playScratchThenSong() {
@@ -2220,7 +2220,7 @@
 
     // ── Scratch interaction ──
     function doScratch() {
-      // Capture current rotation for scratch animation start
+      // Capture current rotation for scratch animation
       const style = window.getComputedStyle(vinylDisc);
       const matrix = new DOMMatrix(style.transform);
       const angle = Math.round(Math.atan2(matrix.m12, matrix.m11) * (180 / Math.PI));
@@ -2229,23 +2229,19 @@
       // Hide hint
       vinylHint.classList.add('hidden');
 
-      // Remove scratching if already on (defensive), then re-add to re-trigger
+      // Trigger scratch wiggle
       vinylDisc.classList.remove('scratching');
-
-      // Force a reflow so the class removal registers before we re-add
       void vinylDisc.offsetWidth;
-
-      // Apply scratch animation and make sure it runs
       vinylDisc.classList.add('scratching');
       vinylDisc.style.animationPlayState = 'running';
 
-      // After scratch wiggle ends, play the MP3s then start spinning
-      vinylDisc.addEventListener('animationend', () => {
+      // After 250ms (scratch animation is 0.2s), start spinning + play audio
+      setTimeout(() => {
         vinylDisc.classList.remove('scratching');
         vinylDisc.classList.add('spinning');
         vinylDisc.style.animationPlayState = 'running';
         playScratchThenSong();
-      }, { once: true });
+      }, 250);
     }
 
     vinylWrap.addEventListener('click', doScratch);
