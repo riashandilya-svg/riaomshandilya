@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Books — Ria Om Shandilya™</title>
+  <link rel="icon" type="image/png" href="favicon_io.png?v=2">
+  <link rel="apple-touch-icon" href="favicon_io.png?v=2">
+  <meta name="theme-color" content="#d4af37">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -1687,7 +1690,88 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ─── RESPONSIVE ─── */
+    /* ─── CURSOR GLITTER CANVAS ─── */
+    #glitter {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* ─── IMAGE LIGHTBOX ─── */
+    .img-lightbox-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .img-lightbox-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .img-lightbox-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      transform: scale(0.90);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    .img-lightbox-overlay.open .img-lightbox-inner {
+      transform: scale(1);
+    }
+    .img-lightbox-inner img {
+      max-width: 90vw;
+      max-height: 88vh;
+      object-fit: contain;
+      display: block;
+      border: 1px solid rgba(212,175,55,0.3);
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    }
+    .img-lightbox-close {
+      position: absolute;
+      top: -14px; right: -14px;
+      width: 36px; height: 36px;
+      background: rgba(10,8,5,0.95);
+      border: 1px solid rgba(212,175,55,0.4);
+      color: var(--gold-light);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+      z-index: 2;
+    }
+    .img-lightbox-close:hover {
+      background: rgba(212,175,55,0.12);
+      border-color: var(--gold);
+    }
+    .img-lightbox-label {
+      position: absolute;
+      bottom: -32px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(212,175,55,0.7);
+      white-space: nowrap;
+    }
+
+    /* Make popup images look clickable */
+    .book-popup-img-wrap {
+      cursor: zoom-in;
+    }
+
+    /* Make the 3D book cover clickable to open About popup */
+    .book-container {
+      cursor: pointer;
+    }
+
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; text-align: center; padding: 0 24px; }
       .hero-text { margin: 0 auto; }
@@ -1717,7 +1801,19 @@
 </head>
 <body>
 
-<!-- ── HEADER ── -->
+<!-- ── GLITTER CANVAS ── -->
+<canvas id="glitter" aria-hidden="true"></canvas>
+
+<!-- ── IMAGE LIGHTBOX ── -->
+<div class="img-lightbox-overlay" id="imgLightboxOverlay">
+  <div class="img-lightbox-inner" id="imgLightboxInner">
+    <button class="img-lightbox-close" id="imgLightboxClose"><i class="fa-solid fa-xmark"></i></button>
+    <img id="imgLightboxImg" src="" alt="" />
+    <span class="img-lightbox-label" id="imgLightboxLabel"></span>
+  </div>
+</div>
+
+
 <header>
   <a class="logo-wrap" href="index.html">
     <div class="logo-icon"><i class="fa-solid fa-feather"></i></div>
@@ -2287,7 +2383,9 @@
     const grid = document.getElementById('books-grid');
     grid.innerHTML = BOOKS.map(book => `
       <div class="book-card" data-id="${book.id}">
-        <a class="book-container" href="" tabindex="-1" onclick="return false;">
+        <a class="book-container" href="" tabindex="0"
+           aria-label="About ${book.title}"
+           onclick="if(BOOK_DETAILS['${book.id}']){openBookPopup(BOOKS.find(b=>b.id==='${book.id}')); return false;} return false;">
           <div class="book">
             <img
               src="${book.cover}"
@@ -2763,10 +2861,10 @@
 
     document.getElementById('bookPopupTitle').textContent = item.title || 'About the Book';
 
-    // Images
+    // Images — each is zoomable
     const imgsEl = document.getElementById('bookPopupImages');
     imgsEl.innerHTML = details.images.map(img => `
-      <div class="book-popup-img-wrap">
+      <div class="book-popup-img-wrap" onclick="openLightbox('${img.src}','${img.label}')">
         <img src="${img.src}" alt="${img.label}" onerror="this.style.opacity='0.15'" />
         <div class="book-popup-img-label">${img.label}</div>
       </div>
@@ -2807,6 +2905,123 @@
     const book = BOOKS.find(b => b.id === bookId);
     if (book) openBookPopup(book);
   });
+
+  // ════════════════════════════════════
+  //  IMAGE LIGHTBOX
+  // ════════════════════════════════════
+  function openLightbox(src, label) {
+    const overlay = document.getElementById('imgLightboxOverlay');
+    document.getElementById('imgLightboxImg').src = src;
+    document.getElementById('imgLightboxImg').alt = label || '';
+    document.getElementById('imgLightboxLabel').textContent = label || '';
+    overlay.classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('imgLightboxOverlay').classList.remove('open');
+  }
+  document.getElementById('imgLightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('imgLightboxOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('imgLightboxOverlay')) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeLightbox(); } });
+
+  // ════════════════════════════════════
+  //  CURSOR GLITTER (gold + white)
+  // ════════════════════════════════════
+  (function() {
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canvas = document.getElementById('glitter');
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    function resize() {
+      canvas.width  = Math.floor(window.innerWidth  * devicePixelRatio);
+      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+      canvas.style.width  = window.innerWidth  + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const particles = [];
+    const MAX = 320;
+
+    function addSpark(x, y, intensity) {
+      if (prefersReduced) return;
+      intensity = intensity || 1;
+      const count = Math.floor(7 * intensity);
+      for (let i = 0; i < count; i++) {
+        if (particles.length > MAX) particles.shift();
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (0.30 + Math.random() * 2.0) * intensity;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 0.20,
+          life: 34 + Math.random() * 30,
+          size: 1.0 + Math.random() * 2.8,
+          tw: Math.random() * Math.PI * 2,
+          alpha: 0.52 + Math.random() * 0.34
+        });
+      }
+    }
+
+    let last = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    window.addEventListener('pointermove', (e) => {
+      const dx = e.clientX - last.x;
+      const dy = e.clientY - last.y;
+      const d = Math.min(34, Math.hypot(dx, dy));
+      const intensity = Math.max(0.75, d / 16);
+      addSpark(e.clientX, e.clientY, intensity);
+      last = { x: e.clientX, y: e.clientY };
+    }, { passive: true });
+
+    window.addEventListener('pointerdown', (e) => addSpark(e.clientX, e.clientY, 1.9), { passive: true });
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life -= 1;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        p.vx *= 0.986;
+        p.vy *= 0.986;
+        p.vy += 0.018;
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.tw += 0.22;
+        const twinkle = 0.62 + Math.sin(p.tw) * 0.38;
+        const fade = Math.min(1, p.life / 44);
+        const a = p.alpha * fade * twinkle;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(212, 175, 55, ${a})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 255, 255, ${a * 0.55})`;
+        ctx.arc(p.x, p.y, p.size * 0.55, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (Math.random() < 0.24) {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.tw * 0.35);
+          ctx.globalAlpha = a * 0.90;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${a})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(-p.size * 2.2, 0); ctx.lineTo(p.size * 2.2, 0);
+          ctx.moveTo(0, -p.size * 2.2); ctx.lineTo(0, p.size * 2.2);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
 </script>
 
 </body>
