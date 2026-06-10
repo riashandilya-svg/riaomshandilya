@@ -388,22 +388,23 @@
     .vinyl-hint {
       position: absolute;
       top: 50%;
-      left: -90px;
+      left: -28px;
       transform: translateY(-50%);
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(0.8rem, 1.1vw, 1rem);
+      font-size: clamp(0.75rem, 1vw, 0.9rem);
       font-style: italic;
       color: rgba(212,175,55,0.8);
-      letter-spacing: 3px;
+      letter-spacing: 6px;
       pointer-events: none;
-      white-space: nowrap;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
       z-index: 4;
       text-shadow: 0 0 16px rgba(212,175,55,0.5);
       animation: hintPulse 2.6s ease-in-out infinite;
     }
     @keyframes hintPulse {
       0%,100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
-      50%      { opacity: 1;   transform: translateY(-50%) translateX(-5px); }
+      50%      { opacity: 1;   transform: translateY(-50%) translateX(-4px); }
     }
     .vinyl-hint.hidden { opacity: 0 !important; animation: none; transition: opacity 0.5s; }
 
@@ -1462,7 +1463,7 @@
 
       <!-- VINYL RECORD -->
       <div class="vinyl-wrap" id="vinylWrap">
-        <span class="vinyl-hint" id="vinylHint">— click here —</span>
+        <span class="vinyl-hint" id="vinylHint">CLICK&nbsp;&nbsp;HERE</span>
         <div class="vinyl vinyl-disc" id="vinylDisc">
           <svg class="vinyl-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
             <defs>
