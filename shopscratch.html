@@ -2010,6 +2010,25 @@
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
 
+<!-- ── BOOK POPUP ── -->
+<div class="book-popup-overlay" id="bookPopupOverlay">
+  <div class="book-popup" id="bookPopup">
+    <div class="book-popup-header">
+      <div class="book-popup-header-left">
+        <span class="book-popup-eyebrow">✦ &nbsp; About the Book &nbsp; ✦</span>
+        <h2 id="bookPopupTitle">Soulful Bollywood Melodies</h2>
+      </div>
+      <button class="book-popup-close" id="bookPopupClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="book-popup-body">
+      <div class="book-popup-images" id="bookPopupImages"></div>
+      <div class="book-popup-rule">✦</div>
+      <div class="book-popup-desc" id="bookPopupDesc"></div>
+      <button class="book-popup-add" id="bookPopupAdd"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Cart</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // ════════════════════════════════════
   //  CONFIG
@@ -2691,24 +2710,6 @@
     if (book) openBookPopup(book);
   });
 </script>
-<!-- ── BOOK POPUP ── -->
-<div class="book-popup-overlay" id="bookPopupOverlay">
-  <div class="book-popup" id="bookPopup">
-    <div class="book-popup-header">
-      <div class="book-popup-header-left">
-        <span class="book-popup-eyebrow">✦ &nbsp; About the Book &nbsp; ✦</span>
-        <h2 id="bookPopupTitle">Soulful Bollywood Melodies</h2>
-      </div>
-      <button class="book-popup-close" id="bookPopupClose"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="book-popup-body">
-      <div class="book-popup-images" id="bookPopupImages"></div>
-      <div class="book-popup-rule">✦</div>
-      <div class="book-popup-desc" id="bookPopupDesc"></div>
-      <button class="book-popup-add" id="bookPopupAdd"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Cart</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
