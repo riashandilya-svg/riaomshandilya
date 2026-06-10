@@ -1,0 +1,3284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Books — Ria Om Shandilya™</title>
+  <link rel="icon" type="image/png" href="favicon_io.png?v=2">
+  <link rel="apple-touch-icon" href="favicon_io.png?v=2">
+  <meta name="theme-color" content="#FFB826">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      /* ===== index.html palette ===== */
+      --ivory:  #FFFDF5;
+      --cream:  #FFF3D1;
+      --butter: #FFE07A;
+      --gown:   #FFBF2F;
+      --gold-rgb: 255, 184, 38;
+
+      /* shop-specific gold (kept for card accents) */
+      --black: #000000;
+      --near-black: #0a0805;
+      --card: #0f0c08;
+      --card2: #121010;
+      --gold: #d4af37;
+      --gold-light: #f0d77a;
+      --gold-dark: #a87f1d;
+      --gold-border: rgba(212,175,55,0.35);
+      --gold-glow: rgba(212,175,55,0.15);
+      --text: #f5f0e8;
+      --muted: #a0a0a0;
+      --border: rgba(212,175,55,0.2);
+
+      /* index.html ink */
+      --ink: #1A140A;
+      --inkRGB: 26,20,10;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 50% 0%, rgba(255,255,255,0.75), transparent 60%),
+                  linear-gradient(180deg, var(--ivory) 0%, var(--cream) 34%, var(--butter) 100%);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Warm manuscript glows — exact from index.html */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 68px 0 0;
+      pointer-events:none;
+      z-index:-5;
+      background:
+        radial-gradient(1200px 650px at 20% 10%, rgba(255,184,38,0.38), transparent 62%),
+        radial-gradient(900px 560px at 86% 18%, rgba(255,184,38,0.30), transparent 66%),
+        radial-gradient(820px 620px at 50% 105%, rgba(255,184,38,0.22), transparent 62%);
+    }
+    body::after{
+      content:"";
+      position: fixed;
+      inset: 68px 0 0;
+      pointer-events:none;
+      z-index:-4;
+      background: radial-gradient(circle at 50% 20%, transparent 60%, rgba(26,20,10,0.14) 100%);
+      opacity: .28;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--ivory); }
+    ::-webkit-scrollbar-thumb { background: var(--gown); border-radius: 999px; }
+
+    /* ─── HEADER (matches index.html topbar exactly) ─── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 99999;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,243,209,0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,184,38,0.46);
+      box-shadow: 0 16px 50px rgba(26,20,10,0.12);
+    }
+
+    .topbar-inner {
+      width: min(1140px, 100%);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    /* Right cluster: nav pills + cart button flush right */
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    /* Brand / logo */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(26,20,10,0.14);
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      line-height: 1;
+    }
+    .brand-name {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: .5px;
+      color: var(--ink);
+      position: relative;
+    }
+    .brand-name::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0;
+      bottom: -5px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        rgba(255,184,38,.95),
+        rgba(255,255,255,.90),
+        rgba(255,184,38,.70)
+      );
+      opacity: .95;
+    }
+    .brand-tag {
+      display: none;
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(26,20,10,.55);
+      letter-spacing: .04em;
+      margin-top: 6px;
+    }
+    @media (min-width: 900px) { .brand-tag { display: block; } }
+
+    /* Nav pills — index.html style */
+    nav {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+    nav a {
+      text-decoration: none;
+      font-family: Inter, sans-serif;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: rgba(26,20,10,.86);
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(26,20,10,.14);
+      background: rgba(255,255,255,.66);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      white-space: nowrap;
+      letter-spacing: .01em;
+    }
+    nav a:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow: 0 16px 40px rgba(26,20,10,.12);
+    }
+
+    /* Cart button — gold pill like index.html primary CTA */
+    #cart-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,184,38,.70);
+      background: linear-gradient(135deg, #FFD35A, #FFBF2F);
+      color: #2A1A00;
+      font-family: Inter, sans-serif;
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: .01em;
+      box-shadow: 0 18px 50px rgba(255,191,47,0.34);
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease;
+      position: relative;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #cart-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+    #cart-count {
+      position: absolute;
+      top: -8px; right: -8px;
+      background: #2A1A00;
+      color: #FFD35A;
+      border-radius: 50%;
+      width: 18px; height: 18px;
+      font-size: 0.62rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+    }
+
+    /* Body needs padding for fixed header */
+    body { padding-top: 68px; }
+
+    @media (max-width: 720px) {
+      header { height: 60px; }
+      body   { padding-top: 60px; }
+      .brand-name { font-size: 15px; }
+      nav a  { font-size: 11.5px; padding: 7px 9px; }
+      #cart-btn { padding: 8px 12px; font-size: 11.5px; }
+    }
+    @media (max-width: 480px) {
+      nav a  { padding: 6px 8px; font-size: 11px; }
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding: 68px 0 0;
+      background:
+        radial-gradient(ellipse at center top, rgba(255,184,38,.12) 0%, transparent 50%),
+        linear-gradient(180deg, rgba(255,253,245,0.85) 0%, rgba(255,243,209,0.90) 40%, rgba(255,224,122,0.80) 100%);
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, transparent 0, transparent 80px, rgba(212,175,55,.03) 80px, rgba(212,175,55,.03) 81px),
+        repeating-linear-gradient(180deg, transparent 0, transparent 120px, rgba(212,175,55,.02) 120px, rgba(212,175,55,.02) 121px);
+      pointer-events: none;
+    }
+
+    /* Stage light beams */
+    .beams {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .beam {
+      position: absolute; top: -20px;
+      width: 160px; height: 80%;
+      background: linear-gradient(180deg, rgba(255,220,140,.3) 0%, rgba(255,220,140,.06) 50%, transparent 100%);
+      clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
+      filter: blur(8px);
+      animation: beamPulse 4s ease-in-out infinite;
+    }
+    .beam:nth-child(1) { left: 5%;  transform: rotate(-15deg); animation-delay: 0s; }
+    .beam:nth-child(2) { left: 25%; transform: rotate(-8deg);  animation-delay: .5s; }
+    .beam:nth-child(3) { left: 45%; transform: rotate(0deg);   animation-delay: 1s; }
+    .beam:nth-child(4) { right: 25%;transform: rotate(8deg);   animation-delay: 1.5s; }
+    .beam:nth-child(5) { right: 5%; transform: rotate(15deg);  animation-delay: 2s; }
+    @keyframes beamPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+
+    /* 2-column hero grid: text LEFT, book RIGHT (inspired by shop1) */
+    .hero-grid {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto; padding: 0 60px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 48px;
+      min-height: calc(100vh - 68px);
+    }
+    .hero-text { max-width: 500px; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      color: var(--gold); font-size: 11px; letter-spacing: 4px;
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow .dash { flex: 0 0 30px; height: 1px; background: var(--gold); }
+
+    /* Stage right column — fills the full right half */
+    .hero-stage {
+      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+    .spotlight {
+      position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 820px;
+      background: radial-gradient(ellipse at center top, rgba(255,220,140,.35) 0%, rgba(255,220,140,.12) 30%, transparent 70%);
+      filter: blur(20px); pointer-events: none;
+    }
+    .hero-book-wrap {
+      position: relative; z-index: 5;
+      pointer-events: none;
+      width: clamp(220px, 24vw, 360px);
+      aspect-ratio: 3/4;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: -10px;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .hero-book-wrap.transitioning { opacity: 0; transform: scale(0.92); }
+    .hero-book-wrap img {
+      max-height: 100%; max-width: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 60px rgba(212,175,55,.35));
+      transition: transform 0.6s ease;
+      animation: heroBookFloat 4s ease-in-out infinite;
+    }
+    @keyframes heroBookFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-14px); }
+    }
+    /* Hero carousel nav — flanks the vinyl inside the stage */
+    .hero-nav {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-52%); /* align with vinyl centre */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 6px;
+      z-index: 30;
+      pointer-events: none; /* let vinyl clicks through */
+    }
+    .hero-nav-btn {
+      pointer-events: all;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(212,175,55,0.4);
+      background: rgba(10,8,5,0.55);
+      backdrop-filter: blur(8px);
+      color: rgba(212,175,55,0.85);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+    .hero-nav-btn:hover {
+      background: rgba(212,175,55,0.18);
+      border-color: var(--gold);
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(212,175,55,0.25);
+      color: var(--gold-light);
+    }
+    .hero-nav-btn svg { width: 22px; height: 22px; display: block; }
+    .hero-dots {
+      position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 12px; z-index: 30;
+    }
+    .hero-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.3); background: transparent;
+      cursor: pointer; transition: all 0.3s; padding: 0;
+    }
+    .hero-dot.active {
+      background: var(--gold); border-color: var(--gold);
+      box-shadow: 0 0 8px rgba(212,175,55,0.5);
+    }
+
+    /* ── VINYL RECORD ── */
+    .vinyl-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -52%);
+      width: clamp(420px, 46vw, 600px);
+      height: clamp(420px, 46vw, 600px);
+      z-index: 2;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    /* The disc itself — pure CSS, no image */
+    .vinyl-disc {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        /* Spindle hole */
+        radial-gradient(circle at 50% 50%, #0a0806 0%, #0a0806 2.2%, transparent 2.2%),
+        /* Label ring inner */
+        radial-gradient(circle at 50% 50%, #f0d77a 2.2%, #f0d77a 2.4%, transparent 2.4%),
+        /* Label area */
+        radial-gradient(circle at 50% 50%, #1a1208 2.4%, #2d1f08 10%, #1a1208 13%, #0f0c06 17.5%, transparent 17.5%),
+        /* Label outer ring */
+        radial-gradient(circle at 50% 50%, transparent 17.5%, #d4af37 17.5%, #d4af37 18%, transparent 18%),
+        /* Groove band 1 — near label */
+        radial-gradient(circle at 50% 50%, transparent 18%, #181410 18%, #0d0b09 22%, transparent 22%),
+        /* Groove shimmer ring */
+        radial-gradient(circle at 50% 50%, transparent 22%, rgba(212,175,55,0.07) 22%, rgba(212,175,55,0.07) 24%, transparent 24%),
+        /* Main groove area — layered repeating to fake grooves */
+        radial-gradient(circle at 50% 50%, transparent 24%, #0c0a08 24%, #141210 28%, #0c0a08 32%, #141210 36%, #0c0a08 40%, #141210 44%, #0c0a08 48%, #141210 52%, #0c0a08 56%, #141210 60%, #0c0a08 64%, #141210 68%, #0c0a08 72%, #141210 76%, #0c0a08 80%, #141210 84%, #0c0a08 88%, #141210 92%, #0a0806 96%),
+        /* Outer bevel gold ring */
+        radial-gradient(circle at 50% 50%, transparent 96%, rgba(212,175,55,0.25) 96%, rgba(212,175,55,0.25) 97.5%, transparent 97.5%),
+        /* Outer rim */
+        radial-gradient(circle at 50% 50%, transparent 97.5%, #1a1612 97.5%, #080604 100%);
+      box-shadow:
+        0 0 60px 20px rgba(0,0,0,0.85),
+        0 0 30px 10px rgba(0,0,0,0.6),
+        inset 0 0 80px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(212,175,55,0.12);
+      animation: vinylSpin 4s linear infinite;
+      animation-play-state: paused;
+      will-change: transform;
+      transform-origin: center center;
+      pointer-events: none;
+    }
+    .vinyl-disc.spinning {
+      animation-play-state: running;
+    }
+    .vinyl-svg {
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Groove reflection sweep — gives it the light-catching look */
+    .vinyl-disc::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.04) 15deg,
+        transparent 30deg,
+        transparent 100deg,
+        rgba(255,255,255,0.06) 115deg,
+        transparent 130deg,
+        transparent 220deg,
+        rgba(255,255,255,0.03) 235deg,
+        transparent 250deg,
+        transparent 360deg
+      );
+      pointer-events: none;
+    }
+
+    /* Label text — centred, doesn't spin with disc */
+    .vinyl-label-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 2;
+      line-height: 1.3;
+    }
+    .vinyl-label-text .vl-brand {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.55rem, 0.9vw, 0.78rem);
+      font-weight: 700;
+      color: #d4af37;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .vinyl-label-text .vl-sub {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.42rem, 0.65vw, 0.58rem);
+      font-style: italic;
+      color: rgba(240,215,122,0.7);
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
+    @keyframes vinylSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .vinyl-disc.scratching {
+      animation: vinylScratch 0.2s ease-in-out forwards;
+    }
+    @keyframes vinylScratch {
+      0%   { transform: rotate(var(--sa, 0deg)); }
+      25%  { transform: rotate(calc(var(--sa, 0deg) - 25deg)); }
+      60%  { transform: rotate(calc(var(--sa, 0deg) + 16deg)); }
+      80%  { transform: rotate(calc(var(--sa, 0deg) - 9deg)); }
+      100% { transform: rotate(var(--sa, 0deg)); }
+    }
+
+    /* "Click here" hint */
+    .vinyl-hint {
+      position: absolute;
+      top: 50%;
+      right: 8%;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.75rem, 1vw, 0.9rem);
+      font-style: italic;
+      color: rgba(212,175,55,0.8);
+      letter-spacing: 6px;
+      pointer-events: none;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      z-index: 4;
+      text-shadow: 0 0 16px rgba(212,175,55,0.5);
+      animation: hintPulse 2.6s ease-in-out infinite;
+    }
+    @keyframes hintPulse {
+      0%,100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+      50%      { opacity: 1;   transform: translateY(-50%) translateX(4px); }
+    }
+    .vinyl-hint.hidden { opacity: 0 !important; animation: none; transition: opacity 0.5s; }
+
+    /* Tonearm */
+    .tonearm-wrap {
+      position: absolute;
+      top: 3%; right: 8%;
+      width: 90px; height: 160px;
+      z-index: 5;
+      transform-origin: 72px 18px;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+    }
+    .tonearm-wrap.on-record { transform: rotate(-24deg); }
+
+    /* Now playing pill */
+    .vinyl-now-playing {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(10,8,5,0.92);
+      border: 1px solid rgba(212,175,55,0.35);
+      color: var(--gold-light);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 7px 20px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s, transform 0.35s;
+      z-index: 6;
+    }
+    .vinyl-now-playing.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Podium */
+    .stage-podium {
+      position: relative;
+      width: 420px;
+      display: flex; flex-direction: column; align-items: center;
+      z-index: 5;
+    }
+    .podium-top {
+      width: 80%; height: 28px;
+      background: linear-gradient(180deg, #3d2c0f 0%, #1a1208 100%);
+      border-top: 2px solid var(--gold);
+      border-radius: 50% 50% 4px 4px / 30% 30% 4px 4px;
+      box-shadow: inset 0 4px 8px rgba(212,175,55,.2);
+      position: relative;
+    }
+    .podium-top::before {
+      content: ''; position: absolute; left: 5%; right: 5%; top: 50%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .podium-plaque {
+      background: linear-gradient(180deg, #2a1d0a 0%, #15100a 100%);
+      border: 1px solid var(--gold); color: var(--gold);
+      font-size: 10px; letter-spacing: 4px; font-weight: 600;
+      padding: 5px 24px; margin-top: -2px; z-index: 2; position: relative;
+      box-shadow: 0 0 16px rgba(212,175,55,.4);
+    }
+    .podium-base {
+      width: 100%; height: 18px;
+      background: linear-gradient(180deg, #2a1d0a 0%, #0a0604 100%);
+      border-top: 1px solid var(--gold-dark); margin-top: -2px; border-radius: 4px;
+    }
+    .podium-lights {
+      display: flex; justify-content: space-around;
+      width: 90%; margin-top: -8px; z-index: 3; position: relative;
+    }
+    .podium-lights span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: radial-gradient(circle, #fff8dc, var(--gold));
+      box-shadow: 0 0 10px var(--gold), 0 0 20px rgba(212,175,55,.4);
+      animation: lightFlicker 2s ease-in-out infinite;
+    }
+    .podium-lights span:nth-child(2){animation-delay:.2s}
+    .podium-lights span:nth-child(3){animation-delay:.4s}
+    .podium-lights span:nth-child(4){animation-delay:.6s}
+    .podium-lights span:nth-child(5){animation-delay:.8s}
+    .podium-lights span:nth-child(6){animation-delay:1s}
+    .podium-lights span:nth-child(7){animation-delay:1.2s}
+    .podium-lights span:nth-child(8){animation-delay:1.4s}
+    .podium-lights span:nth-child(9){animation-delay:1.6s}
+    .podium-lights span:nth-child(10){animation-delay:1.8s}
+    @keyframes lightFlicker{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* Hero text column */
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 6vw, 5.5rem);
+      font-weight: 500; line-height: 1;
+      color: var(--ink); margin-bottom: 28px; letter-spacing: 1px;
+    }
+    .hero-title span { color: #8a5800; font-style: italic; }
+    .hero-subtitle {
+      font-size: 14px; color: rgba(26,20,10,0.72);
+      line-height: 1.7; margin-bottom: 36px; max-width: 340px;
+    }
+    /* ── Scroll-down indicator: animated mouse ── */
+    .scroll-down {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      z-index: 10;
+      cursor: pointer;
+    }
+    .scroll-down-text {
+      font-family: Inter, sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(212,175,55,0.6);
+      animation: scrollFade 2.4s ease-in-out infinite;
+    }
+    /* Mouse shape */
+    .scroll-down-track {
+      width: 26px;
+      height: 42px;
+      border: 2px solid rgba(212,175,55,0.5);
+      border-radius: 13px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(212,175,55,0.15), inset 0 0 8px rgba(212,175,55,0.05);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .scroll-down:hover .scroll-down-track {
+      border-color: rgba(212,175,55,0.9);
+      box-shadow: 0 0 20px rgba(212,175,55,0.35), inset 0 0 10px rgba(212,175,55,0.1);
+    }
+    /* The glowing ball rolling down */
+    .scroll-down-ball {
+      position: absolute;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff8e0, #d4af37);
+      box-shadow: 0 0 8px rgba(212,175,55,0.9), 0 0 16px rgba(212,175,55,0.4);
+      animation: scrollBall 2.4s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+    }
+    @keyframes scrollBall {
+      0%   { top: 5px;  opacity: 1; }
+      60%  { top: 26px; opacity: 1; }
+      85%  { top: 30px; opacity: 0; }
+      100% { top: 5px;  opacity: 0; }
+    }
+    @keyframes scrollFade {
+      0%,100% { opacity: 0.5; }
+      50%      { opacity: 1; }
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #FFE07A, #FFBF2F);
+      border: 1px solid rgba(255,184,38,.70);
+      color: #2A1A00;
+      font-family: Inter, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      border-radius: 14px;
+      box-shadow: 0 18px 50px rgba(255,191,47,0.34);
+      transition: transform 0.2s, filter 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.04); }
+    .btn-primary::before { display: none; }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    /* ─── SECTION HEADINGS ─── */
+    .section-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 80px 48px;
+    }
+    .section-eyebrow {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .section-heading span { color: #8a5800; font-style: italic; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .section-rule::before, .section-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .section-rule-icon {
+      color: var(--gold);
+      font-size: 0.9rem;
+      opacity: 0.6;
+    }
+
+    /* ─── BOOK CARDS GRID ─── */
+    #books-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 1100px) { #books-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 780px) { #books-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+
+    .book-card {
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,184,38,0.30);
+      box-shadow: 0 8px 30px rgba(26,20,10,0.10);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .book-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,184,38,0.60);
+      box-shadow: 0 20px 50px rgba(26,20,10,0.18), 0 0 30px rgba(255,184,38,0.14);
+    }
+
+    /* 3D Book */
+    .book-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 400px;
+      padding: 20px 0 10px;
+      text-decoration: none;
+      background: rgba(255,243,209,0.60);
+    }
+    @keyframes initAnimation {
+      0%   { transform: rotateY(-22deg); }
+      100% { transform: rotateY(0deg); }
+    }
+    .book {
+      width: 200px;
+      height: 300px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      transition: 1s ease;
+      animation: 1s ease 0s 1 initAnimation;
+    }
+    .book-container:hover .book,
+    .book-container:focus .book {
+      transform: rotateY(-22deg);
+    }
+    .book > :first-child {
+      position: absolute;
+      top: 0; left: 0;
+      width: 200px; height: 300px;
+      transform: translateZ(10px);
+      background-color: #ffffff;
+      border-radius: 0 2px 2px 0;
+      box-shadow: 5px 5px 20px #666;
+      object-fit: cover;
+    }
+    .book::before {
+      position: absolute;
+      content: ' ';
+      left: 0; top: 10px;
+      width: 18px; height: 280px;
+      transform: translateX(180px) rotateY(90deg);
+      background: linear-gradient(90deg, #fff 0%, #f9f9f9 5%, #e8e8e8 10%, #f0f0f0 15%, #f9f9f9 20%, #fff 30%, #f9f9f9 40%, #f0f0f0 50%, #f9f9f9 60%, #fff 70%, #f0f0f0 80%, #f9f9f9 90%, #fff 100%);
+    }
+    .book::after {
+      position: absolute;
+      top: 0; left: 0;
+      content: ' ';
+      width: 200px; height: 300px;
+      transform: translateZ(-10px);
+      background-color: #ffffff;
+      border-radius: 0 2px 2px 0;
+      box-shadow: -10px 0 50px 10px #666;
+    }
+
+    /* fallback placeholder inside .book */
+    .book-placeholder {
+      width: 200px; height: 300px;
+      background: linear-gradient(135deg, #1a1208 0%, #2d1f0a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 0 2px 2px 0;
+    }
+    .book-placeholder .ph-sym { font-size: 3rem; color: var(--gold); }
+    .book-placeholder .ph-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--gold-light);
+      text-align: center;
+      padding: 0 12px;
+      line-height: 1.3;
+    }
+
+    .book-info {
+      padding: 16px 18px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .book-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .book-subtitle {
+      font-size: 0.72rem;
+      color: rgba(26,20,10,0.62);
+      line-height: 1.5;
+    }
+    .book-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #8a5800;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+    .book-price small {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: rgba(160,160,160,0.6);
+      margin-left: 4px;
+    }
+
+    /* Free song badge */
+    .free-song-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 3px 8px;
+      margin-top: 4px;
+    }
+
+    .add-to-cart {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(135deg, #FFE07A, #FFBF2F);
+      color: #2A1A00;
+      border: 1px solid rgba(255,184,38,.70);
+      font-family: Inter, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+      margin-top: 12px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(255,191,47,0.25);
+    }
+    .add-to-cart:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+    .add-to-cart.added {
+      background: rgba(100,180,60,0.20);
+      color: #3a6e10;
+      border-color: rgba(100,180,60,0.4);
+      box-shadow: none;
+    }
+    .about-book-btn {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255,255,255,0.66);
+      color: rgba(26,20,10,0.75);
+      border: 1px solid rgba(26,20,10,.16);
+      font-family: Inter, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .about-book-btn:hover {
+      background: rgba(255,255,255,0.90);
+      box-shadow: 0 8px 20px rgba(26,20,10,0.10);
+    }
+
+    /* ── BOOK POPUP — aged parchment ── */
+    .book-popup-overlay {
+      position: fixed; inset: 0;
+      background: rgba(15,8,2,0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .book-popup-overlay.open { opacity: 1; pointer-events: all; }
+
+    .book-popup {
+      /* parchment: bright centre fading to dark burnt edges — matches the photo */
+      background:
+        /* grain/fibre texture via layered noise patterns */
+        repeating-linear-gradient(
+          97deg,
+          transparent 0px, transparent 2px,
+          rgba(180,140,80,0.03) 2px, rgba(180,140,80,0.03) 3px
+        ),
+        repeating-linear-gradient(
+          175deg,
+          transparent 0px, transparent 4px,
+          rgba(160,110,50,0.025) 4px, rgba(160,110,50,0.025) 5px
+        ),
+        repeating-linear-gradient(
+          45deg,
+          transparent 0px, transparent 8px,
+          rgba(200,160,90,0.018) 8px, rgba(200,160,90,0.018) 9px
+        ),
+        /* staff lines */
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0px,
+          transparent 27px,
+          rgba(160,110,50,0.22) 27px,
+          rgba(160,110,50,0.22) 28px,
+          transparent 28px,
+          transparent 30px
+        ),
+        /* vignette — dark burnt edges, bright warm centre like the photo */
+        radial-gradient(
+          ellipse 85% 80% at 50% 45%,
+          #f5e8c8 0%,
+          #edd9a3 25%,
+          #d4b87a 55%,
+          #b8915a 75%,
+          #8a5e32 90%,
+          #5c3518 100%
+        );
+      border: 2px solid rgba(140,90,30,0.7);
+      box-shadow:
+        0 0 0 4px rgba(90,50,10,0.35),
+        0 40px 100px rgba(0,0,0,0.85),
+        inset 0 0 60px rgba(100,60,10,0.15);
+      width: 100%; max-width: 900px;
+      max-height: 92vh;
+      overflow-y: auto;
+      position: relative;
+      transform: scale(0.93) translateY(28px) rotate(-0.25deg);
+      transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+    }
+    .book-popup-overlay.open .book-popup {
+      transform: scale(1) translateY(0) rotate(0deg);
+    }
+
+    /* scrollbar styled to match parchment */
+    .book-popup::-webkit-scrollbar { width: 6px; }
+    .book-popup::-webkit-scrollbar-track { background: rgba(140,90,30,0.15); }
+    .book-popup::-webkit-scrollbar-thumb { background: rgba(140,90,30,0.5); }
+
+    /* red margin line */
+    .book-popup-margin-line {
+      position: absolute;
+      top: 0; left: 58px; bottom: 0;
+      width: 1px;
+      background: rgba(160,40,30,0.3);
+      pointer-events: none; z-index: 1;
+    }
+
+    /* torn-edge top decoration */
+    .book-popup::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg,
+        #5c3518 0%, #8a5e32 8%,
+        #b8915a 15%, #d4b87a 25%,
+        #c8a060 40%, #b8915a 55%,
+        #d4b87a 70%, #8a5e32 85%,
+        #5c3518 100%
+      );
+      z-index: 3;
+    }
+
+    /* corner flourishes */
+    .book-popup::after {
+      content: '✦';
+      position: absolute;
+      top: 12px; right: 16px;
+      color: rgba(120,75,20,0.45);
+      font-size: 0.8rem;
+      z-index: 3; pointer-events: none;
+    }
+
+    /* Header */
+    .book-popup-header {
+      background: linear-gradient(180deg,
+        rgba(140,90,30,0.28) 0%,
+        rgba(140,90,30,0.12) 100%
+      );
+      border-bottom: 1px solid rgba(120,75,20,0.45);
+      padding: 26px 40px 22px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      position: sticky; top: 0; z-index: 2;
+      backdrop-filter: blur(2px);
+    }
+    .book-popup-header-left { display: flex; flex-direction: column; gap: 5px; }
+    .book-popup-eyebrow {
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(100,60,15,0.7);
+    }
+    .book-popup-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      color: #2c1a06;
+      font-size: 2rem; font-weight: 700;
+      letter-spacing: 0.02em; line-height: 1.2;
+      text-shadow: 0 1px 2px rgba(255,240,200,0.6);
+    }
+    .book-popup-close {
+      background: rgba(120,75,20,0.12);
+      border: 1px solid rgba(120,75,20,0.35);
+      color: rgba(80,45,10,0.6);
+      width: 36px; height: 36px;
+      cursor: pointer; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0; margin-top: 4px;
+    }
+    .book-popup-close:hover {
+      background: rgba(120,75,20,0.2);
+      border-color: rgba(120,75,20,0.6);
+      color: #2c1a06;
+    }
+
+    /* Body */
+    .book-popup-body {
+      padding: 32px 44px 40px 72px;
+      position: relative; z-index: 1;
+    }
+
+    /* Images */
+    .book-popup-images {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-bottom: 28px;
+    }
+    .book-popup-img-wrap {
+      aspect-ratio: 3/4;
+      background: rgba(80,50,15,0.2);
+      border: 1px solid rgba(120,75,20,0.4);
+      overflow: hidden; position: relative;
+      box-shadow: 2px 4px 16px rgba(60,30,5,0.35);
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .book-popup-img-wrap:hover {
+      transform: translateY(-3px);
+      box-shadow: 4px 8px 28px rgba(60,30,5,0.45);
+      border-color: rgba(120,75,20,0.7);
+    }
+    .book-popup-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .book-popup-img-wrap:hover img { transform: scale(1.04); }
+    .book-popup-img-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(50,25,5,0.78));
+      color: #e8c87a;
+      font-size: 0.56rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 18px 8px 8px; text-align: center;
+    }
+
+    /* 5-line staff divider */
+    .book-popup-rule {
+      position: relative; margin: 24px 0; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .book-popup-rule::before {
+      content: '';
+      position: absolute; left: 0; right: 0;
+      background: linear-gradient(to bottom,
+        transparent 0px, transparent 2px,
+        rgba(130,85,25,0.3) 2px, rgba(130,85,25,0.3) 3px,
+        transparent 3px, transparent 6px,
+        rgba(130,85,25,0.3) 6px, rgba(130,85,25,0.3) 7px,
+        transparent 7px, transparent 10px,
+        rgba(130,85,25,0.3) 10px, rgba(130,85,25,0.3) 11px,
+        transparent 11px, transparent 14px,
+        rgba(130,85,25,0.3) 14px, rgba(130,85,25,0.3) 15px,
+        transparent 15px, transparent 18px,
+        rgba(130,85,25,0.3) 18px, rgba(130,85,25,0.3) 19px,
+        transparent 19px
+      );
+      height: 22px;
+    }
+    .book-popup-rule span {
+      position: relative; z-index: 1;
+      /* cut the lines behind the clef */
+      background: radial-gradient(ellipse 60% 100% at 50% 50%,
+        #e8d4a0 30%, transparent 100%
+      );
+      padding: 0 16px;
+      color: rgba(100,60,15,0.65);
+      font-size: 1.3rem; line-height: 1;
+    }
+
+    /* Description text — dark ink on parchment */
+    .book-popup-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: #2c1a06;
+      line-height: 1.9;
+    }
+    .book-popup-desc p { margin-bottom: 16px; }
+    .book-popup-desc ul { padding-left: 0; margin-bottom: 16px; list-style: none; }
+    .book-popup-desc ul li {
+      margin-bottom: 5px; padding-left: 22px; position: relative; line-height: 1.9;
+    }
+    .book-popup-desc ul li::before {
+      content: '♩'; position: absolute; left: 0;
+      color: rgba(120,75,20,0.6); font-size: 0.85rem; top: 1px;
+    }
+    .book-popup-desc ol {
+      padding-left: 0; margin-bottom: 16px; list-style: none; counter-reset: ol-c;
+    }
+    .book-popup-desc ol li {
+      margin-bottom: 5px; padding-left: 28px; position: relative;
+      counter-increment: ol-c; line-height: 1.9;
+    }
+    .book-popup-desc ol li::before {
+      content: counter(ol-c) '.'; position: absolute; left: 0;
+      color: rgba(120,75,20,0.7);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 700;
+    }
+    .book-popup-desc strong { color: #5c3010; font-weight: 700; }
+
+    /* Add to cart — dark ink stamp style */
+    .book-popup-add {
+      width: 100%; padding: 15px;
+      margin-top: 28px;
+      background: linear-gradient(90deg, #5c3010 0%, #8a4e18 30%, #a86020 50%, #8a4e18 70%, #5c3010 100%);
+      background-size: 200% 100%;
+      color: #f5e8c0;
+      border: 2px solid rgba(92,48,16,0.6);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem; font-weight: 800;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background-position 0.5s, box-shadow 0.3s;
+      box-shadow: 0 3px 14px rgba(60,25,5,0.3), inset 0 1px 0 rgba(255,220,150,0.15);
+    }
+    .book-popup-add:hover {
+      background-position: 100% 0;
+      box-shadow: 0 6px 24px rgba(60,25,5,0.45), inset 0 1px 0 rgba(255,220,150,0.2);
+    }
+
+    @media (max-width: 640px) {
+      .book-popup-body { padding: 24px 24px 32px 24px; }
+      .book-popup-header { padding: 20px 24px; }
+      .book-popup-header h2 { font-size: 1.5rem; }
+      .book-popup-images { gap: 10px; }
+      .book-popup-margin-line { display: none; }
+    }
+
+    /* ─── COMBO SECTION ─── */
+    #combo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 900px) { #combo-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { #combo-grid { grid-template-columns: 1fr; } }
+
+    .combo-card {
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,184,38,0.28);
+      box-shadow: 0 8px 30px rgba(26,20,10,0.10);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .combo-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(26,20,10,0.18), 0 0 30px rgba(255,184,38,0.12);
+    }
+    .combo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .combo-ribbon {
+      position: absolute;
+      top: 16px; right: -28px;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 40px;
+      transform: rotate(45deg);
+      transform-origin: top right;
+    }
+    .combo-icon-wrap {
+      padding: 36px 28px 16px;
+      text-align: center;
+      font-size: 3.2rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(212,175,55,0.4);
+    }
+    .combo-body {
+      padding: 0 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .combo-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .combo-subtitle {
+      font-size: 0.73rem;
+      color: rgba(26,20,10,0.62);
+      line-height: 1.6;
+    }
+    .combo-price {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #8a5800;
+      padding-top: 6px;
+    }
+    .combo-price small {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: rgba(26,20,10,0.45);
+      margin-left: 4px;
+    }
+    .combo-btn {
+      display: block;
+      margin-top: 14px;
+      padding: 12px;
+      background: linear-gradient(135deg, #FFE07A, #FFBF2F);
+      color: #2A1A00;
+      border: 1px solid rgba(255,184,38,.70);
+      font-family: Inter, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(255,191,47,0.25);
+      transition: filter 0.2s, transform 0.2s;
+    }
+    .combo-btn:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+    .combo-btn.added {
+      background: rgba(100,180,60,0.20);
+      color: #3a6e10;
+      border-color: rgba(100,180,60,0.4);
+      box-shadow: none;
+    }
+
+    /* ─── FEATURES BAR ─── */
+    .features-bar {
+      background: rgba(255,243,209,0.60);
+      border-top: 1px solid rgba(255,184,38,0.30);
+      border-bottom: 1px solid rgba(255,184,38,0.30);
+    }
+    .features-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 48px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+    @media (max-width: 800px) { .features-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+    @media (max-width: 480px) { .features-inner { grid-template-columns: 1fr; } }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .feature-icon {
+      width: 42px; height: 42px;
+      border: 1px solid rgba(255,184,38,0.50);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: #8a5800;
+      font-size: 1rem;
+      flex-shrink: 0;
+      background: rgba(255,184,38,0.12);
+    }
+    .feature-text {}
+    .feature-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .feature-desc {
+      font-size: 0.7rem;
+      color: rgba(26,20,10,0.62);
+      line-height: 1.6;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: rgba(255,243,209,0.80);
+      border-top: 1px solid rgba(255,184,38,0.36);
+      padding: 56px 48px 32px;
+    }
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 700px) { .footer-top { flex-direction: column; } }
+    .footer-brand {}
+    .footer-tagline {
+      font-size: 0.72rem;
+      color: rgba(26,20,10,0.55);
+      margin-top: 10px;
+      letter-spacing: 0.06em;
+      font-style: italic;
+    }
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(26,20,10,0.60);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #8a5800; }
+    .footer-socials {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .footer-socials a {
+      width: 34px; height: 34px;
+      border: 1px solid rgba(26,20,10,0.18);
+      border-radius: 999px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(26,20,10,0.55);
+      font-size: 0.85rem;
+      text-decoration: none;
+      background: rgba(255,255,255,0.60);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .footer-socials a:hover {
+      border-color: rgba(255,184,38,0.70);
+      color: #8a5800;
+      background: rgba(255,255,255,0.90);
+    }
+    .footer-bottom {
+      border-top: 1px solid rgba(26,20,10,0.12);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copy {
+      font-size: 0.68rem;
+      color: rgba(26,20,10,0.40);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── CART DRAWER ─── */
+    .cart-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -460px; bottom: 0;
+      width: min(460px, 100vw);
+      background: #0d0b08;
+      border-left: 1px solid var(--gold-border);
+      z-index: 201;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .cart-drawer.open { right: 0; }
+
+    .cart-header {
+      background: #000;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gold-border);
+      flex-shrink: 0;
+    }
+    .cart-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    #close-cart {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #close-cart:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.2);
+    }
+    .cart-empty .symbol { font-size: 3rem; margin-bottom: 14px; }
+    .cart-empty p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+      align-items: flex-start;
+    }
+    .cart-item-thumb {
+      width: 52px; height: 68px;
+      background: #1a1208;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .cart-item-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .cart-item-thumb .fallback-sym {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+    .cart-item-details { flex: 1; }
+    .cart-item-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .cart-item-price {
+      font-size: 0.82rem;
+      color: var(--gold);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .qty-btn {
+      width: 26px; height: 26px;
+      background: #1a1208;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .qty-btn:hover { background: rgba(212,175,55,0.15); border-color: var(--gold-border); }
+    .qty-num { font-size: 0.88rem; font-weight: 700; min-width: 20px; text-align: center; color: #fff; }
+    .remove-item {
+      color: rgba(212,175,55,0.4);
+      font-size: 0.68rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      transition: color 0.2s;
+    }
+    .remove-item:hover { color: #e07070; }
+
+    .cart-footer {
+      padding: 20px 24px;
+      background: #060504;
+      border-top: 1px solid var(--gold-border);
+      flex-shrink: 0;
+    }
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .cart-total-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cart-total-amt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+    .cart-note {
+      font-size: 0.68rem;
+      color: rgba(160,160,160,0.5);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    #checkout-btn {
+      width: 100%;
+      padding: 15px;
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    #checkout-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    #checkout-btn:hover::before { transform: translateX(0); }
+    #checkout-btn:hover { color: var(--black); }
+    #checkout-btn span { position: relative; z-index: 1; }
+    #checkout-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* ─── CHECKOUT MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #0d0b08;
+      border: 1px solid var(--gold-border);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      background: #000;
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .modal-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold-light);
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    #close-modal {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5);
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #close-modal:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .modal-body { padding: 28px; }
+
+    .order-summary-mini {
+      background: #080604;
+      border: 1px solid var(--border);
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+    .order-summary-mini h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--gold-light);
+      letter-spacing: 0.05em;
+    }
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      padding: 3px 0;
+      color: rgba(255,255,255,0.55);
+    }
+    .summary-total {
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+      padding-top: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 0.9rem;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(160,160,160,0.7);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #080604;
+      border: 1px solid rgba(212,175,55,0.18);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--gold-border); }
+    .form-group select { cursor: pointer; }
+    .form-group select option { background: #0d0b08; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    #pay-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+    #pay-btn:hover {
+      background: var(--gold-light);
+      box-shadow: 0 0 24px rgba(212,175,55,0.35);
+    }
+    #pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* success state */
+    .success-state {
+      text-align: center;
+      padding: 56px 28px;
+      display: none;
+    }
+    .success-state.show { display: block; }
+    .success-icon {
+      font-size: 3rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .success-state h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .success-state p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .order-id-box {
+      background: #080604;
+      border: 1px solid var(--gold-border);
+      padding: 12px 20px;
+      margin: 18px 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .order-id-box strong { color: var(--gold-light); font-family: 'Cormorant Garamond', serif; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0d0b08;
+      border: 1px solid var(--gold-border);
+      color: var(--gold-light);
+      padding: 12px 28px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      z-index: 500;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── CURSOR GLITTER CANVAS ─── */
+    #glitter {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* ─── IMAGE LIGHTBOX ─── */
+    .img-lightbox-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .img-lightbox-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .img-lightbox-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      transform: scale(0.90);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    .img-lightbox-overlay.open .img-lightbox-inner {
+      transform: scale(1);
+    }
+    .img-lightbox-inner img {
+      max-width: 90vw;
+      max-height: 88vh;
+      object-fit: contain;
+      display: block;
+      border: 1px solid rgba(212,175,55,0.3);
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    }
+    .img-lightbox-close {
+      position: absolute;
+      top: -14px; right: -14px;
+      width: 36px; height: 36px;
+      background: rgba(10,8,5,0.95);
+      border: 1px solid rgba(212,175,55,0.4);
+      color: var(--gold-light);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+      z-index: 2;
+    }
+    .img-lightbox-close:hover {
+      background: rgba(212,175,55,0.12);
+      border-color: var(--gold);
+    }
+    .img-lightbox-label {
+      position: absolute;
+      bottom: -32px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(212,175,55,0.7);
+      white-space: nowrap;
+    }
+
+    /* Make popup images look clickable */
+    .book-popup-img-wrap {
+      cursor: zoom-in;
+    }
+
+    /* Make the 3D book cover clickable to open About popup */
+    .book-container {
+      cursor: pointer;
+    }
+
+    /* ══════════════════════════════════════
+       SCROLL REVEAL
+       ══════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition:
+        opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.reveal-left  { transform: translateX(-44px); }
+    .reveal.reveal-right { transform: translateX(44px); }
+    .reveal.reveal-scale { transform: scale(0.86) translateY(20px); }
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0) translateX(0) scale(1);
+    }
+    /* Stagger delays for card grids */
+    .reveal.delay-1 { transition-delay: 0.06s; }
+    .reveal.delay-2 { transition-delay: 0.12s; }
+    .reveal.delay-3 { transition-delay: 0.18s; }
+    .reveal.delay-4 { transition-delay: 0.24s; }
+    .reveal.delay-5 { transition-delay: 0.30s; }
+    .reveal.delay-6 { transition-delay: 0.36s; }
+    .reveal.delay-7 { transition-delay: 0.42s; }
+    .reveal.delay-8 { transition-delay: 0.48s; }
+    .reveal.delay-9 { transition-delay: 0.54s; }
+    /* Rule line grows in from left */
+    .reveal-rule {
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: opacity 0.5s ease 0.2s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.2s;
+    }
+    .reveal-rule.in-view { opacity: 1; transform: scaleX(1); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-rule { transition: none !important; opacity: 1 !important; transform: none !important; }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; padding: 0 24px; }
+      .hero-text { margin: 0 auto; }
+      .hero-eyebrow { justify-content: center; }
+      .hero-subtitle { margin-left: auto; margin-right: auto; }
+      .hero-stage { margin: 40px auto 0; }
+    }
+    @media (max-width: 768px) {
+      header { padding: 0 12px; }
+      .section-wrap { padding: 60px 20px; }
+      .features-inner { padding: 32px 20px; }
+      footer { padding: 40px 20px 24px; }
+      .hero-stage { height: 420px; }
+      .hero-book-wrap { width: clamp(160px, 50vw, 260px); }
+      .stage-podium { width: 260px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      #books-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .book { width: 140px; height: 210px; }
+      .book > :first-child { width: 140px; height: 210px; }
+      .book::before { width: 14px; height: 196px; transform: translateX(124px) rotateY(90deg); }
+      .book::after { width: 140px; height: 210px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── GLITTER CANVAS ── -->
+<canvas id="glitter" aria-hidden="true"></canvas>
+
+<!-- ── IMAGE LIGHTBOX ── -->
+<div class="img-lightbox-overlay" id="imgLightboxOverlay">
+  <div class="img-lightbox-inner" id="imgLightboxInner">
+    <button class="img-lightbox-close" id="imgLightboxClose"><i class="fa-solid fa-xmark"></i></button>
+    <img id="imgLightboxImg" src="" alt="" />
+    <span class="img-lightbox-label" id="imgLightboxLabel"></span>
+  </div>
+</div>
+
+
+<header>
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-text">
+        <span class="brand-name">Ria Om Shandilya™</span>
+        <span class="brand-tag">a virtual music manuscript ✦</span>
+      </div>
+    </a>
+
+    <div class="topbar-right">
+      <nav aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="index.html#books">Books</a>
+        <a href="orders.html">Track Order</a>
+        <a href="connect.html">Contact</a>
+      </nav>
+
+      <button id="cart-btn">
+        <i class="fa-solid fa-bag-shopping"></i>
+        Cart
+        <span id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="beams">
+    <div class="beam"></div>
+    <div class="beam"></div>
+    <div class="beam"></div>
+    <div class="beam"></div>
+    <div class="beam"></div>
+  </div>
+
+  <div class="hero-grid">
+    <!-- Left: text -->
+    <div class="hero-text">
+      <p class="hero-eyebrow"><span class="dash"></span> NOW PERFORMING <span class="dash"></span></p>
+      <h1 class="hero-title">Piano Sheet<br/><span>Music Books</span></h1>
+      <p class="hero-subtitle">Bollywood melodies, music journals &amp; more — handcrafted &amp; delivered to your door</p>
+      <a href="#" class="btn-primary" id="heroAboutBtn" onclick="openBookPopup(ALL_ITEMS ? ALL_ITEMS[heroCarouselCurrent()] : BOOKS[0]); return false;"><span>About the Book &nbsp;<i class="fa-solid fa-book-open"></i></span></a>
+    </div>
+
+    <!-- Right: book on podium -->
+    <div class="hero-stage">
+      <div class="spotlight"></div>
+
+      <!-- VINYL RECORD -->
+      <div class="vinyl-wrap" id="vinylWrap">
+        <span class="vinyl-hint" id="vinylHint">CLICK&nbsp;&nbsp;HERE</span>
+        <div class="vinyl vinyl-disc" id="vinylDisc">
+          <svg class="vinyl-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Base black vinyl radial -->
+              <radialGradient id="vg-base" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stop-color="#2a2420"/>
+                <stop offset="18%"  stop-color="#1a1410"/>
+                <stop offset="35%"  stop-color="#0f0d0a"/>
+                <stop offset="60%"  stop-color="#121010"/>
+                <stop offset="80%"  stop-color="#0a0806"/>
+                <stop offset="100%" stop-color="#050403"/>
+              </radialGradient>
+              <!-- Groove shimmer -->
+              <radialGradient id="vg-shimmer" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stop-color="rgba(212,175,55,0)"  />
+                <stop offset="40%"  stop-color="rgba(212,175,55,0)"  />
+                <stop offset="55%"  stop-color="rgba(212,175,55,0.04)"/>
+                <stop offset="70%"  stop-color="rgba(212,175,55,0.02)"/>
+                <stop offset="85%"  stop-color="rgba(212,175,55,0.06)"/>
+                <stop offset="100%" stop-color="rgba(212,175,55,0)"  />
+              </radialGradient>
+              <!-- Label centre gradient -->
+              <radialGradient id="vg-label" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stop-color="#2d1f08"/>
+                <stop offset="50%"  stop-color="#1a1208"/>
+                <stop offset="100%" stop-color="#0f0c06"/>
+              </radialGradient>
+              <filter id="groove-blur">
+                <feGaussianBlur stdDeviation="0.3"/>
+              </filter>
+            </defs>
+
+            <!-- Outer edge -->
+            <circle cx="250" cy="250" r="248" fill="url(#vg-base)" />
+
+            <!-- Groove rings — many concentric circles -->
+            <g opacity="0.55" filter="url(#groove-blur)">
+              <circle cx="250" cy="250" r="240" fill="none" stroke="#1e1a15" stroke-width="1.2"/>
+              <circle cx="250" cy="250" r="232" fill="none" stroke="#2a2420" stroke-width="0.8"/>
+              <circle cx="250" cy="250" r="224" fill="none" stroke="#1e1a15" stroke-width="1.1"/>
+              <circle cx="250" cy="250" r="216" fill="none" stroke="#2a2420" stroke-width="0.7"/>
+              <circle cx="250" cy="250" r="208" fill="none" stroke="#1e1a15" stroke-width="1.2"/>
+              <circle cx="250" cy="250" r="200" fill="none" stroke="#2a2420" stroke-width="0.8"/>
+              <circle cx="250" cy="250" r="192" fill="none" stroke="#1e1a15" stroke-width="1.0"/>
+              <circle cx="250" cy="250" r="184" fill="none" stroke="#2a2420" stroke-width="0.7"/>
+              <circle cx="250" cy="250" r="176" fill="none" stroke="#1e1a15" stroke-width="1.1"/>
+              <circle cx="250" cy="250" r="168" fill="none" stroke="#2a2420" stroke-width="0.8"/>
+              <circle cx="250" cy="250" r="160" fill="none" stroke="#1e1a15" stroke-width="1.0"/>
+              <circle cx="250" cy="250" r="152" fill="none" stroke="#2a2420" stroke-width="0.7"/>
+              <circle cx="250" cy="250" r="144" fill="none" stroke="#1e1a15" stroke-width="1.2"/>
+              <circle cx="250" cy="250" r="136" fill="none" stroke="#2a2420" stroke-width="0.9"/>
+              <circle cx="250" cy="250" r="128" fill="none" stroke="#1e1a15" stroke-width="1.0"/>
+              <circle cx="250" cy="250" r="120" fill="none" stroke="#2a2420" stroke-width="0.8"/>
+              <circle cx="250" cy="250" r="112" fill="none" stroke="#1e1a15" stroke-width="1.1"/>
+              <circle cx="250" cy="250" r="104" fill="none" stroke="#2a2420" stroke-width="0.7"/>
+            </g>
+
+            <!-- Gold shimmer overlay -->
+            <circle cx="250" cy="250" r="248" fill="url(#vg-shimmer)" opacity="0.7"/>
+
+            <!-- Outer edge bevel -->
+            <circle cx="250" cy="250" r="246" fill="none" stroke="rgba(212,175,55,0.18)" stroke-width="2"/>
+            <circle cx="250" cy="250" r="242" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+            <!-- Label area -->
+            <circle cx="250" cy="250" r="92" fill="url(#vg-label)"/>
+            <circle cx="250" cy="250" r="90" fill="none" stroke="rgba(212,175,55,0.5)" stroke-width="1.5"/>
+            <circle cx="250" cy="250" r="86" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="0.8"/>
+
+            <!-- Label text -->
+            <text x="250" y="232" text-anchor="middle" font-family="Cormorant Garamond, serif"
+                  font-size="13" font-weight="700" fill="#d4af37" letter-spacing="4">RIA OM</text>
+            <text x="250" y="248" text-anchor="middle" font-family="Cormorant Garamond, serif"
+                  font-size="10" font-style="italic" fill="#f0d77a" letter-spacing="2">SHANDILYA</text>
+            <line x1="210" y1="255" x2="290" y2="255" stroke="rgba(212,175,55,0.4)" stroke-width="0.8"/>
+            <text x="250" y="268" text-anchor="middle" font-family="Montserrat, sans-serif"
+                  font-size="7" font-weight="600" fill="rgba(212,175,55,0.6)" letter-spacing="3">MUSIC FOR SOUL</text>
+
+            <!-- Spindle hole -->
+            <circle cx="250" cy="250" r="10" fill="#060504"/>
+            <circle cx="250" cy="250" r="9"  fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>
+            <circle cx="250" cy="250" r="4"  fill="#0a0806"/>
+          </svg>
+        </div>
+
+        <!-- Tonearm SVG -->
+        <div class="tonearm-wrap" id="tonearm">
+          <svg width="90" height="160" viewBox="0 0 90 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Pivot -->
+            <circle cx="72" cy="18" r="10" fill="#2a1d08" stroke="#d4af37" stroke-width="1.5"/>
+            <circle cx="72" cy="18" r="4"  fill="#d4af37"/>
+            <!-- Arm -->
+            <path d="M72 28 Q60 80 30 148" stroke="url(#arm-grad)" stroke-width="5" stroke-linecap="round"/>
+            <!-- Headshell -->
+            <path d="M24 142 L36 154 L18 158 Z" fill="#d4af37" opacity="0.8"/>
+            <defs>
+              <linearGradient id="arm-grad" x1="72" y1="28" x2="30" y2="148" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#a87f1d"/>
+                <stop offset="50%"  stop-color="#d4af37"/>
+                <stop offset="100%" stop-color="#8b6510"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Now playing pill -->
+        <div class="vinyl-now-playing" id="vinylNowPlaying">♪ Now Playing</div>
+      </div>
+      <!-- /VINYL RECORD -->
+      <div class="hero-book-wrap" id="heroPedestal">
+        <img id="heroProductImg" src="soulful.jpg" alt="Soulful Bollywood Melodies" />
+      </div>
+      <div class="stage-podium">
+        <div class="podium-top"></div>
+        <div class="podium-plaque">NOW PERFORMING</div>
+        <div class="podium-base"></div>
+        <div class="podium-lights">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <!-- Prev/Next flanking the vinyl -->
+      <div class="hero-nav">
+        <button class="hero-nav-btn" id="prevAct" aria-label="Previous book">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="hero-nav-btn" id="nextAct" aria-label="Next book">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dots -->
+  <div class="hero-dots" id="heroDots"></div>
+
+  <!-- Scroll indicator -->
+  <a href="#books" class="scroll-down" aria-label="Scroll to books">
+    <span class="scroll-down-text">SCROLL DOWN</span>
+    <span class="scroll-down-track">
+      <span class="scroll-down-ball"></span>
+    </span>
+  </a>
+</section>
+
+<!-- ── BOOKS SECTION ── -->
+<section id="books" class="section-wrap">
+  <div class="section-eyebrow reveal reveal-left">The Collection</div>
+  <h2 class="section-heading reveal">Choose Your <span>Books</span></h2>
+  <div class="section-rule reveal-rule"><span class="section-rule-icon">♩</span></div>
+  <div id="books-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── COMBOS SECTION ── -->
+<section id="combos" class="section-wrap" style="padding-top:0;">
+  <div class="section-eyebrow reveal reveal-left">Bundle &amp; Save</div>
+  <h2 class="section-heading reveal">Combo <span>Sets</span></h2>
+  <div class="section-rule reveal-rule"><span class="section-rule-icon">♫</span></div>
+  <div id="combo-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── FEATURES BAR ── -->
+<div class="features-bar">
+  <div class="features-inner">
+    <div class="feature-item reveal reveal-scale delay-1">
+      <div class="feature-icon"><i class="fa-solid fa-music"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">For Every Musician</div>
+        <div class="feature-desc">Beginner to advanced — a score for every skill level</div>
+      </div>
+    </div>
+    <div class="feature-item reveal reveal-scale delay-2">
+      <div class="feature-icon"><i class="fa-solid fa-medal"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">Premium Quality</div>
+        <div class="feature-desc">Beautifully printed on high-quality paper</div>
+      </div>
+    </div>
+    <div class="feature-item reveal reveal-scale delay-3">
+      <div class="feature-icon"><i class="fa-solid fa-truck-fast"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">Fast Delivery</div>
+        <div class="feature-desc">Swift shipping across India — free on all orders</div>
+      </div>
+    </div>
+    <div class="feature-item reveal reveal-scale delay-4">
+      <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">Support</div>
+        <div class="feature-desc">Questions? We're always here to help you</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" style="text-decoration:none;">
+          <img class="brand-logo" src="favicon_io.png" alt="Ria Om Shandilya" />
+          <div class="brand-text">
+            <span class="brand-name" style="font-size:18px;">Ria Om Shandilya™</span>
+          </div>
+        </a>
+        <p class="footer-tagline">Bringing music to every home.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;align-items:flex-end;">
+        <div class="footer-links">
+          <a href="about.html">About Us</a>
+          <a href="faqs.html">FAQs</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/riaomshandilya/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.youtube.com/riashandilya" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://linktr.ee/riashandilya" target="_blank" rel="noopener" aria-label="Linktree"><i class="fa-solid fa-tree"></i></a>
+          <a href="https://www.amazon.com/stores/Ria-Om-Shandilya/author/B09QN8NFFD" target="_blank" rel="noopener" aria-label="Amazon Store"><i class="fa-brands fa-amazon"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© <span id="footerYear"></span> Ria Om Shandilya™. All rights reserved.</span>
+      <span class="footer-copy" style="color:rgba(212,175,55,0.3);">♩ Music For Soul</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── CART OVERLAY + DRAWER ── -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h2><i class="fa-solid fa-bag-shopping" style="margin-right:10px;font-size:1rem;"></i>Your Cart</h2>
+    <button id="close-cart"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">
+      <div class="symbol">♪</div>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amt" id="cart-total">₹0</span>
+    </div>
+    <p class="cart-note">Free shipping on all orders 🎉 &nbsp;·&nbsp; 🎵 Free song on riaaz.app with every purchase</p>
+    <button id="checkout-btn" disabled><span>Proceed to Checkout</span></button>
+  </div>
+</div>
+
+<!-- ── CHECKOUT MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Delivery Details</h2>
+      <button id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div id="checkout-form-wrapper">
+      <div class="modal-body">
+        <div class="order-summary-mini">
+          <h3>Order Summary</h3>
+          <div id="summary-lines"></div>
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="f-name" placeholder="Your full name" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="f-email" placeholder="you@email.com" />
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" id="f-phone" placeholder="10-digit mobile" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Address Line 1 *</label>
+          <input type="text" id="f-addr1" placeholder="House / Flat / Building" />
+        </div>
+        <div class="form-group">
+          <label>Address Line 2</label>
+          <input type="text" id="f-addr2" placeholder="Street / Area / Locality" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="f-city" placeholder="City" />
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" id="f-state" placeholder="State" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>PIN Code *</label>
+            <input type="text" id="f-pin" placeholder="110001" />
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <select id="f-country">
+              <option value="India" selected>India</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="pay-btn"><i class="fa-solid fa-lock" style="margin-right:8px;"></i>Pay with Razorpay</button>
+      </div>
+    </div>
+
+    <div class="success-state" id="success-state">
+      <div class="success-icon">✦</div>
+      <h2>Order Placed!</h2>
+      <p>Thank you for your purchase.<br>We'll dispatch your books soon.</p>
+      <div class="order-id-box">Order ID: <strong id="success-order-id">—</strong></div>
+      <p>A confirmation has been sent to your email.<br>
+        Track your order at <a href="orders.html" style="color:var(--gold)">orders page</a>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── BOOK POPUP ── -->
+<div class="book-popup-overlay" id="bookPopupOverlay">
+  <div class="book-popup" id="bookPopup">
+    <div class="book-popup-margin-line"></div>
+    <div class="book-popup-header">
+      <div class="book-popup-header-left">
+        <span class="book-popup-eyebrow">✦ &nbsp; About the Book &nbsp; ✦</span>
+        <h2 id="bookPopupTitle">Soulful Bollywood Melodies</h2>
+      </div>
+      <button class="book-popup-close" id="bookPopupClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="book-popup-body">
+      <div class="book-popup-images" id="bookPopupImages"></div>
+      <div class="book-popup-rule"><span>𝄞</span></div>
+      <div class="book-popup-desc" id="bookPopupDesc"></div>
+      <button class="book-popup-add" id="bookPopupAdd"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ════════════════════════════════════
+  //  CONFIG
+  // ════════════════════════════════════
+  const RAZORPAY_KEY_ID = 'rzp_test_SyTPwvTDWJZkqT';
+  const SHIPPING_FEE = 0;
+  const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
+  const SEND_EMAIL_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/send-order-email';
+
+  // ════════════════════════════════════
+  //  CATALOG
+  // ════════════════════════════════════
+  const BOOKS = [
+    { id: 'soulful-bollywood',  title: 'Soulful Bollywood Melodies',           subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',                        price: 499, symbol: '♩',  cover: 'soulful.jpg',   audio: 'soulful.mp3'   },
+    { id: 'peppy-bollywood',    title: 'Peppy Bollywood Melodies',             subtitle: 'Señorita, Naina Da Kya Kasoor, and more lively tunes',                            price: 499, symbol: '♪',  cover: 'peppy.jpg',     audio: 'peppy.mp3'     },
+    { id: 'romantic-bollywood', title: 'Romantic Bollywood Melodies',          subtitle: 'Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, and more',                        price: 499, symbol: '♫',  cover: 'romantic.jpg',  audio: 'romantic.mp3'  },
+    { id: 'classic-bollywood',  title: 'Classic Bollywood Melodies',           subtitle: 'Ek Ladki Bheegi Bhaagi Si, Kal Ho Na Ho, and timeless classics',                 price: 499, symbol: '𝄞', cover: 'classic.png',   audio: 'classic.mp3'   },
+    { id: 'meet-notes-beginner',title: "Meet The Notes: Beginner's Guide",     subtitle: 'Beginner-friendly piano foundations',                                             price: 399, symbol: '𝄢', cover: 'kids.png'      },
+    { id: 'meet-notes-theory',  title: 'Meet The Notes: Theory Edition',       subtitle: 'Theory + activities + worksheets',                                                price: 399, symbol: '𝄡', cover: 'kids2.png'     },
+    { id: 'wyom-100',           title: 'Write Your Own Melodies (100 pages)',  subtitle: 'Blank 12-stave music journal — 100 pages / 50 sheets',                           price: 299, symbol: '✦',  cover: 'wyom.png'      },
+    { id: 'wyom-72',            title: 'Write Your Own Melodies (72 pages)',   subtitle: 'Blank 12-stave music journal — 72 pages / 36 sheets',                            price: 249, symbol: '✧',  cover: 'wyom2.png'     },
+    { id: 'track-your-journey', title: 'Track Your Journey',                   subtitle: 'Music log book for all instruments',                                              price: 299, symbol: '♬',  cover: 'logbook.png'   },
+  ];
+
+  const COMBOS = [
+    { id: 'combo-classic-romantic',       title: 'Classic & Romantic Bollywood Melodies',                    subtitle: '2 books · 8 songs · Classic Bollywood Melodies + Romantic Bollywood Melodies',         price: 1200, icon: '♩♪' },
+    { id: 'combo-classic-romantic-peppy', title: 'Classic, Romantic & Peppy Bollywood Melodies',             subtitle: '3 books · 16 songs · Classic + Romantic + Peppy Bollywood Melodies',                   price: 1700, icon: '♫𝄞' },
+    { id: 'combo-all-four',               title: 'Classic, Romantic, Peppy & Soulful Bollywood Melodies',    subtitle: '4 books · 32 songs · The complete Bollywood Melodies collection',                       price: 2200, icon: '♥♫' },
+  ];
+
+  // ════════════════════════════════════
+  //  SUPABASE
+  // ════════════════════════════════════
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ════════════════════════════════════
+  //  CART STATE
+  // ════════════════════════════════════
+  let cart = {};
+
+  function cartTotal() {
+    return Object.values(cart).reduce((s, item) => s + item.price * item.qty, 0);
+  }
+  function cartCount() {
+    return Object.values(cart).reduce((s, item) => s + item.qty, 0);
+  }
+
+  // ════════════════════════════════════
+  //  BOOK DETAILS (popup content)
+  // ════════════════════════════════════
+  const BOOK_DETAILS = {
+    'soulful-bollywood': {
+      images: [
+        { src: '/book-images/index-soulful.jpg',   label: 'Index' },
+        { src: '/book-images/song-soulful.jpg',    label: 'A Song' },
+        { src: '/book-images/back-soulful.jpg',    label: 'Back Page' },
+      ],
+      html: `
+        <p>This piano sheet music collection brings together a curated selection of timeless and contemporary Bollywood songs, thoughtfully arranged for solo piano. Designed for pianists who enjoy expressive, lyrical playing, the book presents authentic adaptations that retain the emotional essence of the original compositions while remaining pianistically natural and enjoyable to perform.</p>
+        <p><strong>Included songs:</strong></p>
+        <ul>
+          <li>Srivalli</li><li>Ae Hairate</li><li>Jashn-e-Baharaa</li><li>Allah Ke Bande</li>
+          <li>Teri Deewani</li><li>Moh Moh Ke Dhaage</li><li>Kalank</li><li>Itna Na Mujhse Tu Pyaar Badha</li>
+        </ul>
+        <p>Each piece is notated with clarity and musical detail, making this collection suitable for learners as well as experienced players. The arrangements include clearly marked finger numbers, dynamic markings, pedal indications, and lyrics placed thoughtfully under the melody to support musical phrasing and expression. Chord voicings, melodic lines, and rhythmic patterns are crafted to sit comfortably under the hands while allowing the pianist to explore tone, balance, and emotional nuance.</p>
+        <p>Ideal for practice, performance, or personal enjoyment, this book is a refined addition to any pianist's Bollywood repertoire, offering expressive sheet music that balances musical depth with playability.</p>
+      `
+    },
+    'peppy-bollywood': {
+      images: [
+        { src: '/book-images/index-peppy.jpg',  label: 'Index' },
+        { src: '/book-images/song-peppy.jpg',   label: 'A Song' },
+        { src: '/book-images/back-peppy.jpg',   label: 'Back Page' },
+      ],
+      html: `
+        <p>Step into the world of Bollywood with <strong>Peppy Bollywood Melodies</strong>, a piano sheet music book designed for beginners to intermediate players. This is the fourth book by Ria Om Shandilya, and the third in the popular Bollywood Melodies series, offering a carefully crafted collection of 8 upbeat Bollywood classics.</p>
+        <p><strong>🎹 8 Fun and Energetic Songs:</strong></p>
+        <ol>
+          <li><strong>Kaisi Paheli Zindagani</strong> – A smooth, jazzy classic with timeless charm.</li>
+          <li><strong>Darling (7 Khoon Maaf)</strong> – A quirky melody that's playful yet haunting.</li>
+          <li><strong>Jaane Kahan Mera Jigar Gaya Ji</strong> – A lively, golden-era tune to brighten any day.</li>
+          <li><strong>Senorita</strong> – A vibrant mix of Bollywood and Spanish flair.</li>
+          <li><strong>Zoobie Doobie</strong> – A bubbly and romantic favorite for all ages.</li>
+          <li><strong>Gore Gore O Banke Chhore</strong> – A fun, peppy melody from Bollywood's retro years.</li>
+          <li><strong>Naina Da Kya Kasoor</strong> – A soulful yet lighthearted track with modern appeal.</li>
+          <li><strong>Slow Motion Angreza</strong> – A playful, offbeat tune with a retro-modern twist.</li>
+        </ol>
+        <p><strong>🎼 Designed for Easy Learning:</strong></p>
+        <ul>
+          <li>Chord Names: Clear and simple for harmony reference.</li>
+          <li>Tempo Marks: Adjust your playing to match the original mood.</li>
+          <li>Phrases and Dynamics: Add expression effortlessly.</li>
+          <li>Lyrics Included: Sing along or enjoy the storytelling element.</li>
+        </ul>
+        <p>✨ <strong>Perfect for Beginner to Intermediate Pianists</strong> — no advanced techniques or overwhelming notations. This book is tailored to help you learn and play Bollywood hits confidently while enjoying the process.</p>
+        <p>With years of experience bringing Bollywood music to piano enthusiasts, Ria continues her mission to make Indian cinema's timeless melodies accessible to learners of all skill levels. Following the success of Classic and Romantic Bollywood Melodies, this third installment highlights the playful, energetic spirit of Bollywood.</p>
+      `
+    },
+    'romantic-bollywood': {
+      images: [
+        { src: '/book-images/index-romantic.jpg', label: 'Index' },
+        { src: '/book-images/song-romantic.jpg',  label: 'A Song' },
+        { src: '/book-images/back-romantic.jpg',  label: 'Back Page' },
+      ],
+      html: `
+        <p>Discover the magic of Bollywood's most beloved romantic melodies with <strong>Romantic Bollywood Melodies</strong>, a delightful collection of piano sheet music that brings to life the timeless classics that have captured hearts for generations. This book is your gateway to the soul-stirring world of Hindi cinema's most cherished love songs.</p>
+        <p><strong>8 Unforgettable Bollywood Classics:</strong></p>
+        <ol>
+          <li>Aaj Kal Tere Mere Pyaar Ke Charche</li>
+          <li>Bade Acche Lagte Hain</li>
+          <li>Piyu Bole</li>
+          <li>Main Agar Kahun</li>
+          <li>Mere Saamne Wali Khidki Mein</li>
+          <li>Raat Kali Ek Khwab Mein Aayi</li>
+          <li>Pal Pal Har Pal</li>
+          <li>Khwab Ho Tum Ya Koi Haqeeqat</li>
+        </ol>
+        <p><strong>Features:</strong></p>
+        <ul>
+          <li>Western Sheet Notations: Familiar notation style for ease of play.</li>
+          <li>Lyrics and Chord Symbols: For vocal accompaniment or ensemble performance.</li>
+          <li>Detailed Notation: Phrases, pedaling instructions, dynamics and ornaments.</li>
+          <li>Suitable for Grade 2 and Above: Accessible for a broad range of skill levels.</li>
+        </ul>
+        <p>Capture the timeless romance of Bollywood melodies on your piano. Order your copy and let the music transport you to the heart of Bollywood's love stories.</p>
+      `
+    },
+    'classic-bollywood': {
+      images: [
+        { src: '/book-images/index-classic.jpg', label: 'Index' },
+        { src: '/book-images/song-classic.jpg',  label: 'A Song' },
+        { src: '/book-images/back-classic.jpg',  label: 'Back Page' },
+      ],
+      html: `
+        <p>This book contains <strong>8 timeless Bollywood classics</strong>, complete with a Repertoire, Reference Chart and Music Index.</p>
+        <p><strong>Songs included:</strong></p>
+        <ol>
+          <li>Ek Ladki Bheegi Bhaagi Si</li>
+          <li>Gulaabi Aankhen</li>
+          <li>Chookar Mere Mann Ko</li>
+          <li>Hai Apna Dil Toh Awaara</li>
+          <li>Kal Ho Na Ho</li>
+          <li>Ajeeb Dastaan Hai Yeh</li>
+          <li>Aaoge Jab Tum Saajna</li>
+          <li>Maula Mere Le Le Meri Jaan</li>
+        </ol>
+        <p>The quality of the book is top-notch and would look even fancier sitting in your music library! Please note that the book is best suited for <strong>Grade 3–8</strong>.</p>
+      `
+    },
+  };
+
+  // ════════════════════════════════════
+  //  RENDER BOOKS
+  // ════════════════════════════════════
+  function renderBooks() {
+    const grid = document.getElementById('books-grid');
+    grid.innerHTML = BOOKS.map((book, idx) => `
+      <div class="book-card reveal delay-${Math.min(idx + 1, 9)}" data-id="${book.id}">
+        <a class="book-container" href="" tabindex="0"
+           aria-label="About ${book.title}"
+           onclick="if(BOOK_DETAILS['${book.id}']){openBookPopup(BOOKS.find(b=>b.id==='${book.id}')); return false;} return false;">
+          <div class="book">
+            <img
+              src="${book.cover}"
+              alt="${book.title}"
+              onerror="this.outerHTML='<div class=\\'book-placeholder\\'><div class=\\'ph-sym\\'>${book.symbol}</div><div class=\\'ph-title\\'>${book.title}</div></div>'"
+            />
+          </div>
+        </a>
+        <div class="book-info">
+          <div class="book-title">${book.title}</div>
+          <div class="book-subtitle">${book.subtitle}</div>
+          <div class="book-price">₹${book.price} <small>free shipping</small></div>
+          <div class="free-song-badge">🎵 Free song on riaaz.app</div>
+          <button class="add-to-cart" onclick="addToCart('${book.id}')">
+            <i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart
+          </button>
+          ${BOOK_DETAILS[book.id] ? `<button class="about-book-btn" data-about="${book.id}"><i class="fa-solid fa-book-open" style="font-size:0.62rem;"></i>About the Book</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderCombos() {
+    const grid = document.getElementById('combo-grid');
+    grid.innerHTML = COMBOS.map((combo, idx) => `
+      <div class="combo-card reveal delay-${Math.min(idx + 1, 9)}" data-id="${combo.id}">
+        <div class="combo-ribbon">Combo</div>
+        <div class="combo-icon-wrap">${combo.icon}</div>
+        <div class="combo-body">
+          <div class="combo-title">${combo.title}</div>
+          <div class="combo-subtitle">${combo.subtitle}</div>
+          <div class="combo-price">₹${combo.price.toLocaleString('en-IN')} <small>free shipping</small></div>
+          <div class="free-song-badge">🎵 Free song on riaaz.app</div>
+          <button class="combo-btn" onclick="addToCart('${combo.id}')">
+            <i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ════════════════════════════════════
+  //  CART ACTIONS
+  // ════════════════════════════════════
+  function addToCart(id) {
+    const item = BOOKS.find(b => b.id === id) || COMBOS.find(c => c.id === id);
+    if (!item) return;
+
+    if (cart[id]) {
+      cart[id].qty++;
+    } else {
+      cart[id] = { ...item, qty: 1 };
+    }
+    updateCartUI();
+
+    // flash button
+    const btns = document.querySelectorAll(`[data-id="${id}"] .add-to-cart, [data-id="${id}"] .combo-btn`);
+    btns.forEach(btn => {
+      btn.innerHTML = '<i class="fa-solid fa-check" style="margin-right:6px;font-size:0.65rem;"></i>Added';
+      btn.classList.add('added');
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart';
+        btn.classList.remove('added');
+      }, 1400);
+    });
+
+    showToast(`${item.title.split(' ').slice(0,3).join(' ')}… added ♪`);
+    openCart();
+  }
+
+  function removeFromCart(id) {
+    delete cart[id];
+    updateCartUI();
+  }
+
+  function changeQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const count = cartCount();
+    const total = cartTotal();
+
+    const countEl = document.getElementById('cart-count');
+    countEl.textContent = count;
+    countEl.style.display = count > 0 ? 'flex' : 'none';
+
+    document.getElementById('cart-total').textContent = `₹${total.toLocaleString('en-IN')}`;
+    document.getElementById('checkout-btn').disabled = count === 0;
+
+    const itemsEl = document.getElementById('cart-items');
+    if (count === 0) {
+      itemsEl.innerHTML = `<div class="cart-empty"><div class="symbol">♪</div><p>Your cart is empty</p></div>`;
+      return;
+    }
+
+    itemsEl.innerHTML = Object.values(cart).map(item => `
+      <div class="cart-item">
+        <div class="cart-item-thumb">
+          <img
+            src="${item.cover || ''}"
+            alt="${item.title}"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          />
+          <div class="fallback-sym" style="display:none;">${item.symbol || '♪'}</div>
+        </div>
+        <div class="cart-item-details">
+          <div class="cart-item-name">${item.title}</div>
+          <div class="cart-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', +1)">+</button>
+            <button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ════════════════════════════════════
+  //  CART DRAWER
+  // ════════════════════════════════════
+  function openCart() {
+    document.getElementById('cart-drawer').classList.add('open');
+    document.getElementById('cart-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCart() {
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('cart-btn').addEventListener('click', openCart);
+  document.getElementById('close-cart').addEventListener('click', closeCart);
+  document.getElementById('cart-overlay').addEventListener('click', closeCart);
+
+  // ════════════════════════════════════
+  //  CHECKOUT MODAL
+  // ════════════════════════════════════
+  function openCheckout() {
+    closeCart();
+
+    const lines = Object.values(cart).map(item =>
+      `<div class="summary-line"><span>${item.title} × ${item.qty}</span><span>₹${(item.price * item.qty).toLocaleString('en-IN')}</span></div>`
+    ).join('');
+    const shippingLine = SHIPPING_FEE > 0
+      ? `<div class="summary-line"><span>Shipping</span><span>₹${SHIPPING_FEE}</span></div>` : '';
+    document.getElementById('summary-lines').innerHTML = lines + shippingLine;
+    document.getElementById('summary-total').textContent = `₹${(cartTotal() + SHIPPING_FEE).toLocaleString('en-IN')}`;
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('checkout-btn').addEventListener('click', openCheckout);
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+
+  // ════════════════════════════════════
+  //  RAZORPAY + SUPABASE
+  // ════════════════════════════════════
+  document.getElementById('pay-btn').addEventListener('click', async () => {
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    const addr1 = document.getElementById('f-addr1').value.trim();
+    const city  = document.getElementById('f-city').value.trim();
+    const state = document.getElementById('f-state').value.trim();
+    const pin   = document.getElementById('f-pin').value.trim();
+
+    if (!name || !email || !phone || !addr1 || !city || !state || !pin) {
+      showToast('Please fill in all required fields'); return;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      showToast('Enter a valid 10-digit phone number'); return;
+    }
+    if (!/^\d{6}$/.test(pin)) {
+      showToast('Enter a valid 6-digit PIN code'); return;
+    }
+
+    const amountPaise = (cartTotal() + SHIPPING_FEE) * 100;
+    const address = {
+      line1: addr1,
+      line2: document.getElementById('f-addr2').value.trim(),
+      city, state, pin,
+      country: document.getElementById('f-country').value,
+    };
+    const orderItems = Object.values(cart).map(item => ({
+      id: item.id, title: item.title, qty: item.qty, price: item.price,
+    }));
+
+    const rzp = new Razorpay({
+      key: RAZORPAY_KEY_ID,
+      amount: amountPaise,
+      currency: 'INR',
+      name: 'Ria Om Shandilya™',
+      description: 'Piano Sheet Music Books',
+      prefill: { name, email, contact: phone },
+      theme: { color: '#d4af37' },
+
+      handler: async function(response) {
+        const savedTotal = cartTotal() + SHIPPING_FEE;
+        const savedItems = [...orderItems];
+        const savedAddress = `${address.line1}${address.line2 ? ', ' + address.line2 : ''}, ${address.city}, ${address.state} - ${address.pin}`;
+
+        const { data, error } = await db.from('orders').insert([{
+          razorpay_payment_id: response.razorpay_payment_id,
+          name, email, phone,
+          address: address.line1 + (address.line2 ? ', ' + address.line2 : ''),
+          city: address.city,
+          state: address.state,
+          pin: address.pin,
+          country: address.country,
+          items: orderItems,
+          subtotal: cartTotal(),
+          shipping: SHIPPING_FEE,
+          total: savedTotal,
+          status: 'paid',
+        }]).select().single();
+
+        if (error) console.error('Supabase error:', error);
+
+        const shortId = data
+          ? data.id.toString().slice(0, 8).toUpperCase()
+          : response.razorpay_payment_id.slice(-8).toUpperCase();
+
+        try {
+          const emailRes = await fetch(SEND_EMAIL_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name, email,
+              orderId: shortId,
+              items: savedItems,
+              total: `₹${savedTotal}`,
+              address: savedAddress,
+            }),
+          });
+          const emailData = await emailRes.json();
+          console.log('Email result:', emailData);
+        } catch (emailErr) {
+          console.warn('Email send failed:', emailErr);
+        }
+
+        document.getElementById('checkout-form-wrapper').style.display = 'none';
+        document.getElementById('success-order-id').textContent = data ? data.id : response.razorpay_payment_id;
+        document.getElementById('success-state').classList.add('show');
+
+        cart = {};
+        updateCartUI();
+      },
+
+      modal: { ondismiss: () => showToast('Payment cancelled') }
+    });
+
+    rzp.open();
+  });
+
+  // ════════════════════════════════════
+  //  TOAST
+  // ════════════════════════════════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ════════════════════════════════════
+  //  INIT
+  // ════════════════════════════════════
+  // ═══════════════════════════════
+  //  HERO CAROUSEL + VINYL
+  // ═══════════════════════════════
+  let ALL_ITEMS, heroCurrentIdx = 0;
+  (function() {
+    ALL_ITEMS = [...BOOKS, ...COMBOS];
+    let current = 0;
+    let busy = false;
+    const imgEl    = document.getElementById('heroProductImg');
+    const pedEl    = document.getElementById('heroPedestal');
+    const titleEl  = document.querySelector('.hero-title');
+    const descEl   = document.querySelector('.hero-subtitle');
+    const dotsEl   = document.getElementById('heroDots');
+
+    // ── Vinyl elements ──
+    const vinylDisc    = document.getElementById('vinylDisc');
+    const vinylWrap    = document.getElementById('vinylWrap');
+    const tonearm      = document.getElementById('tonearm');
+    const vinylHint    = document.getElementById('vinylHint');
+    const nowPlaying   = document.getElementById('vinylNowPlaying');
+
+    // ── Audio state ──
+    let currentAudio   = null;  // HTMLAudioElement
+    let isPlaying      = false;
+
+    // GitHub raw URL base — your sound-effects repo
+    const SOUND_BASE = '/sound-effects/';
+
+    // ── Play recordscratch.mp3, then the current book's mp3 ──
+    function playScratchThenSong() {
+      const item = ALL_ITEMS[current];
+      if (!item.audio) return;
+
+      try {
+        const scratch = new Audio(SOUND_BASE + 'recordscratch.mp3');
+        scratch.volume = 1.0;
+        scratch.play().catch(() => { playBookAudio(item); });
+        scratch.addEventListener('ended', () => { playBookAudio(item); }, { once: true });
+        scratch.addEventListener('error', () => { playBookAudio(item); }, { once: true });
+      } catch(e) {
+        playBookAudio(item);
+      }
+    }
+
+    // ── Play a book's MP3 from GitHub ──
+    function playBookAudio(item) {
+      if (!item.audio) return;
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+        isPlaying = false;
+      }
+
+      const audio = new Audio(SOUND_BASE + item.audio);
+      audio.volume = 0.85;
+      currentAudio = audio;
+
+      audio.play().then(() => {
+        isPlaying = true;
+        tonearm.classList.add('on-record');
+        nowPlaying.textContent = '♪ ' + item.title.split(' ').slice(0, 3).join(' ') + '…';
+        nowPlaying.classList.add('show');
+        vinylDisc.classList.add('spinning');
+        vinylDisc.style.animationPlayState = 'running';
+
+        audio.addEventListener('ended', () => {
+          isPlaying = false;
+          tonearm.classList.remove('on-record');
+          nowPlaying.classList.remove('show');
+          currentAudio = null;
+          vinylDisc.style.animationPlayState = 'paused';
+        }, { once: true });
+      }).catch(() => {
+        isPlaying = false;
+        vinylDisc.style.animationPlayState = 'paused';
+      });
+    }
+
+    // ── Scratch interaction ──
+    function doScratch() {
+      // If already playing — stop everything
+      if (isPlaying) {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          currentAudio = null;
+        }
+        isPlaying = false;
+        tonearm.classList.remove('on-record');
+        nowPlaying.classList.remove('show');
+        vinylDisc.classList.remove('spinning');
+        vinylDisc.style.animationPlayState = 'paused';
+        vinylHint.classList.remove('hidden');
+        return;
+      }
+
+      // Capture current rotation for scratch animation
+      const style = window.getComputedStyle(vinylDisc);
+      const matrix = new DOMMatrix(style.transform);
+      const angle = Math.round(Math.atan2(matrix.m12, matrix.m11) * (180 / Math.PI));
+      vinylDisc.style.setProperty('--sa', angle + 'deg');
+
+      // Hide hint
+      vinylHint.classList.add('hidden');
+
+      // Trigger scratch wiggle
+      vinylDisc.classList.remove('scratching');
+      void vinylDisc.offsetWidth;
+      vinylDisc.classList.add('scratching');
+      vinylDisc.style.animationPlayState = 'running';
+
+      // After 250ms (scratch animation is 0.2s), start spinning + play audio
+      setTimeout(() => {
+        vinylDisc.classList.remove('scratching');
+        vinylDisc.classList.add('spinning');
+        vinylDisc.style.animationPlayState = 'running';
+        playScratchThenSong();
+      }, 250);
+    }
+
+    vinylWrap.addEventListener('click', doScratch);
+
+    // Touch support
+    vinylWrap.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      doScratch();
+    }, { passive: false });
+
+    // ── Carousel ──
+    function buildDots() {
+      dotsEl.innerHTML = '';
+      ALL_ITEMS.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Go to product ' + (i + 1));
+        d.addEventListener('click', () => go(i));
+        dotsEl.appendChild(d);
+      });
+    }
+
+    function go(idx) {
+      if (busy || idx === current) return;
+      busy = true;
+
+      // Stop audio when switching
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+        isPlaying = false;
+        tonearm.classList.remove('on-record');
+        nowPlaying.classList.remove('show');
+      }
+      // Reset hint
+      vinylHint.classList.remove('hidden');
+
+      pedEl.classList.add('transitioning');
+      titleEl.style.cssText = 'opacity:0;transform:translateY(15px);transition:opacity .4s ease,transform .4s ease';
+
+      setTimeout(() => {
+        current = (idx + ALL_ITEMS.length) % ALL_ITEMS.length;
+        heroCurrentIdx = current;
+        const item = ALL_ITEMS[current];
+        imgEl.src  = item.cover || '';
+        imgEl.alt  = item.title;
+        titleEl.innerHTML = item.title.replace(' & ', ' &amp; ');
+        if (descEl) descEl.textContent = item.subtitle;
+        pedEl.classList.remove('transitioning');
+        titleEl.style.cssText = 'opacity:1;transform:translateY(0);transition:opacity .4s ease,transform .4s ease';
+        dotsEl.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+        setTimeout(() => { busy = false; }, 400);
+      }, 400);
+    }
+
+    document.getElementById('nextAct')?.addEventListener('click', () => go(current + 1));
+    document.getElementById('prevAct')?.addEventListener('click', () => go(current - 1));
+    buildDots();
+  })();
+
+
+
+  // ════════════════════════════════════
+  //  BOOK POPUP
+  // ════════════════════════════════════
+  let popupCurrentId = null;
+
+  function openBookPopup(item) {
+    if (!item || !item.id) return;
+    const details = BOOK_DETAILS[item.id];
+    if (!details) return;
+
+    popupCurrentId = item.id;
+
+    document.getElementById('bookPopupTitle').textContent = item.title || 'About the Book';
+
+    // Images — each is zoomable
+    const imgsEl = document.getElementById('bookPopupImages');
+    imgsEl.innerHTML = details.images.map(img => `
+      <div class="book-popup-img-wrap" onclick="openLightbox('${img.src}','${img.label}')">
+        <img src="${img.src}" alt="${img.label}" onerror="this.style.opacity='0.15'" />
+        <div class="book-popup-img-label">${img.label}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('bookPopupDesc').innerHTML = details.html;
+    document.getElementById('bookPopupAdd').onclick = () => { addToCart(item.id); };
+
+    document.getElementById('bookPopupOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeBookPopup() {
+    document.getElementById('bookPopupOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('bookPopupClose').addEventListener('click', closeBookPopup);
+  document.getElementById('bookPopupOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('bookPopupOverlay')) closeBookPopup();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBookPopup(); });
+
+  // Helper for hero button to get current carousel item
+  function heroCarouselCurrent() {
+    return heroCurrentIdx || 0;
+  }
+
+  // Dynamic footer year
+  const yearEl = document.getElementById('footerYear');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+
+
+  // ════════════════════════════════════
+  //  SCROLL REVEAL — IntersectionObserver
+  // ════════════════════════════════════
+  (function initReveal() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target); // fire once only
+        }
+      });
+    }, {
+      threshold: 0.12,      // 12% visible before triggering
+      rootMargin: '0px 0px -40px 0px'  // slightly before bottom edge
+    });
+
+    // Observe all static reveal elements
+    document.querySelectorAll('.reveal, .reveal-rule').forEach(el => observer.observe(el));
+
+    // Re-observe after dynamic cards are rendered (they already exist by now)
+    // Books and combos grids: stagger is already set per-card via delay-N classes
+    document.querySelectorAll('#books-grid .reveal, #combo-grid .reveal').forEach(el => observer.observe(el));
+  })();
+
+  // Delegated click for "About the Book" buttons (uses data-about attribute)
+  document.getElementById('books-grid').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-about]');
+    if (!btn) return;
+    const bookId = btn.getAttribute('data-about');
+    const book = BOOKS.find(b => b.id === bookId);
+    if (book) openBookPopup(book);
+  });
+
+  // ════════════════════════════════════
+  //  IMAGE LIGHTBOX
+  // ════════════════════════════════════
+  function openLightbox(src, label) {
+    const overlay = document.getElementById('imgLightboxOverlay');
+    document.getElementById('imgLightboxImg').src = src;
+    document.getElementById('imgLightboxImg').alt = label || '';
+    document.getElementById('imgLightboxLabel').textContent = label || '';
+    overlay.classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('imgLightboxOverlay').classList.remove('open');
+  }
+  document.getElementById('imgLightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('imgLightboxOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('imgLightboxOverlay')) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeLightbox(); } });
+
+  // ════════════════════════════════════
+  //  CURSOR GLITTER (gold + white)
+  // ════════════════════════════════════
+  (function() {
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canvas = document.getElementById('glitter');
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    function resize() {
+      canvas.width  = Math.floor(window.innerWidth  * devicePixelRatio);
+      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+      canvas.style.width  = window.innerWidth  + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const particles = [];
+    const MAX = 320;
+
+    function addSpark(x, y, intensity) {
+      if (prefersReduced) return;
+      intensity = intensity || 1;
+      const count = Math.floor(7 * intensity);
+      for (let i = 0; i < count; i++) {
+        if (particles.length > MAX) particles.shift();
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (0.30 + Math.random() * 2.0) * intensity;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 0.20,
+          life: 34 + Math.random() * 30,
+          size: 1.0 + Math.random() * 2.8,
+          tw: Math.random() * Math.PI * 2,
+          alpha: 0.52 + Math.random() * 0.34
+        });
+      }
+    }
+
+    let last = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    window.addEventListener('pointermove', (e) => {
+      const dx = e.clientX - last.x;
+      const dy = e.clientY - last.y;
+      const d = Math.min(34, Math.hypot(dx, dy));
+      const intensity = Math.max(0.75, d / 16);
+      addSpark(e.clientX, e.clientY, intensity);
+      last = { x: e.clientX, y: e.clientY };
+    }, { passive: true });
+
+    window.addEventListener('pointerdown', (e) => addSpark(e.clientX, e.clientY, 1.9), { passive: true });
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life -= 1;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        p.vx *= 0.986;
+        p.vy *= 0.986;
+        p.vy += 0.018;
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.tw += 0.22;
+        const twinkle = 0.62 + Math.sin(p.tw) * 0.38;
+        const fade = Math.min(1, p.life / 44);
+        const a = p.alpha * fade * twinkle;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(212, 175, 55, ${a})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 255, 255, ${a * 0.55})`;
+        ctx.arc(p.x, p.y, p.size * 0.55, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (Math.random() < 0.24) {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.tw * 0.35);
+          ctx.globalAlpha = a * 0.90;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${a})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(-p.size * 2.2, 0); ctx.lineTo(p.size * 2.2, 0);
+          ctx.moveTo(0, -p.size * 2.2); ctx.lineTo(0, p.size * 2.2);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
+</script>
+
+</body>
+</html>
