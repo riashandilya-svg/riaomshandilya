@@ -262,94 +262,164 @@
     /* ── VINYL RECORD ── */
     .vinyl-wrap {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: clamp(380px, 42vw, 560px);
-      height: clamp(380px, 42vw, 560px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -52%);
+      width: clamp(420px, 46vw, 600px);
+      height: clamp(420px, 46vw, 600px);
       z-index: 1;
       cursor: pointer;
     }
-    .vinyl {
-      width: 100%; height: 100%;
+
+    /* The disc itself — pure CSS, no image */
+    .vinyl-disc {
+      position: absolute;
+      inset: 0;
       border-radius: 50%;
-      position: relative;
-      animation: vinylSpin 3s linear infinite;
-      transform-origin: center center;
+      background:
+        /* Spindle hole */
+        radial-gradient(circle at 50% 50%, #0a0806 0%, #0a0806 2.2%, transparent 2.2%),
+        /* Label ring inner */
+        radial-gradient(circle at 50% 50%, #f0d77a 2.2%, #f0d77a 2.4%, transparent 2.4%),
+        /* Label area */
+        radial-gradient(circle at 50% 50%, #1a1208 2.4%, #2d1f08 10%, #1a1208 13%, #0f0c06 17.5%, transparent 17.5%),
+        /* Label outer ring */
+        radial-gradient(circle at 50% 50%, transparent 17.5%, #d4af37 17.5%, #d4af37 18%, transparent 18%),
+        /* Groove band 1 — near label */
+        radial-gradient(circle at 50% 50%, transparent 18%, #181410 18%, #0d0b09 22%, transparent 22%),
+        /* Groove shimmer ring */
+        radial-gradient(circle at 50% 50%, transparent 22%, rgba(212,175,55,0.07) 22%, rgba(212,175,55,0.07) 24%, transparent 24%),
+        /* Main groove area — layered repeating to fake grooves */
+        radial-gradient(circle at 50% 50%, transparent 24%, #0c0a08 24%, #141210 28%, #0c0a08 32%, #141210 36%, #0c0a08 40%, #141210 44%, #0c0a08 48%, #141210 52%, #0c0a08 56%, #141210 60%, #0c0a08 64%, #141210 68%, #0c0a08 72%, #141210 76%, #0c0a08 80%, #141210 84%, #0c0a08 88%, #141210 92%, #0a0806 96%),
+        /* Outer bevel gold ring */
+        radial-gradient(circle at 50% 50%, transparent 96%, rgba(212,175,55,0.25) 96%, rgba(212,175,55,0.25) 97.5%, transparent 97.5%),
+        /* Outer rim */
+        radial-gradient(circle at 50% 50%, transparent 97.5%, #1a1612 97.5%, #080604 100%);
+      box-shadow:
+        0 0 60px 20px rgba(0,0,0,0.85),
+        0 0 30px 10px rgba(0,0,0,0.6),
+        inset 0 0 80px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(212,175,55,0.12);
+      animation: vinylSpin 4s linear infinite;
       will-change: transform;
+      transform-origin: center center;
     }
-    .vinyl.scratching {
-      animation: vinylScratch 0.18s ease-in-out;
+
+    /* Groove reflection sweep — gives it the light-catching look */
+    .vinyl-disc::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.04) 15deg,
+        transparent 30deg,
+        transparent 100deg,
+        rgba(255,255,255,0.06) 115deg,
+        transparent 130deg,
+        transparent 220deg,
+        rgba(255,255,255,0.03) 235deg,
+        transparent 250deg,
+        transparent 360deg
+      );
+      pointer-events: none;
     }
-    .vinyl.paused {
-      animation-play-state: paused;
+
+    /* Label text — centred, doesn't spin with disc */
+    .vinyl-label-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 2;
+      line-height: 1.3;
     }
+    .vinyl-label-text .vl-brand {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.55rem, 0.9vw, 0.78rem);
+      font-weight: 700;
+      color: #d4af37;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .vinyl-label-text .vl-sub {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.42rem, 0.65vw, 0.58rem);
+      font-style: italic;
+      color: rgba(240,215,122,0.7);
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
     @keyframes vinylSpin {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
     }
-    @keyframes vinylScratch {
-      0%   { transform: rotate(var(--scratch-start, 0deg)); }
-      30%  { transform: rotate(calc(var(--scratch-start, 0deg) - 22deg)); }
-      60%  { transform: rotate(calc(var(--scratch-start, 0deg) + 14deg)); }
-      80%  { transform: rotate(calc(var(--scratch-start, 0deg) - 8deg)); }
-      100% { transform: rotate(var(--scratch-start, 0deg)); }
+    .vinyl-disc.scratching {
+      animation: vinylScratch 0.2s ease-in-out forwards;
     }
-    .vinyl-svg {
-      width: 100%; height: 100%;
-      border-radius: 50%;
-      display: block;
-      filter: drop-shadow(0 0 40px rgba(0,0,0,0.9)) drop-shadow(0 0 20px rgba(212,175,55,0.15));
+    @keyframes vinylScratch {
+      0%   { transform: rotate(var(--sa, 0deg)); }
+      25%  { transform: rotate(calc(var(--sa, 0deg) - 25deg)); }
+      60%  { transform: rotate(calc(var(--sa, 0deg) + 16deg)); }
+      80%  { transform: rotate(calc(var(--sa, 0deg) - 9deg)); }
+      100% { transform: rotate(var(--sa, 0deg)); }
     }
 
-    /* "Scratch me" label that floats above */
+    /* "Scratch me" hint */
     .vinyl-hint {
       position: absolute;
-      top: 12%;
+      bottom: 14%;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(0.75rem, 1.2vw, 1rem);
+      font-size: clamp(0.8rem, 1.1vw, 1rem);
       font-style: italic;
-      color: rgba(212,175,55,0.75);
+      color: rgba(212,175,55,0.8);
       letter-spacing: 3px;
       pointer-events: none;
       white-space: nowrap;
       z-index: 4;
-      text-shadow: 0 0 12px rgba(212,175,55,0.4);
-      animation: hintPulse 2.5s ease-in-out infinite;
+      text-shadow: 0 0 16px rgba(212,175,55,0.5);
+      animation: hintPulse 2.6s ease-in-out infinite;
     }
     @keyframes hintPulse {
-      0%,100% { opacity: 0.55; transform: translateX(-50%) translateY(0); }
-      50%      { opacity: 1;    transform: translateX(-50%) translateY(-4px); }
+      0%,100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+      50%      { opacity: 1;   transform: translateX(-50%) translateY(-5px); }
     }
-    .vinyl-hint.hidden { opacity: 0; transition: opacity 0.4s; }
+    .vinyl-hint.hidden { opacity: 0 !important; animation: none; transition: opacity 0.5s; }
 
     /* Tonearm */
     .tonearm-wrap {
       position: absolute;
-      top: 4%; right: 10%;
+      top: 3%; right: 8%;
       width: 90px; height: 160px;
       z-index: 5;
       transform-origin: 72px 18px;
-      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
       pointer-events: none;
     }
-    .tonearm-wrap.on-record { transform: rotate(-22deg); }
+    .tonearm-wrap.on-record { transform: rotate(-24deg); }
 
-    /* Now playing toast */
+    /* Now playing pill */
     .vinyl-now-playing {
       position: absolute;
-      bottom: 8%;
+      bottom: 5%;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: rgba(10,8,5,0.9);
-      border: 1px solid var(--gold-border);
+      background: rgba(10,8,5,0.92);
+      border: 1px solid rgba(212,175,55,0.35);
       color: var(--gold-light);
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      padding: 6px 18px;
+      padding: 7px 20px;
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
