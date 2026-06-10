@@ -600,13 +600,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 600px;
+      perspective: 400px;
       padding: 20px 0 10px;
+      text-decoration: none;
     }
 
     @keyframes initAnimation {
-      0%   { transform: rotateY(0deg); }
-      100% { transform: rotateY(-45deg); }
+      0%   { transform: rotateY(-22deg); }
+      100% { transform: rotateY(0deg); }
     }
 
     .book {
@@ -614,14 +615,14 @@
       height: 300px;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateY(-45deg);
+      transform: rotateY(0deg);
       transition: 1s ease;
       animation: 1s ease 0s 1 initAnimation;
     }
 
     .book-container:hover .book,
     .book-container:focus .book {
-      transform: rotateY(0deg);
+      transform: rotateY(-22deg);
     }
 
     .book > :first-child {
@@ -630,8 +631,8 @@
       left: 0;
       width: 200px;
       height: 300px;
-      transform: translateZ(15px);
-      background-color: #01060f;
+      transform: translateZ(10px);
+      background-color: #ffffff;
       border-radius: 0 2px 2px 0;
       box-shadow: 5px 5px 20px #666;
       object-fit: cover;
@@ -641,10 +642,10 @@
       position: absolute;
       content: ' ';
       left: 0;
-      top: 1px;
-      width: 28px;
-      height: 298px;
-      transform: translateX(184px) rotateY(90deg);
+      top: 10px;
+      width: 18px;
+      height: 280px;
+      transform: translateX(180px) rotateY(90deg);
       background: linear-gradient(90deg,
         #fff 0%, #f9f9f9 5%, #fff 10%, #f9f9f9 15%,
         #fff 20%, #f9f9f9 25%, #fff 30%, #f9f9f9 35%,
@@ -661,10 +662,25 @@
       content: ' ';
       width: 200px;
       height: 300px;
-      transform: translateZ(-15px);
-      background-color: #01060f;
+      transform: translateZ(-10px);
+      background-color: #ffffff;
       border-radius: 0 2px 2px 0;
       box-shadow: -10px 0 50px 10px #666;
+    }
+
+    /* ── FREE SONG BADGE ── */
+    .free-song-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      background: rgba(201,151,58,0.1);
+      border: 1px solid rgba(201,151,58,0.3);
+      padding: 3px 8px;
+      margin-top: 2px;
     }
 
     /* ── COMBO SECTION ── */
@@ -747,6 +763,18 @@
       transition: background 0.2s;
     }
     .combo-buy-btn:hover { background: var(--gold-light); }
+    .combo-price {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 6px 0 4px;
+    }
+    .combo-price span {
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--gold);
+      margin-left: 6px;
+    }
 
     @media (max-width: 600px) {
       header { padding: 14px 18px; }
@@ -795,39 +823,7 @@
 <section class="combo-section">
   <div class="section-label">Bundle &amp; Save</div>
   <h2 class="section-title" style="color:var(--ink);">Combo Sets</h2>
-  <div class="combo-grid">
-
-    <div class="combo-card">
-      <div class="combo-badge">Combo</div>
-      <div class="combo-icon">♩♪</div>
-      <div class="combo-info">
-        <div class="combo-title">Bollywood Melodies Piano Sheet Bundle</div>
-        <div class="combo-subtitle">A curated collection of Bollywood piano sheet music books — perfect for beginners and intermediate players alike.</div>
-        <a class="combo-buy-btn" href="https://www.amazon.in/Bollywood-Melodies-Piano-Sheet-Bundle/dp/B0GHFRKCSN?ref_=ast_author_dp_rw&th=1&psc=1&dib=eyJ2IjoiMSJ9.R3DpHEvSftQU2HBdOE17OSjfzgKmK5ZgXZ2PgJCMCuA04vjec3RImt65WbBZO174zMn4lmtF1ixaRTtRwTyobnSg8SJe8_m0wBt_cAZ2WWfJ5EsEWr93EWnJUpBRxknWL3NQ69Q26WrQfIk36Dl1Q-BUHos1NRM2KnzWl8tG8V77dz_D19pkRnfz4m4l60Oj.rsPevEP2yPduAJPkXPf_ka8qQ-tz0w4hKIUgfqD7uDo&dib_tag=AUTHOR" target="_blank" rel="noopener">Buy on Amazon →</a>
-      </div>
-    </div>
-
-    <div class="combo-card">
-      <div class="combo-badge">Combo</div>
-      <div class="combo-icon">♫𝄞</div>
-      <div class="combo-info">
-        <div class="combo-title">Bollywood Melodies Piano Sheet Bundle Vol. 2</div>
-        <div class="combo-subtitle">More beloved Bollywood melodies in piano notation — expand your repertoire with this essential bundle.</div>
-        <a class="combo-buy-btn" href="https://www.amazon.in/Bollywood-Melodies-Piano-Sheet-Bundle/dp/B0FGL245LV?ref_=ast_author_dp_rw&th=1&psc=1&dib=eyJ2IjoiMSJ9.R3DpHEvSftQU2HBdOE17OSjfzgKmK5ZgXZ2PgJCMCuA04vjec3RImt65WbBZO174zMn4lmtF1ixaRTtRwTyobnSg8SJe8_m0wBt_cAZ2WWfJ5EsEWr93EWnJUpBRxknWL3NQ69Q26WrQfIk36Dl1Q-BUHos1NRM2KnzWl8tG8V77dz_D19pkRnfz4m4l60Oj.rsPevEP2yPduAJPkXPf_ka8qQ-tz0w4hKIUgfqD7uDo&dib_tag=AUTHOR" target="_blank" rel="noopener">Buy on Amazon →</a>
-      </div>
-    </div>
-
-    <div class="combo-card">
-      <div class="combo-badge">Combo</div>
-      <div class="combo-icon">♥♫</div>
-      <div class="combo-info">
-        <div class="combo-title">Bollywood Melodies Romantic Books Bundle</div>
-        <div class="combo-subtitle">A heartfelt collection of romantic Bollywood melodies — the perfect gift for music lovers and pianists.</div>
-        <a class="combo-buy-btn" href="https://www.amazon.in/Bollywood-Melodies-Romantic-Books-Bundle/dp/B0CKBX4K4T?ref_=ast_author_dp_rw&th=1&psc=1&dib=eyJ2IjoiMSJ9.R3DpHEvSftQU2HBdOE17OSjfzgKmK5ZgXZ2PgJCMCuA04vjec3RImt65WbBZO174zMn4lmtF1ixaRTtRwTyobnSg8SJe8_m0wBt_cAZ2WWfJ5EsEWr93EWnJUpBRxknWL3NQ69Q26WrQfIk36Dl1Q-BUHos1NRM2KnzWl8tG8V77dz_D19pkRnfz4m4l60Oj.rsPevEP2yPduAJPkXPf_ka8qQ-tz0w4hKIUgfqD7uDo&dib_tag=AUTHOR" target="_blank" rel="noopener">Buy on Amazon →</a>
-      </div>
-    </div>
-
-  </div>
+  <div class="combo-grid" id="combo-grid"></div>
 </section>
 
 <!-- ── CART DRAWER ── -->
@@ -848,7 +844,7 @@
       <span class="cart-total-label">Total</span>
       <span class="cart-total-amt" id="cart-total">₹0</span>
     </div>
-    <p class="cart-note">Free shipping on all orders 🎉</p>
+    <p class="cart-note">Free shipping on all orders 🎉 &nbsp;·&nbsp; 🎵 Free song on riaaz.app with every purchase</p>
     <button id="checkout-btn" disabled>Proceed to Checkout</button>
   </div>
 </div>
@@ -1027,6 +1023,30 @@
     },
   ];
 
+  const COMBOS = [
+    {
+      id: 'combo-classic-romantic',
+      title: 'Classic & Romantic Bollywood Melodies',
+      subtitle: '2 books · 8 songs · Classic Bollywood Melodies + Romantic Bollywood Melodies',
+      price: 1200,
+      icon: '♩♪',
+    },
+    {
+      id: 'combo-classic-romantic-peppy',
+      title: 'Classic, Romantic & Peppy Bollywood Melodies',
+      subtitle: '3 books · 16 songs · Classic + Romantic + Peppy Bollywood Melodies',
+      price: 1700,
+      icon: '♫𝄞',
+    },
+    {
+      id: 'combo-all-four',
+      title: 'Classic, Romantic, Peppy & Soulful Bollywood Melodies',
+      subtitle: '4 books · 32 songs · The complete Bollywood Melodies collection',
+      price: 2200,
+      icon: '♥♫',
+    },
+  ];
+
   // ═══════════════════════════════
   //  SUPABASE INIT
   // ═══════════════════════════════
@@ -1065,9 +1085,27 @@
           <div class="book-title">${book.title}</div>
           <div class="book-subtitle">${book.subtitle}</div>
           <div class="book-price">₹${book.price} <span>free shipping</span></div>
+          <div class="free-song-badge">🎵 Free song on riaaz.app</div>
           <button class="add-to-cart" onclick="addToCart('${book.id}')">
             + Add to Cart
           </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderCombos() {
+    const grid = document.getElementById('combo-grid');
+    grid.innerHTML = COMBOS.map(combo => `
+      <div class="combo-card" data-id="${combo.id}">
+        <div class="combo-badge">Combo</div>
+        <div class="combo-icon">${combo.icon}</div>
+        <div class="combo-info">
+          <div class="combo-title">${combo.title}</div>
+          <div class="combo-subtitle">${combo.subtitle}</div>
+          <div class="combo-price">₹${combo.price.toLocaleString('en-IN')} <span>free shipping</span></div>
+          <div class="free-song-badge">🎵 Free song on riaaz.app</div>
+          <button class="combo-buy-btn" onclick="addToCart('${combo.id}')">+ Add to Cart</button>
         </div>
       </div>
     `).join('');
@@ -1077,7 +1115,7 @@
   //  CART ACTIONS
   // ═══════════════════════════════
   function addToCart(id) {
-    const book = BOOKS.find(b => b.id === id);
+    const book = BOOKS.find(b => b.id === id) || COMBOS.find(c => c.id === id);
     if (!book) return;
     if (cart[id]) {
       cart[id].qty++;
@@ -1087,7 +1125,7 @@
     updateCartUI();
 
     // flash button
-    const btns = document.querySelectorAll(`.book-card[data-id="${id}"] .add-to-cart`);
+    const btns = document.querySelectorAll(`[data-id="${id}"] .add-to-cart, [data-id="${id}"] .combo-buy-btn`);
     btns.forEach(btn => {
       btn.textContent = '✓ Added';
       btn.classList.add('added');
@@ -1318,6 +1356,7 @@
   //  INIT
   // ═══════════════════════════════
   renderBooks();
+  renderCombos();
   updateCartUI();
 </script>
 </body>
