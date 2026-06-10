@@ -387,9 +387,9 @@
     /* "Click here" hint */
     .vinyl-hint {
       position: absolute;
-      top: 50%;
-      left: -28px;
-      transform: translateY(-50%);
+      bottom: 18%;
+      left: 12%;
+      transform: none;
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(0.75rem, 1vw, 0.9rem);
       font-style: italic;
@@ -403,8 +403,8 @@
       animation: hintPulse 2.6s ease-in-out infinite;
     }
     @keyframes hintPulse {
-      0%,100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
-      50%      { opacity: 1;   transform: translateY(-50%) translateX(-4px); }
+      0%,100% { opacity: 0.5; transform: translateY(0); }
+      50%      { opacity: 1;   transform: translateY(-4px); }
     }
     .vinyl-hint.hidden { opacity: 0 !important; animation: none; transition: opacity 0.5s; }
 
