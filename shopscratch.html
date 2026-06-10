@@ -6,7 +6,7 @@
   <title>Books — Ria Om Shandilya™</title>
   <link rel="icon" type="image/png" href="favicon_io.png?v=2">
   <link rel="apple-touch-icon" href="favicon_io.png?v=2">
-  <meta name="theme-color" content="#FFB826">
+  <meta name="theme-color" content="#d4af37">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -48,39 +48,16 @@
 
     body {
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 50% 0%, rgba(255,255,255,0.75), transparent 60%),
-                  linear-gradient(180deg, var(--ivory) 0%, var(--cream) 34%, var(--butter) 100%);
-      color: var(--ink);
+      background: var(--near-black);
+      color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Warm manuscript glows — exact from index.html */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 68px 0 0;
-      pointer-events:none;
-      z-index:-5;
-      background:
-        radial-gradient(1200px 650px at 20% 10%, rgba(255,184,38,0.38), transparent 62%),
-        radial-gradient(900px 560px at 86% 18%, rgba(255,184,38,0.30), transparent 66%),
-        radial-gradient(820px 620px at 50% 105%, rgba(255,184,38,0.22), transparent 62%);
-    }
-    body::after{
-      content:"";
-      position: fixed;
-      inset: 68px 0 0;
-      pointer-events:none;
-      z-index:-4;
-      background: radial-gradient(circle at 50% 20%, transparent 60%, rgba(26,20,10,0.14) 100%);
-      opacity: .28;
-    }
-
     /* ─── SCROLLBAR ─── */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--ivory); }
-    ::-webkit-scrollbar-thumb { background: var(--gown); border-radius: 999px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); }
 
     /* ─── HEADER (matches index.html topbar exactly) ─── */
     header {
@@ -91,7 +68,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,243,209,0.72);
+      background: rgba(255,243,209,0.82);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,184,38,0.46);
@@ -259,8 +236,8 @@
       min-height: 100vh;
       padding: 68px 0 0;
       background:
-        radial-gradient(ellipse at center top, rgba(255,184,38,.12) 0%, transparent 50%),
-        linear-gradient(180deg, rgba(255,253,245,0.85) 0%, rgba(255,243,209,0.90) 40%, rgba(255,224,122,0.80) 100%);
+        radial-gradient(ellipse at center top, rgba(212,175,55,.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0d0905 0%, #1a1208 40%, #0a0604 100%);
       overflow: hidden;
     }
     .hero::after {
@@ -635,11 +612,11 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(3.5rem, 6vw, 5.5rem);
       font-weight: 500; line-height: 1;
-      color: var(--ink); margin-bottom: 28px; letter-spacing: 1px;
+      color: #fff; margin-bottom: 28px; letter-spacing: 1px;
     }
-    .hero-title span { color: #8a5800; font-style: italic; }
+    .hero-title span { color: var(--gold-light); font-style: italic; }
     .hero-subtitle {
-      font-size: 14px; color: rgba(26,20,10,0.72);
+      font-size: 14px; color: #c8c0b0;
       line-height: 1.7; margin-bottom: 36px; max-width: 340px;
     }
     /* ── Scroll-down indicator: animated mouse ── */
@@ -705,25 +682,32 @@
     }
     .btn-primary {
       display: inline-block;
-      padding: 12px 28px;
-      background: linear-gradient(135deg, #FFE07A, #FFBF2F);
-      border: 1px solid rgba(255,184,38,.70);
-      color: #2A1A00;
-      font-family: Inter, sans-serif;
+      padding: 14px 40px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
+      font-weight: 700;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       text-decoration: none;
       cursor: pointer;
-      border-radius: 14px;
-      box-shadow: 0 18px 50px rgba(255,191,47,0.34);
-      transition: transform 0.2s, filter 0.2s;
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
       position: relative;
       overflow: hidden;
     }
-    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.04); }
-    .btn-primary::before { display: none; }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary:hover { color: var(--black); box-shadow: 0 0 30px rgba(212,175,55,0.4); }
     .btn-primary span { position: relative; z-index: 1; }
 
     /* ─── SECTION HEADINGS ─── */
@@ -744,11 +728,11 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.8rem, 3.5vw, 2.8rem);
       font-weight: 600;
-      color: var(--ink);
+      color: #fff;
       margin-bottom: 8px;
       line-height: 1.1;
     }
-    .section-heading span { color: #8a5800; font-style: italic; }
+    .section-heading span { color: var(--gold-light); font-style: italic; }
     .section-rule {
       display: flex;
       align-items: center;
@@ -777,20 +761,17 @@
     @media (max-width: 780px) { #books-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
 
     .book-card {
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(255,184,38,0.30);
-      box-shadow: 0 8px 30px rgba(26,20,10,0.10);
+      background: var(--card);
+      border: 1px solid rgba(212,175,55,0.12);
       display: flex;
       flex-direction: column;
       transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
       position: relative;
-      border-radius: 16px;
-      overflow: hidden;
     }
     .book-card:hover {
       transform: translateY(-6px);
-      border-color: rgba(255,184,38,0.60);
-      box-shadow: 0 20px 50px rgba(26,20,10,0.18), 0 0 30px rgba(255,184,38,0.14);
+      border-color: var(--gold-border);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(212,175,55,0.08);
     }
 
     /* 3D Book */
@@ -801,7 +782,7 @@
       perspective: 400px;
       padding: 20px 0 10px;
       text-decoration: none;
-      background: rgba(255,243,209,0.60);
+      background: #080604;
     }
     @keyframes initAnimation {
       0%   { transform: rotateY(-22deg); }
@@ -881,18 +862,18 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem;
       font-weight: 600;
-      color: var(--ink);
+      color: #fff;
       line-height: 1.25;
     }
     .book-subtitle {
       font-size: 0.72rem;
-      color: rgba(26,20,10,0.62);
+      color: var(--muted);
       line-height: 1.5;
     }
     .book-price {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #8a5800;
+      color: var(--gold);
       margin-top: auto;
       padding-top: 10px;
     }
@@ -921,50 +902,49 @@
     .add-to-cart {
       width: 100%;
       padding: 11px;
-      background: linear-gradient(135deg, #FFE07A, #FFBF2F);
-      color: #2A1A00;
-      border: 1px solid rgba(255,184,38,.70);
-      font-family: Inter, sans-serif;
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--gold-border);
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.10em;
+      font-weight: 700;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: filter 0.2s, transform 0.2s;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
       margin-top: 12px;
-      border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(255,191,47,0.25);
     }
     .add-to-cart:hover {
-      filter: brightness(1.06);
-      transform: translateY(-1px);
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
     }
     .add-to-cart.added {
-      background: rgba(100,180,60,0.20);
-      color: #3a6e10;
+      background: rgba(100,180,60,0.15);
+      color: #7ecc55;
       border-color: rgba(100,180,60,0.4);
-      box-shadow: none;
     }
     .about-book-btn {
       width: 100%;
-      padding: 10px;
-      background: rgba(255,255,255,0.66);
-      color: rgba(26,20,10,0.75);
-      border: 1px solid rgba(26,20,10,.16);
-      font-family: Inter, sans-serif;
+      padding: 11px;
+      background: transparent;
+      color: rgba(212,175,55,0.65);
+      border: 1px solid rgba(212,175,55,0.22);
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.68rem;
       font-weight: 700;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s;
+      transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
       margin-top: 8px;
-      border-radius: 10px;
       display: flex; align-items: center; justify-content: center; gap: 7px;
     }
     .about-book-btn:hover {
-      background: rgba(255,255,255,0.90);
-      box-shadow: 0 8px 20px rgba(26,20,10,0.10);
+      background: rgba(212,175,55,0.07);
+      color: var(--gold-light);
+      border-color: rgba(212,175,55,0.45);
+      box-shadow: 0 0 16px rgba(212,175,55,0.08);
     }
 
     /* ── BOOK POPUP — aged parchment ── */
@@ -1256,10 +1236,8 @@
     @media (max-width: 600px) { #combo-grid { grid-template-columns: 1fr; } }
 
     .combo-card {
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(255,184,38,0.28);
-      box-shadow: 0 8px 30px rgba(26,20,10,0.10);
-      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--gold-border);
       display: flex;
       flex-direction: column;
       position: relative;
@@ -1268,7 +1246,7 @@
     }
     .combo-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 20px 50px rgba(26,20,10,0.18), 0 0 30px rgba(255,184,38,0.12);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 40px rgba(212,175,55,0.12);
     }
     .combo-card::before {
       content: '';
@@ -1308,60 +1286,58 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.2rem;
       font-weight: 600;
-      color: var(--ink);
+      color: var(--gold-light);
       line-height: 1.3;
     }
     .combo-subtitle {
       font-size: 0.73rem;
-      color: rgba(26,20,10,0.62);
+      color: rgba(160,160,160,0.8);
       line-height: 1.6;
     }
     .combo-price {
       font-size: 1.15rem;
       font-weight: 700;
-      color: #8a5800;
+      color: var(--gold);
       padding-top: 6px;
     }
     .combo-price small {
       font-size: 0.68rem;
       font-weight: 400;
-      color: rgba(26,20,10,0.45);
+      color: rgba(160,160,160,0.6);
       margin-left: 4px;
     }
     .combo-btn {
       display: block;
       margin-top: 14px;
       padding: 12px;
-      background: linear-gradient(135deg, #FFE07A, #FFBF2F);
-      color: #2A1A00;
-      border: 1px solid rgba(255,184,38,.70);
-      font-family: Inter, sans-serif;
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--gold-border);
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.10em;
+      font-weight: 700;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       text-align: center;
       cursor: pointer;
-      border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(255,191,47,0.25);
-      transition: filter 0.2s, transform 0.2s;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
     }
     .combo-btn:hover {
-      filter: brightness(1.06);
-      transform: translateY(-1px);
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
     }
     .combo-btn.added {
-      background: rgba(100,180,60,0.20);
-      color: #3a6e10;
+      background: rgba(100,180,60,0.15);
+      color: #7ecc55;
       border-color: rgba(100,180,60,0.4);
-      box-shadow: none;
     }
 
     /* ─── FEATURES BAR ─── */
     .features-bar {
-      background: rgba(255,243,209,0.60);
-      border-top: 1px solid rgba(255,184,38,0.30);
-      border-bottom: 1px solid rgba(255,184,38,0.30);
+      background: #060504;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
     .features-inner {
       max-width: 1180px;
@@ -1381,13 +1357,12 @@
     }
     .feature-icon {
       width: 42px; height: 42px;
-      border: 1px solid rgba(255,184,38,0.50);
-      border-radius: 12px;
+      border: 1px solid var(--gold-border);
       display: flex; align-items: center; justify-content: center;
-      color: #8a5800;
+      color: var(--gold);
       font-size: 1rem;
       flex-shrink: 0;
-      background: rgba(255,184,38,0.12);
+      background: rgba(212,175,55,0.05);
     }
     .feature-text {}
     .feature-title {
@@ -1395,19 +1370,19 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--ink);
+      color: #fff;
       margin-bottom: 4px;
     }
     .feature-desc {
       font-size: 0.7rem;
-      color: rgba(26,20,10,0.62);
+      color: var(--muted);
       line-height: 1.6;
     }
 
     /* ─── FOOTER ─── */
     footer {
-      background: rgba(255,243,209,0.80);
-      border-top: 1px solid rgba(255,184,38,0.36);
+      background: #000;
+      border-top: 1px solid var(--border);
       padding: 56px 48px 32px;
     }
     .footer-inner {
@@ -1425,7 +1400,7 @@
     .footer-brand {}
     .footer-tagline {
       font-size: 0.72rem;
-      color: rgba(26,20,10,0.55);
+      color: var(--muted);
       margin-top: 10px;
       letter-spacing: 0.06em;
       font-style: italic;
@@ -1436,7 +1411,7 @@
       flex-wrap: wrap;
     }
     .footer-links a {
-      color: rgba(26,20,10,0.60);
+      color: rgba(255,255,255,0.45);
       text-decoration: none;
       font-size: 0.7rem;
       font-weight: 600;
@@ -1444,7 +1419,7 @@
       text-transform: uppercase;
       transition: color 0.2s;
     }
-    .footer-links a:hover { color: #8a5800; }
+    .footer-links a:hover { color: var(--gold-light); }
     .footer-socials {
       display: flex;
       gap: 14px;
@@ -1452,22 +1427,20 @@
     }
     .footer-socials a {
       width: 34px; height: 34px;
-      border: 1px solid rgba(26,20,10,0.18);
-      border-radius: 999px;
+      border: 1px solid rgba(212,175,55,0.2);
       display: flex; align-items: center; justify-content: center;
-      color: rgba(26,20,10,0.55);
+      color: rgba(255,255,255,0.4);
       font-size: 0.85rem;
       text-decoration: none;
-      background: rgba(255,255,255,0.60);
       transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
     .footer-socials a:hover {
-      border-color: rgba(255,184,38,0.70);
-      color: #8a5800;
-      background: rgba(255,255,255,0.90);
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212,175,55,0.05);
     }
     .footer-bottom {
-      border-top: 1px solid rgba(26,20,10,0.12);
+      border-top: 1px solid var(--border);
       padding-top: 24px;
       display: flex;
       justify-content: space-between;
@@ -1477,7 +1450,7 @@
     }
     .footer-copy {
       font-size: 0.68rem;
-      color: rgba(26,20,10,0.40);
+      color: rgba(255,255,255,0.25);
       letter-spacing: 0.06em;
     }
 
@@ -2043,6 +2016,7 @@
 <header>
   <div class="topbar-inner">
     <a class="brand" href="index.html">
+      <img class="brand-logo" src="favicon_io.png" alt="Ria Om Shandilya" />
       <div class="brand-text">
         <span class="brand-name">Ria Om Shandilya™</span>
         <span class="brand-tag">a virtual music manuscript ✦</span>
@@ -2052,9 +2026,8 @@
     <div class="topbar-right">
       <nav aria-label="Primary">
         <a href="index.html">Home</a>
-        <a href="index.html#books">Books</a>
         <a href="orders.html">Track Order</a>
-        <a href="connect.html">Contact</a>
+        <a href="connect.html">Contact Us</a>
       </nav>
 
       <button id="cart-btn">
@@ -2307,21 +2280,21 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:20px;align-items:flex-end;">
         <div class="footer-links">
-          <a href="about.html">About Us</a>
-          <a href="faqs.html">FAQs</a>
-          <a href="privacy.html">Privacy Policy</a>
-          <a href="terms.html">Terms &amp; Conditions</a>
+          <a href="#">About Us</a>
+          <a href="#">FAQs</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a>
         </div>
         <div class="footer-socials">
-          <a href="https://www.instagram.com/riaomshandilya/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://www.youtube.com/riashandilya" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-          <a href="https://linktr.ee/riashandilya" target="_blank" rel="noopener" aria-label="Linktree"><i class="fa-solid fa-tree"></i></a>
-          <a href="https://www.amazon.com/stores/Ria-Om-Shandilya/author/B09QN8NFFD" target="_blank" rel="noopener" aria-label="Amazon Store"><i class="fa-brands fa-amazon"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy">© <span id="footerYear"></span> Ria Om Shandilya™. All rights reserved.</span>
+      <span class="footer-copy">© 2025 Ria Om Shandilya™. All rights reserved.</span>
       <span class="footer-copy" style="color:rgba(212,175,55,0.3);">♩ Music For Soul</span>
     </div>
   </div>
@@ -3123,11 +3096,9 @@
     return heroCurrentIdx || 0;
   }
 
-  // Dynamic footer year
-  const yearEl = document.getElementById('footerYear');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-
+  renderBooks();
+  renderCombos();
+  updateCartUI();
 
   // ════════════════════════════════════
   //  SCROLL REVEAL — IntersectionObserver
