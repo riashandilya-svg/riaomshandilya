@@ -881,104 +881,178 @@ body{ padding-top: 68px; }
   z-index: 2; /* keep clefs floating above preview */
 }
 
-/* ===== Books carousel sizing tweak (aim: ~5 visible on desktop) ===== */
+/* ===== Books carousel — premium redesign ===== */
 .carousel{
   display:flex;
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
-  gap: 10px;
-  padding: 6px 2px 12px;
-  scroll-snap-type: x proximity;
+  gap: 16px;
+  padding: 12px 4px 24px;
+  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
 
-.bookCard{
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-}
-
-
-.carousel::-webkit-scrollbar{ height: 10px; }
+.carousel::-webkit-scrollbar{ height: 6px; }
 .carousel::-webkit-scrollbar-thumb{
-  background: rgba(26,20,10,.18);
+  background: linear-gradient(90deg, rgba(var(--gold),.55), rgba(var(--gold),.25));
   border-radius: 999px;
 }
 .carousel::-webkit-scrollbar-track{
-  background: rgba(255,255,255,.35);
+  background: rgba(255,255,255,.28);
   border-radius: 999px;
 }
+
 .scrollHint{
   display:flex;
   align-items:center;
   justify-content:flex-end;
   gap: 8px;
-  margin: 6px 2px 8px;
+  margin: 4px 4px 10px;
   font-weight: 900;
   font-size: 12px;
-  color: rgba(26,20,10,.70);
+  color: rgba(26,20,10,.58);
+  letter-spacing: .04em;
   user-select: none;
 }
 
 .scrollHint .arrow{
-  font-size: 16px;
-  animation: nudge 1.2s ease-in-out infinite;
+  font-size: 15px;
+  animation: nudge 1.4s ease-in-out infinite;
 }
 
 @keyframes nudge{
-  0%,100%{ transform: translateX(0); opacity:.75; }
-  50%{ transform: translateX(6px); opacity:1; }
+  0%,100%{ transform: translateX(0); opacity:.65; }
+  50%{ transform: translateX(7px); opacity:1; }
 }
 
+/* Card */
 .bookCard{
-  flex: 0 0 auto;          /* IMPORTANT: prevents wrapping/stacking */
-  width: 200px;
+  flex: 0 0 auto;
+  width: 196px;
   scroll-snap-align: start;
+  border-radius: 20px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(var(--gold),.44);
+  box-shadow:
+    0 8px 28px rgba(26,20,10,.10),
+    inset 0 1px 0 rgba(255,255,255,.90);
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+  position: relative;
 }
 
-/* optional: slightly reduce cover height feel */
+.bookCard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  background: radial-gradient(180px 120px at 50% 0%, rgba(var(--gold),.13), transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.bookCard:hover{
+  transform: translateY(-5px) scale(1.015);
+  box-shadow:
+    0 22px 56px rgba(26,20,10,.16),
+    0 0 0 1.5px rgba(var(--gold),.70),
+    inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+/* Cover image area */
 .cover{
   aspect-ratio: 2 / 3;
-}
-
-  .cover{
-  aspect-ratio: 2 / 3;   /* rectangle book cover */
   height: auto;
   position: relative;
-  background:
-    radial-gradient(240px 240px at 20% 20%, rgba(var(--gold),.18), transparent 62%),
-    rgba(255,255,255,.74);
-  border-bottom: 1px solid rgba(26,20,10,.10);
+  background: linear-gradient(160deg, rgba(var(--gold),.12) 0%, rgba(255,255,255,.50) 100%);
+  overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
+  z-index:1;
 }
 
-         .cover::after{
-           /* staff overlay inside cover */
-           content:"";
-           position:absolute;
-           inset:0;
-           opacity:.22;
-           background:
-             repeating-linear-gradient(to bottom, rgba(26,20,10,.20) 0px, rgba(26,20,10,.20) 1px, transparent 1px, transparent 20px);
-           mask-image: radial-gradient(circle at 50% 60%, black 52%, transparent 92%);
-           pointer-events:none;
-         }
-         .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
-         .coverPlaceholder{
-           font-family: "Cormorant Garamond", serif;
-           font-weight: 700;
-           font-size: 18px;
-           opacity: .92;
-           padding: 0 18px;
-           text-align:center;
-         }
-     
-         .bookBody{ padding: 14px 14px 16px; }
-         .bookBody h3{ margin: 0 0 6px; font-size: 16px; font-weight: 950; letter-spacing: -0.01em; }
-         .bookBody p{ margin: 0 0 12px; color: rgba(26,20,10,.74); font-size: 13.5px; line-height: 1.5; }
+.cover::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, transparent 60%, rgba(26,20,10,.28) 100%);
+  pointer-events:none;
+  z-index:2;
+}
+
+/* Sheen animation on hover */
+.bookCard:hover .cover::before{
+  content:"";
+  position:absolute;
+  inset:-100%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.30) 50%, transparent 60%);
+  animation: sheen .55s ease forwards;
+  z-index:3;
+  pointer-events:none;
+}
+
+@keyframes sheen{
+  from{ transform: translateX(-100%) rotate(0deg); }
+  to{ transform: translateX(100%) rotate(0deg); }
+}
+
+.cover img{ width:100%; height:100%; object-fit:cover; display:block; position:relative; z-index:1; }
+.coverPlaceholder{
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 16px;
+  opacity: .72;
+  padding: 0 16px;
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+
+/* Card body */
+.bookBody{
+  padding: 12px 14px 14px;
+  position:relative;
+  z-index:1;
+}
+
+.bookBody h3{
+  margin: 0 0 5px;
+  font-size: 14.5px;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+  line-height: 1.28;
+  color: rgba(26,20,10,.96);
+}
+
+.bookBody p{
+  margin: 0 0 10px;
+  color: rgba(26,20,10,.62);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* "Shop now" micro-CTA on each card */
+.bookCTA{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 950;
+  color: rgba(160,100,0,.95);
+  letter-spacing:.02em;
+}
+
+.bookCTA .arr{
+  font-size: 13px;
+  transition: transform .15s ease;
+}
+
+.bookCard:hover .bookCTA .arr{
+  transform: translateX(3px);
+}
      
          /* YouTube */
          .ytGrid{
