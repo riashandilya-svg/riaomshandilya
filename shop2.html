@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Books — Ria Om Shandilya™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --black: #000000;
+      --near-black: #0a0805;
+      --card: #0f0c08;
+      --card2: #121010;
+      --gold: #d4af37;
+      --gold-light: #f0d77a;
+      --gold-dark: #a87f1d;
+      --gold-border: rgba(212,175,55,0.35);
+      --gold-glow: rgba(212,175,55,0.15);
+      --text: #f5f0e8;
+      --muted: #a0a0a0;
+      --border: rgba(212,175,55,0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--near-black);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); }
+
+    /* ─── HEADER ─── */
+    header {
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0 48px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--gold-border);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      font-size: 1rem;
+    }
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .logo-sub {
+      font-size: 0.58rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    nav a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--gold-light); }
+
+    #cart-btn {
+      background: transparent;
+      border: 1px solid var(--gold-border);
+      color: var(--gold-light);
+      padding: 8px 18px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      display: flex; align-items: center; gap: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    #cart-btn:hover {
+      background: var(--gold-glow);
+      border-color: var(--gold);
+    }
+    #cart-count {
+      position: absolute;
+      top: -8px; right: -8px;
+      background: var(--gold);
+      color: var(--black);
+      border-radius: 50%;
+      width: 18px; height: 18px;
+      font-size: 0.65rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding: 140px 0 80px;
+      background:
+        radial-gradient(ellipse at center top, rgba(212,175,55,.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0d0905 0%, #1a1208 40%, #0a0604 100%);
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, transparent 0, transparent 80px, rgba(212,175,55,.03) 80px, rgba(212,175,55,.03) 81px),
+        repeating-linear-gradient(180deg, transparent 0, transparent 120px, rgba(212,175,55,.02) 120px, rgba(212,175,55,.02) 121px);
+      pointer-events: none;
+    }
+
+    /* Stage light beams */
+    .beams {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .beam {
+      position: absolute; top: -20px;
+      width: 160px; height: 80%;
+      background: linear-gradient(180deg, rgba(255,220,140,.3) 0%, rgba(255,220,140,.06) 50%, transparent 100%);
+      clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
+      filter: blur(8px);
+      animation: beamPulse 4s ease-in-out infinite;
+    }
+    .beam:nth-child(1) { left: 5%;  transform: rotate(-15deg); animation-delay: 0s; }
+    .beam:nth-child(2) { left: 25%; transform: rotate(-8deg);  animation-delay: .5s; }
+    .beam:nth-child(3) { left: 45%; transform: rotate(0deg);   animation-delay: 1s; }
+    .beam:nth-child(4) { right: 25%;transform: rotate(8deg);   animation-delay: 1.5s; }
+    .beam:nth-child(5) { right: 5%; transform: rotate(15deg);  animation-delay: 2s; }
+    @keyframes beamPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+
+    /* 3-column hero grid */
+    .hero-grid {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: 1fr 1.2fr 1fr;
+      align-items: center; gap: 32px;
+      min-height: 75vh;
+    }
+    .hero-text { max-width: 420px; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      color: var(--gold); font-size: 11px; letter-spacing: 4px;
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow .dash { flex: 0 0 30px; height: 1px; background: var(--gold); }
+
+    /* Stage centre column */
+    .hero-stage {
+      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      height: 520px;
+    }
+    .spotlight {
+      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 620px;
+      background: radial-gradient(ellipse at center top, rgba(255,220,140,.35) 0%, rgba(255,220,140,.12) 30%, transparent 70%);
+      filter: blur(20px); pointer-events: none;
+    }
+    .hero-book-wrap {
+      position: relative; z-index: 3;
+      perspective: 800px;
+      margin-bottom: -20px;
+    }
+    .hero-book {
+      width: 160px; height: 230px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: perspective(800px) rotateY(-8deg);
+      animation: heroBookFloat 4s ease-in-out infinite;
+      filter: drop-shadow(0 20px 40px rgba(212,175,55,.3));
+    }
+    @keyframes heroBookFloat {
+      0%,100% { transform: perspective(800px) rotateY(-8deg) translateY(0); }
+      50%      { transform: perspective(800px) rotateY(-8deg) translateY(-10px); }
+    }
+    .hero-book > .hb-face {
+      position: absolute; top: 0; left: 0;
+      width: 160px; height: 230px;
+      transform: translateZ(8px);
+      background: linear-gradient(135deg, #1a1208 0%, #0a0604 100%);
+      border: 2px solid var(--gold);
+      border-radius: 4px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      box-shadow: inset 0 0 30px rgba(212,175,55,.1), 4px 4px 20px rgba(0,0,0,.7);
+    }
+    .hero-book > .hb-face::before {
+      content: ''; position: absolute; inset: 8px;
+      border: 1px solid rgba(212,175,55,.35); border-radius: 2px; pointer-events: none;
+    }
+    .hero-book > .hb-face .hb-symbol {
+      font-size: 3rem; color: var(--gold);
+      filter: drop-shadow(0 0 8px rgba(212,175,55,.5));
+    }
+    .hero-book > .hb-face .hb-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--gold); letter-spacing: 3px;
+    }
+    .hero-book > .hb-face .hb-label {
+      font-size: 0.55rem; letter-spacing: 2px;
+      color: var(--gold-light); text-align: center; padding: 0 10px;
+    }
+    .hero-book::before {
+      position: absolute; content: '';
+      left: 0; top: 10px;
+      width: 18px; height: 210px;
+      transform: translateX(142px) rotateY(90deg);
+      background: linear-gradient(90deg, #fff 0%, #f9f9f9 5%, #e8e8e8 10%, #f0f0f0 15%, #f9f9f9 20%, #fff 30%, #f9f9f9 40%, #f0f0f0 50%, #f9f9f9 60%, #fff 70%, #f0f0f0 80%, #f9f9f9 90%, #fff 100%);
+    }
+    .hero-book::after {
+      position: absolute; top: 0; left: 0; content: '';
+      width: 160px; height: 230px;
+      transform: translateZ(-8px);
+      background: #fff; border-radius: 0 2px 2px 0;
+      box-shadow: -10px 0 50px 10px rgba(0,0,0,0.7);
+    }
+
+    /* Podium */
+    .stage-podium {
+      position: relative;
+      width: 340px;
+      display: flex; flex-direction: column; align-items: center;
+      z-index: 2;
+    }
+    .podium-top {
+      width: 80%; height: 28px;
+      background: linear-gradient(180deg, #3d2c0f 0%, #1a1208 100%);
+      border-top: 2px solid var(--gold);
+      border-radius: 50% 50% 4px 4px / 30% 30% 4px 4px;
+      box-shadow: inset 0 4px 8px rgba(212,175,55,.2);
+      position: relative;
+    }
+    .podium-top::before {
+      content: ''; position: absolute; left: 5%; right: 5%; top: 50%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .podium-plaque {
+      background: linear-gradient(180deg, #2a1d0a 0%, #15100a 100%);
+      border: 1px solid var(--gold); color: var(--gold);
+      font-size: 10px; letter-spacing: 4px; font-weight: 600;
+      padding: 5px 24px; margin-top: -2px; z-index: 2; position: relative;
+      box-shadow: 0 0 16px rgba(212,175,55,.4);
+    }
+    .podium-base {
+      width: 100%; height: 18px;
+      background: linear-gradient(180deg, #2a1d0a 0%, #0a0604 100%);
+      border-top: 1px solid var(--gold-dark); margin-top: -2px; border-radius: 4px;
+    }
+    .podium-lights {
+      display: flex; justify-content: space-around;
+      width: 90%; margin-top: -8px; z-index: 3; position: relative;
+    }
+    .podium-lights span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: radial-gradient(circle, #fff8dc, var(--gold));
+      box-shadow: 0 0 10px var(--gold), 0 0 20px rgba(212,175,55,.4);
+      animation: lightFlicker 2s ease-in-out infinite;
+    }
+    .podium-lights span:nth-child(2){animation-delay:.2s}
+    .podium-lights span:nth-child(3){animation-delay:.4s}
+    .podium-lights span:nth-child(4){animation-delay:.6s}
+    .podium-lights span:nth-child(5){animation-delay:.8s}
+    .podium-lights span:nth-child(6){animation-delay:1s}
+    .podium-lights span:nth-child(7){animation-delay:1.2s}
+    .podium-lights span:nth-child(8){animation-delay:1.4s}
+    .podium-lights span:nth-child(9){animation-delay:1.6s}
+    .podium-lights span:nth-child(10){animation-delay:1.8s}
+    @keyframes lightFlicker{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* Hero text column */
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 500; line-height: 1;
+      color: #fff; margin-bottom: 24px; letter-spacing: 1px;
+    }
+    .hero-title span { color: var(--gold-light); font-style: italic; }
+    .hero-subtitle {
+      font-size: 14px; color: #c8c0b0;
+      line-height: 1.7; margin-bottom: 36px; max-width: 340px;
+    }
+    .scroll-down {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--gold); font-size: 10px; letter-spacing: 3px; z-index: 3;
+      text-decoration: none;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+    .btn-primary {
+      display: inline-block;
+      padding: 14px 40px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary:hover { color: var(--black); box-shadow: 0 0 30px rgba(212,175,55,0.4); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    /* ─── SECTION HEADINGS ─── */
+    .section-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 80px 48px;
+    }
+    .section-eyebrow {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .section-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .section-heading span { color: var(--gold-light); font-style: italic; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .section-rule::before, .section-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .section-rule-icon {
+      color: var(--gold);
+      font-size: 0.9rem;
+      opacity: 0.6;
+    }
+
+    /* ─── BOOK CARDS GRID ─── */
+    #books-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 1100px) { #books-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 780px) { #books-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+
+    .book-card {
+      background: var(--card);
+      border: 1px solid rgba(212,175,55,0.12);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .book-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold-border);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(212,175,55,0.08);
+    }
+
+    /* 3D Book */
+    .book-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 400px;
+      padding: 20px 0 10px;
+      text-decoration: none;
+      background: #080604;
+    }
+    @keyframes initAnimation {
+      0%   { transform: rotateY(-22deg); }
+      100% { transform: rotateY(0deg); }
+    }
+    .book {
+      width: 200px;
+      height: 300px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      transition: 1s ease;
+      animation: 1s ease 0s 1 initAnimation;
+    }
+    .book-container:hover .book,
+    .book-container:focus .book {
+      transform: rotateY(-22deg);
+    }
+    .book > :first-child {
+      position: absolute;
+      top: 0; left: 0;
+      width: 200px; height: 300px;
+      transform: translateZ(10px);
+      background-color: #ffffff;
+      border-radius: 0 2px 2px 0;
+      box-shadow: 5px 5px 20px #666;
+      object-fit: cover;
+    }
+    .book::before {
+      position: absolute;
+      content: ' ';
+      left: 0; top: 10px;
+      width: 18px; height: 280px;
+      transform: translateX(180px) rotateY(90deg);
+      background: linear-gradient(90deg, #fff 0%, #f9f9f9 5%, #e8e8e8 10%, #f0f0f0 15%, #f9f9f9 20%, #fff 30%, #f9f9f9 40%, #f0f0f0 50%, #f9f9f9 60%, #fff 70%, #f0f0f0 80%, #f9f9f9 90%, #fff 100%);
+    }
+    .book::after {
+      position: absolute;
+      top: 0; left: 0;
+      content: ' ';
+      width: 200px; height: 300px;
+      transform: translateZ(-10px);
+      background-color: #ffffff;
+      border-radius: 0 2px 2px 0;
+      box-shadow: -10px 0 50px 10px #666;
+    }
+
+    /* fallback placeholder inside .book */
+    .book-placeholder {
+      width: 200px; height: 300px;
+      background: linear-gradient(135deg, #1a1208 0%, #2d1f0a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 0 2px 2px 0;
+    }
+    .book-placeholder .ph-sym { font-size: 3rem; color: var(--gold); }
+    .book-placeholder .ph-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--gold-light);
+      text-align: center;
+      padding: 0 12px;
+      line-height: 1.3;
+    }
+
+    .book-info {
+      padding: 16px 18px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .book-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.25;
+    }
+    .book-subtitle {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .book-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: auto;
+      padding-top: 10px;
+    }
+    .book-price small {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: rgba(160,160,160,0.6);
+      margin-left: 4px;
+    }
+
+    /* Free song badge */
+    .free-song-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 3px 8px;
+      margin-top: 4px;
+    }
+
+    .add-to-cart {
+      width: 100%;
+      padding: 11px;
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--gold-border);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+      margin-top: 12px;
+    }
+    .add-to-cart:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+    }
+    .add-to-cart.added {
+      background: rgba(100,180,60,0.15);
+      color: #7ecc55;
+      border-color: rgba(100,180,60,0.4);
+    }
+
+    /* ─── COMBO SECTION ─── */
+    #combo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 900px) { #combo-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { #combo-grid { grid-template-columns: 1fr; } }
+
+    .combo-card {
+      background: var(--card);
+      border: 1px solid var(--gold-border);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .combo-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 40px rgba(212,175,55,0.12);
+    }
+    .combo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .combo-ribbon {
+      position: absolute;
+      top: 16px; right: -28px;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 40px;
+      transform: rotate(45deg);
+      transform-origin: top right;
+    }
+    .combo-icon-wrap {
+      padding: 36px 28px 16px;
+      text-align: center;
+      font-size: 3.2rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(212,175,55,0.4);
+    }
+    .combo-body {
+      padding: 0 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .combo-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      line-height: 1.3;
+    }
+    .combo-subtitle {
+      font-size: 0.73rem;
+      color: rgba(160,160,160,0.8);
+      line-height: 1.6;
+    }
+    .combo-price {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold);
+      padding-top: 6px;
+    }
+    .combo-price small {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: rgba(160,160,160,0.6);
+      margin-left: 4px;
+    }
+    .combo-btn {
+      display: block;
+      margin-top: 14px;
+      padding: 12px;
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--gold-border);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+    }
+    .combo-btn:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+    }
+    .combo-btn.added {
+      background: rgba(100,180,60,0.15);
+      color: #7ecc55;
+      border-color: rgba(100,180,60,0.4);
+    }
+
+    /* ─── FEATURES BAR ─── */
+    .features-bar {
+      background: #060504;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .features-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 48px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+    @media (max-width: 800px) { .features-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+    @media (max-width: 480px) { .features-inner { grid-template-columns: 1fr; } }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .feature-icon {
+      width: 42px; height: 42px;
+      border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      font-size: 1rem;
+      flex-shrink: 0;
+      background: rgba(212,175,55,0.05);
+    }
+    .feature-text {}
+    .feature-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .feature-desc {
+      font-size: 0.7rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #000;
+      border-top: 1px solid var(--border);
+      padding: 56px 48px 32px;
+    }
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 700px) { .footer-top { flex-direction: column; } }
+    .footer-brand {}
+    .footer-tagline {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 10px;
+      letter-spacing: 0.06em;
+      font-style: italic;
+    }
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold-light); }
+    .footer-socials {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .footer-socials a {
+      width: 34px; height: 34px;
+      border: 1px solid rgba(212,175,55,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .footer-socials a:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212,175,55,0.05);
+    }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copy {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── CART DRAWER ─── */
+    .cart-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -460px; bottom: 0;
+      width: min(460px, 100vw);
+      background: #0d0b08;
+      border-left: 1px solid var(--gold-border);
+      z-index: 201;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .cart-drawer.open { right: 0; }
+
+    .cart-header {
+      background: #000;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gold-border);
+      flex-shrink: 0;
+    }
+    .cart-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    #close-cart {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #close-cart:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.2);
+    }
+    .cart-empty .symbol { font-size: 3rem; margin-bottom: 14px; }
+    .cart-empty p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+      align-items: flex-start;
+    }
+    .cart-item-thumb {
+      width: 52px; height: 68px;
+      background: #1a1208;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .cart-item-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .cart-item-thumb .fallback-sym {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+    .cart-item-details { flex: 1; }
+    .cart-item-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .cart-item-price {
+      font-size: 0.82rem;
+      color: var(--gold);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .qty-btn {
+      width: 26px; height: 26px;
+      background: #1a1208;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .qty-btn:hover { background: rgba(212,175,55,0.15); border-color: var(--gold-border); }
+    .qty-num { font-size: 0.88rem; font-weight: 700; min-width: 20px; text-align: center; color: #fff; }
+    .remove-item {
+      color: rgba(212,175,55,0.4);
+      font-size: 0.68rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      transition: color 0.2s;
+    }
+    .remove-item:hover { color: #e07070; }
+
+    .cart-footer {
+      padding: 20px 24px;
+      background: #060504;
+      border-top: 1px solid var(--gold-border);
+      flex-shrink: 0;
+    }
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .cart-total-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cart-total-amt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+    .cart-note {
+      font-size: 0.68rem;
+      color: rgba(160,160,160,0.5);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    #checkout-btn {
+      width: 100%;
+      padding: 15px;
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    #checkout-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    #checkout-btn:hover::before { transform: translateX(0); }
+    #checkout-btn:hover { color: var(--black); }
+    #checkout-btn span { position: relative; z-index: 1; }
+    #checkout-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* ─── CHECKOUT MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #0d0b08;
+      border: 1px solid var(--gold-border);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      background: #000;
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .modal-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold-light);
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    #close-modal {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5);
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #close-modal:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .modal-body { padding: 28px; }
+
+    .order-summary-mini {
+      background: #080604;
+      border: 1px solid var(--border);
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+    .order-summary-mini h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--gold-light);
+      letter-spacing: 0.05em;
+    }
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      padding: 3px 0;
+      color: rgba(255,255,255,0.55);
+    }
+    .summary-total {
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+      padding-top: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 0.9rem;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(160,160,160,0.7);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #080604;
+      border: 1px solid rgba(212,175,55,0.18);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--gold-border); }
+    .form-group select { cursor: pointer; }
+    .form-group select option { background: #0d0b08; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    #pay-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+    #pay-btn:hover {
+      background: var(--gold-light);
+      box-shadow: 0 0 24px rgba(212,175,55,0.35);
+    }
+    #pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* success state */
+    .success-state {
+      text-align: center;
+      padding: 56px 28px;
+      display: none;
+    }
+    .success-state.show { display: block; }
+    .success-icon {
+      font-size: 3rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .success-state h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .success-state p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .order-id-box {
+      background: #080604;
+      border: 1px solid var(--gold-border);
+      padding: 12px 20px;
+      margin: 18px 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .order-id-box strong { color: var(--gold-light); font-family: 'Cormorant Garamond', serif; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0d0b08;
+      border: 1px solid var(--gold-border);
+      color: var(--gold-light);
+      padding: 12px 28px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      z-index: 500;
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-text { margin: 0 auto; }
+      .hero-eyebrow { justify-content: center; }
+      .hero-subtitle { margin-left: auto; margin-right: auto; }
+      .hero-stage { margin: 40px auto 0; }
+    }
+    @media (max-width: 768px) {
+      header { padding: 0 20px; }
+      nav { display: none; }
+      .section-wrap { padding: 60px 20px; }
+      .features-inner { padding: 32px 20px; }
+      footer { padding: 40px 20px 24px; }
+      .hero-stage { height: 400px; }
+      .hero-book { width: 130px; height: 190px; }
+      .hero-book > .hb-face { width: 130px; height: 190px; }
+      .hero-book::before { height: 170px; transform: translateX(112px) rotateY(90deg); }
+      .hero-book::after { width: 130px; height: 190px; }
+      .stage-podium { width: 260px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      #books-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .book { width: 140px; height: 210px; }
+      .book > :first-child { width: 140px; height: 210px; }
+      .book::before { width: 14px; height: 196px; transform: translateX(124px) rotateY(90deg); }
+      .book::after { width: 140px; height: 210px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a class="logo-wrap" href="index.html">
+    <div class="logo-icon"><i class="fa-solid fa-feather"></i></div>
+    <div class="logo-text">
+      <span class="logo-name">Ria Om Shandilya</span>
+      <span class="logo-sub">Music For Soul</span>
+    </div>
+  </a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="#books">Books</a>
+    <a href="#combos">Combos</a>
+    <a href="index.html#about">About</a>
+  </nav>
+  <button id="cart-btn">
+    <i class="fa-solid fa-bag-shopping"></i>
+    Cart
+    <span id="cart-count">0</span>
+  </button>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="beams">
+    <div class="beam"></div>
+    <div class="beam"></div>
+    <div class="beam"></div>
+    <div class="beam"></div>
+    <div class="beam"></div>
+  </div>
+
+  <div class="hero-grid">
+    <!-- Left: text -->
+    <div class="hero-text">
+      <p class="hero-eyebrow"><span class="dash"></span> NOW PERFORMING <span class="dash"></span></p>
+      <h1 class="hero-title">Piano Sheet<br/><span>Music Books</span></h1>
+      <p class="hero-subtitle">Bollywood melodies, music journals &amp; more — handcrafted &amp; delivered to your door</p>
+      <a href="#books" class="btn-primary"><span>Take This Home &nbsp;<i class="fa-solid fa-arrow-right"></i></span></a>
+    </div>
+
+    <!-- Centre: book on podium -->
+    <div class="hero-stage">
+      <div class="spotlight"></div>
+      <div class="hero-book-wrap">
+        <div class="hero-book">
+          <div class="hb-face">
+            <div class="hb-symbol">𝄞</div>
+            <div class="hb-brand">RIAAZ</div>
+            <div class="hb-label">PIANO SHEET MUSIC</div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-podium">
+        <div class="podium-top"></div>
+        <div class="podium-plaque">NOW PERFORMING</div>
+        <div class="podium-base"></div>
+        <div class="podium-lights">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: empty spacer -->
+    <div></div>
+  </div>
+
+  <a href="#books" class="scroll-down">
+    <span>SCROLL DOWN</span>
+    <i class="fa-solid fa-chevron-down"></i>
+  </a>
+</section>
+
+<!-- ── BOOKS SECTION ── -->
+<section id="books" class="section-wrap">
+  <div class="section-eyebrow">The Collection</div>
+  <h2 class="section-heading">Choose Your <span>Books</span></h2>
+  <div class="section-rule"><span class="section-rule-icon">♩</span></div>
+  <div id="books-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── COMBOS SECTION ── -->
+<section id="combos" class="section-wrap" style="padding-top:0;">
+  <div class="section-eyebrow">Bundle &amp; Save</div>
+  <h2 class="section-heading">Combo <span>Sets</span></h2>
+  <div class="section-rule"><span class="section-rule-icon">♫</span></div>
+  <div id="combo-grid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ── FEATURES BAR ── -->
+<div class="features-bar">
+  <div class="features-inner">
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa-solid fa-music"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">For Every Musician</div>
+        <div class="feature-desc">Beginner to advanced — a score for every skill level</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa-solid fa-medal"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">Premium Quality</div>
+        <div class="feature-desc">Beautifully printed on high-quality paper</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa-solid fa-truck-fast"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">Fast Delivery</div>
+        <div class="feature-desc">Swift shipping across India — free on all orders</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
+      <div class="feature-text">
+        <div class="feature-title">Support</div>
+        <div class="feature-desc">Questions? We're always here to help you</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="logo-wrap" href="index.html">
+          <div class="logo-icon"><i class="fa-solid fa-feather"></i></div>
+          <div class="logo-text">
+            <span class="logo-name">Ria Om Shandilya</span>
+            <span class="logo-sub">Music For Soul</span>
+          </div>
+        </a>
+        <p class="footer-tagline">Bringing music to every home.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;align-items:flex-end;">
+        <div class="footer-links">
+          <a href="#">About Us</a>
+          <a href="#">FAQs</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a>
+        </div>
+        <div class="footer-socials">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 Ria Om Shandilya™. All rights reserved.</span>
+      <span class="footer-copy" style="color:rgba(212,175,55,0.3);">♩ Music For Soul</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── CART OVERLAY + DRAWER ── -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h2><i class="fa-solid fa-bag-shopping" style="margin-right:10px;font-size:1rem;"></i>Your Cart</h2>
+    <button id="close-cart"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">
+      <div class="symbol">♪</div>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amt" id="cart-total">₹0</span>
+    </div>
+    <p class="cart-note">Free shipping on all orders 🎉 &nbsp;·&nbsp; 🎵 Free song on riaaz.app with every purchase</p>
+    <button id="checkout-btn" disabled><span>Proceed to Checkout</span></button>
+  </div>
+</div>
+
+<!-- ── CHECKOUT MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Delivery Details</h2>
+      <button id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div id="checkout-form-wrapper">
+      <div class="modal-body">
+        <div class="order-summary-mini">
+          <h3>Order Summary</h3>
+          <div id="summary-lines"></div>
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="f-name" placeholder="Your full name" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="f-email" placeholder="you@email.com" />
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" id="f-phone" placeholder="10-digit mobile" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Address Line 1 *</label>
+          <input type="text" id="f-addr1" placeholder="House / Flat / Building" />
+        </div>
+        <div class="form-group">
+          <label>Address Line 2</label>
+          <input type="text" id="f-addr2" placeholder="Street / Area / Locality" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="f-city" placeholder="City" />
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" id="f-state" placeholder="State" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>PIN Code *</label>
+            <input type="text" id="f-pin" placeholder="110001" />
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <select id="f-country">
+              <option value="India" selected>India</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="pay-btn"><i class="fa-solid fa-lock" style="margin-right:8px;"></i>Pay with Razorpay</button>
+      </div>
+    </div>
+
+    <div class="success-state" id="success-state">
+      <div class="success-icon">✦</div>
+      <h2>Order Placed!</h2>
+      <p>Thank you for your purchase.<br>We'll dispatch your books soon.</p>
+      <div class="order-id-box">Order ID: <strong id="success-order-id">—</strong></div>
+      <p>A confirmation has been sent to your email.<br>
+        Track your order at <a href="orders.html" style="color:var(--gold)">orders page</a>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ════════════════════════════════════
+  //  CONFIG
+  // ════════════════════════════════════
+  const RAZORPAY_KEY_ID = 'rzp_test_SyTPwvTDWJZkqT';
+  const SHIPPING_FEE = 0;
+  const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
+  const SEND_EMAIL_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/send-order-email';
+
+  // ════════════════════════════════════
+  //  CATALOG
+  // ════════════════════════════════════
+  const BOOKS = [
+    { id: 'soulful-bollywood',  title: 'Soulful Bollywood Melodies',           subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',                        price: 499, symbol: '♩',  cover: 'soulful.jpg'  },
+    { id: 'peppy-bollywood',    title: 'Peppy Bollywood Melodies',             subtitle: 'Señorita, Naina Da Kya Kasoor, and more lively tunes',                            price: 499, symbol: '♪',  cover: 'peppy.jpg'    },
+    { id: 'romantic-bollywood', title: 'Romantic Bollywood Melodies',          subtitle: 'Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, and more',                        price: 499, symbol: '♫',  cover: 'romantic.jpg' },
+    { id: 'classic-bollywood',  title: 'Classic Bollywood Melodies',           subtitle: 'Ek Ladki Bheegi Bhaagi Si, Kal Ho Na Ho, and timeless classics',                 price: 499, symbol: '𝄞', cover: 'classic.png'  },
+    { id: 'meet-notes-beginner',title: "Meet The Notes: Beginner's Guide",     subtitle: 'Beginner-friendly piano foundations',                                             price: 399, symbol: '𝄢', cover: 'kids.png'     },
+    { id: 'meet-notes-theory',  title: 'Meet The Notes: Theory Edition',       subtitle: 'Theory + activities + worksheets',                                                price: 399, symbol: '𝄡', cover: 'kids2.png'    },
+    { id: 'wyom-100',           title: 'Write Your Own Melodies (100 pages)',  subtitle: 'Blank 12-stave music journal — 100 pages / 50 sheets',                           price: 299, symbol: '✦',  cover: 'wyom.png'     },
+    { id: 'wyom-72',            title: 'Write Your Own Melodies (72 pages)',   subtitle: 'Blank 12-stave music journal — 72 pages / 36 sheets',                            price: 249, symbol: '✧',  cover: 'wyom2.png'    },
+    { id: 'track-your-journey', title: 'Track Your Journey',                   subtitle: 'Music log book for all instruments',                                              price: 299, symbol: '♬',  cover: 'logbook.png'  },
+  ];
+
+  const COMBOS = [
+    { id: 'combo-classic-romantic',       title: 'Classic & Romantic Bollywood Melodies',                    subtitle: '2 books · 8 songs · Classic Bollywood Melodies + Romantic Bollywood Melodies',         price: 1200, icon: '♩♪' },
+    { id: 'combo-classic-romantic-peppy', title: 'Classic, Romantic & Peppy Bollywood Melodies',             subtitle: '3 books · 16 songs · Classic + Romantic + Peppy Bollywood Melodies',                   price: 1700, icon: '♫𝄞' },
+    { id: 'combo-all-four',               title: 'Classic, Romantic, Peppy & Soulful Bollywood Melodies',    subtitle: '4 books · 32 songs · The complete Bollywood Melodies collection',                       price: 2200, icon: '♥♫' },
+  ];
+
+  // ════════════════════════════════════
+  //  SUPABASE
+  // ════════════════════════════════════
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ════════════════════════════════════
+  //  CART STATE
+  // ════════════════════════════════════
+  let cart = {};
+
+  function cartTotal() {
+    return Object.values(cart).reduce((s, item) => s + item.price * item.qty, 0);
+  }
+  function cartCount() {
+    return Object.values(cart).reduce((s, item) => s + item.qty, 0);
+  }
+
+  // ════════════════════════════════════
+  //  RENDER BOOKS
+  // ════════════════════════════════════
+  function renderBooks() {
+    const grid = document.getElementById('books-grid');
+    grid.innerHTML = BOOKS.map(book => `
+      <div class="book-card" data-id="${book.id}">
+        <a class="book-container" href="" tabindex="-1" onclick="return false;">
+          <div class="book">
+            <img
+              src="${book.cover}"
+              alt="${book.title}"
+              onerror="this.outerHTML='<div class=\\'book-placeholder\\'><div class=\\'ph-sym\\'>${book.symbol}</div><div class=\\'ph-title\\'>${book.title}</div></div>'"
+            />
+          </div>
+        </a>
+        <div class="book-info">
+          <div class="book-title">${book.title}</div>
+          <div class="book-subtitle">${book.subtitle}</div>
+          <div class="book-price">₹${book.price} <small>free shipping</small></div>
+          <div class="free-song-badge">🎵 Free song on riaaz.app</div>
+          <button class="add-to-cart" onclick="addToCart('${book.id}')">
+            <i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderCombos() {
+    const grid = document.getElementById('combo-grid');
+    grid.innerHTML = COMBOS.map(combo => `
+      <div class="combo-card" data-id="${combo.id}">
+        <div class="combo-ribbon">Combo</div>
+        <div class="combo-icon-wrap">${combo.icon}</div>
+        <div class="combo-body">
+          <div class="combo-title">${combo.title}</div>
+          <div class="combo-subtitle">${combo.subtitle}</div>
+          <div class="combo-price">₹${combo.price.toLocaleString('en-IN')} <small>free shipping</small></div>
+          <div class="free-song-badge">🎵 Free song on riaaz.app</div>
+          <button class="combo-btn" onclick="addToCart('${combo.id}')">
+            <i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ════════════════════════════════════
+  //  CART ACTIONS
+  // ════════════════════════════════════
+  function addToCart(id) {
+    const item = BOOKS.find(b => b.id === id) || COMBOS.find(c => c.id === id);
+    if (!item) return;
+
+    if (cart[id]) {
+      cart[id].qty++;
+    } else {
+      cart[id] = { ...item, qty: 1 };
+    }
+    updateCartUI();
+
+    // flash button
+    const btns = document.querySelectorAll(`[data-id="${id}"] .add-to-cart, [data-id="${id}"] .combo-btn`);
+    btns.forEach(btn => {
+      btn.innerHTML = '<i class="fa-solid fa-check" style="margin-right:6px;font-size:0.65rem;"></i>Added';
+      btn.classList.add('added');
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart';
+        btn.classList.remove('added');
+      }, 1400);
+    });
+
+    showToast(`${item.title.split(' ').slice(0,3).join(' ')}… added ♪`);
+    openCart();
+  }
+
+  function removeFromCart(id) {
+    delete cart[id];
+    updateCartUI();
+  }
+
+  function changeQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const count = cartCount();
+    const total = cartTotal();
+
+    const countEl = document.getElementById('cart-count');
+    countEl.textContent = count;
+    countEl.style.display = count > 0 ? 'flex' : 'none';
+
+    document.getElementById('cart-total').textContent = `₹${total.toLocaleString('en-IN')}`;
+    document.getElementById('checkout-btn').disabled = count === 0;
+
+    const itemsEl = document.getElementById('cart-items');
+    if (count === 0) {
+      itemsEl.innerHTML = `<div class="cart-empty"><div class="symbol">♪</div><p>Your cart is empty</p></div>`;
+      return;
+    }
+
+    itemsEl.innerHTML = Object.values(cart).map(item => `
+      <div class="cart-item">
+        <div class="cart-item-thumb">
+          <img
+            src="${item.cover || ''}"
+            alt="${item.title}"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          />
+          <div class="fallback-sym" style="display:none;">${item.symbol || '♪'}</div>
+        </div>
+        <div class="cart-item-details">
+          <div class="cart-item-name">${item.title}</div>
+          <div class="cart-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', +1)">+</button>
+            <button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ════════════════════════════════════
+  //  CART DRAWER
+  // ════════════════════════════════════
+  function openCart() {
+    document.getElementById('cart-drawer').classList.add('open');
+    document.getElementById('cart-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCart() {
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('cart-btn').addEventListener('click', openCart);
+  document.getElementById('close-cart').addEventListener('click', closeCart);
+  document.getElementById('cart-overlay').addEventListener('click', closeCart);
+
+  // ════════════════════════════════════
+  //  CHECKOUT MODAL
+  // ════════════════════════════════════
+  function openCheckout() {
+    closeCart();
+
+    const lines = Object.values(cart).map(item =>
+      `<div class="summary-line"><span>${item.title} × ${item.qty}</span><span>₹${(item.price * item.qty).toLocaleString('en-IN')}</span></div>`
+    ).join('');
+    const shippingLine = SHIPPING_FEE > 0
+      ? `<div class="summary-line"><span>Shipping</span><span>₹${SHIPPING_FEE}</span></div>` : '';
+    document.getElementById('summary-lines').innerHTML = lines + shippingLine;
+    document.getElementById('summary-total').textContent = `₹${(cartTotal() + SHIPPING_FEE).toLocaleString('en-IN')}`;
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('checkout-btn').addEventListener('click', openCheckout);
+  document.getElementById('close-modal').addEventListener('click', closeModal);
+
+  // ════════════════════════════════════
+  //  RAZORPAY + SUPABASE
+  // ════════════════════════════════════
+  document.getElementById('pay-btn').addEventListener('click', async () => {
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    const addr1 = document.getElementById('f-addr1').value.trim();
+    const city  = document.getElementById('f-city').value.trim();
+    const state = document.getElementById('f-state').value.trim();
+    const pin   = document.getElementById('f-pin').value.trim();
+
+    if (!name || !email || !phone || !addr1 || !city || !state || !pin) {
+      showToast('Please fill in all required fields'); return;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      showToast('Enter a valid 10-digit phone number'); return;
+    }
+    if (!/^\d{6}$/.test(pin)) {
+      showToast('Enter a valid 6-digit PIN code'); return;
+    }
+
+    const amountPaise = (cartTotal() + SHIPPING_FEE) * 100;
+    const address = {
+      line1: addr1,
+      line2: document.getElementById('f-addr2').value.trim(),
+      city, state, pin,
+      country: document.getElementById('f-country').value,
+    };
+    const orderItems = Object.values(cart).map(item => ({
+      id: item.id, title: item.title, qty: item.qty, price: item.price,
+    }));
+
+    const rzp = new Razorpay({
+      key: RAZORPAY_KEY_ID,
+      amount: amountPaise,
+      currency: 'INR',
+      name: 'Ria Om Shandilya™',
+      description: 'Piano Sheet Music Books',
+      prefill: { name, email, contact: phone },
+      theme: { color: '#d4af37' },
+
+      handler: async function(response) {
+        const savedTotal = cartTotal() + SHIPPING_FEE;
+        const savedItems = [...orderItems];
+        const savedAddress = `${address.line1}${address.line2 ? ', ' + address.line2 : ''}, ${address.city}, ${address.state} - ${address.pin}`;
+
+        const { data, error } = await db.from('orders').insert([{
+          razorpay_payment_id: response.razorpay_payment_id,
+          name, email, phone,
+          address: address.line1 + (address.line2 ? ', ' + address.line2 : ''),
+          city: address.city,
+          state: address.state,
+          pin: address.pin,
+          country: address.country,
+          items: orderItems,
+          subtotal: cartTotal(),
+          shipping: SHIPPING_FEE,
+          total: savedTotal,
+          status: 'paid',
+        }]).select().single();
+
+        if (error) console.error('Supabase error:', error);
+
+        const shortId = data
+          ? data.id.toString().slice(0, 8).toUpperCase()
+          : response.razorpay_payment_id.slice(-8).toUpperCase();
+
+        try {
+          const emailRes = await fetch(SEND_EMAIL_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name, email,
+              orderId: shortId,
+              items: savedItems,
+              total: `₹${savedTotal}`,
+              address: savedAddress,
+            }),
+          });
+          const emailData = await emailRes.json();
+          console.log('Email result:', emailData);
+        } catch (emailErr) {
+          console.warn('Email send failed:', emailErr);
+        }
+
+        document.getElementById('checkout-form-wrapper').style.display = 'none';
+        document.getElementById('success-order-id').textContent = data ? data.id : response.razorpay_payment_id;
+        document.getElementById('success-state').classList.add('show');
+
+        cart = {};
+        updateCartUI();
+      },
+
+      modal: { ondismiss: () => showToast('Payment cancelled') }
+    });
+
+    rzp.open();
+  });
+
+  // ════════════════════════════════════
+  //  TOAST
+  // ════════════════════════════════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ════════════════════════════════════
+  //  INIT
+  // ════════════════════════════════════
+  renderBooks();
+  renderCombos();
+  updateCartUI();
+</script>
+</body>
+</html>
