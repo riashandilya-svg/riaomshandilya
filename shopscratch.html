@@ -214,7 +214,8 @@
       filter: blur(20px); pointer-events: none;
     }
     .hero-book-wrap {
-      position: relative; z-index: 3;
+      position: relative; z-index: 5;
+      pointer-events: none;
       width: clamp(220px, 24vw, 360px);
       aspect-ratio: 3/4;
       display: flex; align-items: center; justify-content: center;
@@ -267,7 +268,7 @@
       transform: translate(-50%, -52%);
       width: clamp(420px, 46vw, 600px);
       height: clamp(420px, 46vw, 600px);
-      z-index: 10;
+      z-index: 2;
       cursor: pointer;
       border-radius: 50%;
     }
@@ -448,7 +449,7 @@
       position: relative;
       width: 420px;
       display: flex; flex-direction: column; align-items: center;
-      z-index: 3;
+      z-index: 5;
     }
     .podium-top {
       width: 80%; height: 28px;
