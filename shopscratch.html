@@ -761,6 +761,126 @@
       color: #7ecc55;
       border-color: rgba(100,180,60,0.4);
     }
+    .about-book-btn {
+      width: 100%;
+      padding: 11px;
+      background: transparent;
+      color: rgba(212,175,55,0.6);
+      border: 1px solid rgba(212,175,55,0.2);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+      margin-top: 8px;
+    }
+    .about-book-btn:hover {
+      background: rgba(212,175,55,0.08);
+      color: var(--gold-light);
+      border-color: var(--gold-border);
+    }
+
+    /* ── BOOK POPUP ── */
+    .book-popup-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .book-popup-overlay.open { opacity: 1; pointer-events: all; }
+    .book-popup {
+      background: #0d0b08;
+      border: 1px solid var(--gold-border);
+      width: 100%; max-width: 860px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: scale(0.94) translateY(24px);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 80px rgba(212,175,55,0.15);
+    }
+    .book-popup-overlay.open .book-popup { transform: scale(1) translateY(0); }
+    .book-popup-header {
+      background: #000;
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 2;
+    }
+    .book-popup-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold-light);
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .book-popup-close {
+      background: none; border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5); width: 36px; height: 36px;
+      cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .book-popup-close:hover { border-color: var(--gold); color: var(--gold-light); }
+    .book-popup-body { padding: 32px; }
+    .book-popup-images {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-bottom: 32px;
+    }
+    .book-popup-img-wrap {
+      aspect-ratio: 3/4;
+      background: #080604;
+      border: 1px solid var(--gold-border);
+      overflow: hidden;
+      position: relative;
+    }
+    .book-popup-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .book-popup-img-wrap:hover img { transform: scale(1.04); }
+    .book-popup-img-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      color: var(--gold);
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; padding: 12px 10px 8px;
+      text-align: center;
+    }
+    .book-popup-desc {
+      font-size: 0.85rem; color: rgba(245,240,232,0.75);
+      line-height: 1.85;
+    }
+    .book-popup-desc p { margin-bottom: 14px; }
+    .book-popup-desc ul { padding-left: 20px; margin-bottom: 14px; }
+    .book-popup-desc ul li { margin-bottom: 6px; }
+    .book-popup-desc ol { padding-left: 20px; margin-bottom: 14px; }
+    .book-popup-desc ol li { margin-bottom: 6px; }
+    .book-popup-desc strong { color: var(--gold-light); }
+    .book-popup-rule {
+      height: 1px; background: var(--gold-border);
+      margin: 24px 0;
+    }
+    .book-popup-add {
+      width: 100%; padding: 15px;
+      background: var(--gold); color: var(--black);
+      border: none; font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem; font-weight: 800;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
+      margin-top: 24px;
+    }
+    .book-popup-add:hover { background: var(--gold-light); box-shadow: 0 0 24px rgba(212,175,55,0.35); }
+    @media (max-width: 600px) {
+      .book-popup-images { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .book-popup-body { padding: 20px; }
+      .book-popup-header { padding: 18px 20px; }
+    }
 
     /* ─── COMBO SECTION ─── */
     #combo-grid {
@@ -1454,7 +1574,7 @@
       <p class="hero-eyebrow"><span class="dash"></span> NOW PERFORMING <span class="dash"></span></p>
       <h1 class="hero-title">Piano Sheet<br/><span>Music Books</span></h1>
       <p class="hero-subtitle">Bollywood melodies, music journals &amp; more — handcrafted &amp; delivered to your door</p>
-      <a href="#books" class="btn-primary"><span>Take This Home &nbsp;<i class="fa-solid fa-arrow-right"></i></span></a>
+      <a href="#" class="btn-primary" id="heroAboutBtn" onclick="openBookPopup(ALL_ITEMS ? ALL_ITEMS[heroCarouselCurrent()] : BOOKS[0]); return false;"><span>About the Book &nbsp;<i class="fa-solid fa-book-open"></i></span></a>
     </div>
 
     <!-- Right: book on podium -->
@@ -1879,6 +1999,7 @@
           <button class="add-to-cart" onclick="addToCart('${book.id}')">
             <i class="fa-solid fa-plus" style="margin-right:6px;font-size:0.65rem;"></i>Add to Cart
           </button>
+          ${BOOK_DETAILS[book.id] ? `<button class="about-book-btn" onclick="openBookPopup(${JSON.stringify({id: book.id, title: book.title}).replace(/"/g, '&quot;')})"><i class="fa-solid fa-book-open" style="margin-right:6px;font-size:0.65rem;"></i>About the Book</button>` : ''}
         </div>
       </div>
     `).join('');
@@ -2319,9 +2440,175 @@
     buildDots();
   })();
 
+  // ════════════════════════════════════
+  //  BOOK DETAILS (popup content)
+  // ════════════════════════════════════
+  const BOOK_DETAILS = {
+    'soulful-bollywood': {
+      images: [
+        { src: 'soulful-index.jpg',   label: 'Index' },
+        { src: 'soulful-song.jpg',    label: 'A Song' },
+        { src: 'soulful-back.jpg',    label: 'Back Page' },
+      ],
+      html: `
+        <p>This piano sheet music collection brings together a curated selection of timeless and contemporary Bollywood songs, thoughtfully arranged for solo piano. Designed for pianists who enjoy expressive, lyrical playing, the book presents authentic adaptations that retain the emotional essence of the original compositions while remaining pianistically natural and enjoyable to perform.</p>
+        <p><strong>Included songs:</strong></p>
+        <ul>
+          <li>Srivalli</li><li>Ae Hairate</li><li>Jashn-e-Baharaa</li><li>Allah Ke Bande</li>
+          <li>Teri Deewani</li><li>Moh Moh Ke Dhaage</li><li>Kalank</li><li>Itna Na Mujhse Tu Pyaar Badha</li>
+        </ul>
+        <p>Each piece is notated with clarity and musical detail, making this collection suitable for learners as well as experienced players. The arrangements include clearly marked finger numbers, dynamic markings, pedal indications, and lyrics placed thoughtfully under the melody to support musical phrasing and expression. Chord voicings, melodic lines, and rhythmic patterns are crafted to sit comfortably under the hands while allowing the pianist to explore tone, balance, and emotional nuance.</p>
+        <p>Ideal for practice, performance, or personal enjoyment, this book is a refined addition to any pianist's Bollywood repertoire, offering expressive sheet music that balances musical depth with playability.</p>
+      `
+    },
+    'peppy-bollywood': {
+      images: [
+        { src: 'peppy-index.jpg',  label: 'Index' },
+        { src: 'peppy-song.jpg',   label: 'A Song' },
+        { src: 'peppy-back.jpg',   label: 'Back Page' },
+      ],
+      html: `
+        <p>Step into the world of Bollywood with <strong>Peppy Bollywood Melodies</strong>, a piano sheet music book designed for beginners to intermediate players. This is the fourth book by Ria Om Shandilya, and the third in the popular Bollywood Melodies series, offering a carefully crafted collection of 8 upbeat Bollywood classics.</p>
+        <p><strong>🎹 8 Fun and Energetic Songs:</strong></p>
+        <ol>
+          <li><strong>Kaisi Paheli Zindagani</strong> – A smooth, jazzy classic with timeless charm.</li>
+          <li><strong>Darling (7 Khoon Maaf)</strong> – A quirky melody that's playful yet haunting.</li>
+          <li><strong>Jaane Kahan Mera Jigar Gaya Ji</strong> – A lively, golden-era tune to brighten any day.</li>
+          <li><strong>Senorita</strong> – A vibrant mix of Bollywood and Spanish flair.</li>
+          <li><strong>Zoobie Doobie</strong> – A bubbly and romantic favorite for all ages.</li>
+          <li><strong>Gore Gore O Banke Chhore</strong> – A fun, peppy melody from Bollywood's retro years.</li>
+          <li><strong>Naina Da Kya Kasoor</strong> – A soulful yet lighthearted track with modern appeal.</li>
+          <li><strong>Slow Motion Angreza</strong> – A playful, offbeat tune with a retro-modern twist.</li>
+        </ol>
+        <p><strong>🎼 Designed for Easy Learning:</strong></p>
+        <ul>
+          <li>Chord Names: Clear and simple for harmony reference.</li>
+          <li>Tempo Marks: Adjust your playing to match the original mood.</li>
+          <li>Phrases and Dynamics: Add expression effortlessly.</li>
+          <li>Lyrics Included: Sing along or enjoy the storytelling element.</li>
+        </ul>
+        <p>✨ <strong>Perfect for Beginner to Intermediate Pianists</strong> — no advanced techniques or overwhelming notations. This book is tailored to help you learn and play Bollywood hits confidently while enjoying the process.</p>
+        <p>With years of experience bringing Bollywood music to piano enthusiasts, Ria continues her mission to make Indian cinema's timeless melodies accessible to learners of all skill levels. Following the success of Classic and Romantic Bollywood Melodies, this third installment highlights the playful, energetic spirit of Bollywood.</p>
+      `
+    },
+    'romantic-bollywood': {
+      images: [
+        { src: 'romantic-index.jpg', label: 'Index' },
+        { src: 'romantic-song.jpg',  label: 'A Song' },
+        { src: 'romantic-back.jpg',  label: 'Back Page' },
+      ],
+      html: `
+        <p>Discover the magic of Bollywood's most beloved romantic melodies with <strong>Romantic Bollywood Melodies</strong>, a delightful collection of piano sheet music that brings to life the timeless classics that have captured hearts for generations. This book is your gateway to the soul-stirring world of Hindi cinema's most cherished love songs.</p>
+        <p><strong>8 Unforgettable Bollywood Classics:</strong></p>
+        <ol>
+          <li>Aaj Kal Tere Mere Pyaar Ke Charche</li>
+          <li>Bade Acche Lagte Hain</li>
+          <li>Piyu Bole</li>
+          <li>Main Agar Kahun</li>
+          <li>Mere Saamne Wali Khidki Mein</li>
+          <li>Raat Kali Ek Khwab Mein Aayi</li>
+          <li>Pal Pal Har Pal</li>
+          <li>Khwab Ho Tum Ya Koi Haqeeqat</li>
+        </ol>
+        <p><strong>Features:</strong></p>
+        <ul>
+          <li>Western Sheet Notations: Familiar notation style for ease of play.</li>
+          <li>Lyrics and Chord Symbols: For vocal accompaniment or ensemble performance.</li>
+          <li>Detailed Notation: Phrases, pedaling instructions, dynamics and ornaments.</li>
+          <li>Suitable for Grade 2 and Above: Accessible for a broad range of skill levels.</li>
+        </ul>
+        <p>Capture the timeless romance of Bollywood melodies on your piano. Order your copy and let the music transport you to the heart of Bollywood's love stories.</p>
+      `
+    },
+    'classic-bollywood': {
+      images: [
+        { src: 'classic-index.jpg', label: 'Index' },
+        { src: 'classic-song.jpg',  label: 'A Song' },
+        { src: 'classic-back.jpg',  label: 'Back Page' },
+      ],
+      html: `
+        <p>This book contains <strong>8 timeless Bollywood classics</strong>, complete with a Repertoire, Reference Chart and Music Index.</p>
+        <p><strong>Songs included:</strong></p>
+        <ol>
+          <li>Ek Ladki Bheegi Bhaagi Si</li>
+          <li>Gulaabi Aankhen</li>
+          <li>Chookar Mere Mann Ko</li>
+          <li>Hai Apna Dil Toh Awaara</li>
+          <li>Kal Ho Na Ho</li>
+          <li>Ajeeb Dastaan Hai Yeh</li>
+          <li>Aaoge Jab Tum Saajna</li>
+          <li>Maula Mere Le Le Meri Jaan</li>
+        </ol>
+        <p>The quality of the book is top-notch and would look even fancier sitting in your music library! Please note that the book is best suited for <strong>Grade 3–8</strong>.</p>
+      `
+    },
+  };
+
+  // ════════════════════════════════════
+  //  BOOK POPUP
+  // ════════════════════════════════════
+  let popupCurrentId = null;
+
+  function openBookPopup(item) {
+    if (!item || !item.id) return;
+    const details = BOOK_DETAILS[item.id];
+    if (!details) return;
+
+    popupCurrentId = item.id;
+
+    document.getElementById('bookPopupTitle').textContent = item.title || 'About the Book';
+
+    // Images
+    const imgsEl = document.getElementById('bookPopupImages');
+    imgsEl.innerHTML = details.images.map(img => `
+      <div class="book-popup-img-wrap">
+        <img src="${img.src}" alt="${img.label}" onerror="this.style.opacity='0.15'" />
+        <div class="book-popup-img-label">${img.label}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('bookPopupDesc').innerHTML = details.html;
+    document.getElementById('bookPopupAdd').onclick = () => { addToCart(item.id); };
+
+    document.getElementById('bookPopupOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeBookPopup() {
+    document.getElementById('bookPopupOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('bookPopupClose').addEventListener('click', closeBookPopup);
+  document.getElementById('bookPopupOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('bookPopupOverlay')) closeBookPopup();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBookPopup(); });
+
+  // Helper for hero button to get current carousel item
+  function heroCarouselCurrent() {
+    return typeof heroCurrentIdx !== 'undefined' ? heroCurrentIdx : 0;
+  }
+
   renderBooks();
   renderCombos();
   updateCartUI();
 </script>
+<!-- ── BOOK POPUP ── -->
+<div class="book-popup-overlay" id="bookPopupOverlay">
+  <div class="book-popup" id="bookPopup">
+    <div class="book-popup-header">
+      <h2 id="bookPopupTitle">About the Book</h2>
+      <button class="book-popup-close" id="bookPopupClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="book-popup-body">
+      <div class="book-popup-images" id="bookPopupImages"></div>
+      <div class="book-popup-rule"></div>
+      <div class="book-popup-desc" id="bookPopupDesc"></div>
+      <button class="book-popup-add" id="bookPopupAdd"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Cart</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
