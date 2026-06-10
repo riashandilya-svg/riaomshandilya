@@ -276,7 +276,7 @@
       max-width: 1280px; margin: 0 auto; padding: 0 60px;
       display: grid; grid-template-columns: 1fr 1fr;
       align-items: center; gap: 48px;
-      min-height: calc(100vh - 68px);
+      min-height: calc(88vh - 68px);
     }
     .hero-text { max-width: 500px; }
     .hero-eyebrow {
@@ -296,14 +296,14 @@
     }
     .spotlight {
       position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 820px;
+      width: 600px; height: 680px;
       background: radial-gradient(ellipse at center top, rgba(255,220,140,.35) 0%, rgba(255,220,140,.12) 30%, transparent 70%);
       filter: blur(20px); pointer-events: none;
     }
     .hero-book-wrap {
       position: relative; z-index: 5;
       pointer-events: none;
-      width: clamp(220px, 24vw, 360px);
+      width: clamp(180px, 20vw, 300px);
       aspect-ratio: 3/4;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: -10px;
@@ -376,8 +376,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -52%);
-      width: clamp(420px, 46vw, 600px);
-      height: clamp(420px, 46vw, 600px);
+      width: clamp(360px, 40vw, 520px);
+      height: clamp(360px, 40vw, 520px);
       z-index: 2;
       cursor: pointer;
       border-radius: 50%;
@@ -610,13 +610,13 @@
     /* Hero text column */
     .hero-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3.5rem, 6vw, 5.5rem);
+      font-size: clamp(2.8rem, 4.8vw, 4.4rem);
       font-weight: 500; line-height: 1;
       color: #fff; margin-bottom: 28px; letter-spacing: 1px;
     }
     .hero-title span { color: var(--gold-light); font-style: italic; }
     .hero-subtitle {
-      font-size: 14px; color: #c8c0b0;
+      font-size: 13px; color: #c8c0b0;
       line-height: 1.7; margin-bottom: 36px; max-width: 340px;
     }
     /* ── Scroll-down indicator: animated mouse ── */
