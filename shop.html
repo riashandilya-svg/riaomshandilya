@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riaaz - Music for Soul</title>
+  <link rel="icon" type="image/png" href="favicon_io.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===================== RESET & BASE ===================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0B0B0B;
+      --gold: #D4AF37;
+      --gold-dim: #B8962E;
+      --gold-glow: rgba(212, 175, 55, 0.35);
+      --gold-glow-strong: rgba(212, 175, 55, 0.55);
+      --white: #FFFFFF;
+      --white-dim: rgba(255, 255, 255, 0.7);
+      --white-faint: rgba(255, 255, 255, 0.4);
+      --card-bg: #111111;
+      --card-border: rgba(212, 175, 55, 0.2);
+      --font-heading: 'Cinzel', 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { border: none; cursor: pointer; font-family: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ===================== NAVBAR ===================== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 1.2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.5s ease, backdrop-filter 0.5s ease;
+      background: transparent;
+    }
+
+    .navbar.scrolled {
+      background: rgba(11, 11, 11, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--gold);
+    }
+
+    .nav-logo-text {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .nav-logo-sub {
+      font-family: var(--font-body);
+      font-size: 0.55rem;
+      letter-spacing: 4px;
+      color: var(--white-faint);
+      text-transform: uppercase;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: var(--gold);
+      transition: width 0.4s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--gold);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-icons {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .nav-icon-btn {
+      background: none;
+      color: var(--white-dim);
+      font-size: 1.1rem;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-icon-btn:hover { color: var(--gold); }
+
+    .cart-count {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: var(--gold);
+      color: var(--bg);
+      font-size: 0.6rem;
+      font-weight: 700;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      cursor: pointer;
+    }
+
+    .nav-hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ===================== HERO / STAGE ===================== */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* 3D Proscenium Arch */
+    .proscenium {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      perspective: 1200px;
+    }
+
+    .proscenium-arch {
+      position: absolute;
+      inset: 0;
+      border: clamp(20px, 4vw, 60px) solid transparent;
+      border-image: linear-gradient(
+        180deg,
+        #D4AF37 0%,
+        #F5E6A3 15%,
+        #D4AF37 30%,
+        #8B6914 50%,
+        #D4AF37 70%,
+        #F5E6A3 85%,
+        #D4AF37 100%
+      ) 1;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .arch-ornament-top {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      width: clamp(200px, 30vw, 400px);
+      height: clamp(50px, 6vw, 90px);
+      pointer-events: none;
+    }
+
+    .arch-ornament-top::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(ellipse 60% 100% at 50% 0%, #D4AF37 0%, transparent 70%),
+        radial-gradient(ellipse 30% 60% at 50% 20%, #F5E6A3 0%, transparent 60%);
+    }
+
+    .arch-ornament-top::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .arch-column {
+      position: absolute;
+      top: 0;
+      width: clamp(30px, 5vw, 70px);
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .arch-column--left { left: 0; }
+    .arch-column--right { right: 0; }
+
+    .arch-column::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        #D4AF37 0%,
+        #8B6914 20%,
+        #D4AF37 40%,
+        #6B5210 60%,
+        #D4AF37 80%,
+        #8B6914 100%
+      );
+      opacity: 0.5;
+    }
+
+    .arch-column::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(212, 175, 55, 0.15) 0px,
+        transparent 2px,
+        transparent 40px,
+        rgba(212, 175, 55, 0.15) 42px
+      );
+    }
+
+    /* Curtains */
+    .curtain {
+      position: absolute;
+      top: 0;
+      width: clamp(80px, 12vw, 180px);
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .curtain--left {
+      left: 0;
+      background: linear-gradient(90deg,
+        rgba(80, 10, 10, 0.6) 0%,
+        rgba(60, 5, 5, 0.3) 40%,
+        transparent 100%
+      );
+    }
+
+    .curtain--right {
+      right: 0;
+      background: linear-gradient(-90deg,
+        rgba(80, 10, 10, 0.6) 0%,
+        rgba(60, 5, 5, 0.3) 40%,
+        transparent 100%
+      );
+    }
+
+    .curtain::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(120, 20, 20, 0.1) 0px,
+        transparent 3px,
+        transparent 20px
+      );
+    }
+
+    /* Volumetric Spotlight Beams */
+    .spotlights {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .spotlight-beam {
+      position: absolute;
+      top: -10%;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      opacity: 0;
+      filter: blur(2px);
+      mix-blend-mode: screen;
+    }
+
+    .spotlight-beam--center {
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 clamp(100px, 15vw, 250px) 120vh clamp(100px, 15vw, 250px);
+      border-color: transparent transparent rgba(212, 175, 55, 0.06) transparent;
+      animation: beamPulse 6s ease-in-out infinite, beamFadeIn 2s ease forwards;
+      animation-delay: 0.5s;
+    }
+
+    .spotlight-beam--left {
+      left: 15%;
+      transform: rotate(-8deg);
+      transform-origin: top center;
+      border-width: 0 clamp(50px, 8vw, 130px) 110vh clamp(50px, 8vw, 130px);
+      border-color: transparent transparent rgba(212, 175, 55, 0.035) transparent;
+      animation: beamSwayLeft 10s ease-in-out infinite, beamFadeIn 2s ease forwards;
+      animation-delay: 1s;
+    }
+
+    .spotlight-beam--right {
+      right: 15%;
+      left: auto;
+      transform: rotate(8deg);
+      transform-origin: top center;
+      border-width: 0 clamp(50px, 8vw, 130px) 110vh clamp(50px, 8vw, 130px);
+      border-color: transparent transparent rgba(212, 175, 55, 0.035) transparent;
+      animation: beamSwayRight 10s ease-in-out infinite, beamFadeIn 2s ease forwards;
+      animation-delay: 1.5s;
+    }
+
+    .spotlight-beam--far-left {
+      left: 3%;
+      transform: rotate(-18deg);
+      transform-origin: top center;
+      border-width: 0 clamp(40px, 6vw, 100px) 100vh clamp(40px, 6vw, 100px);
+      border-color: transparent transparent rgba(212, 175, 55, 0.02) transparent;
+      animation: beamSwayFarLeft 14s ease-in-out infinite, beamFadeIn 2.5s ease forwards;
+      animation-delay: 2s;
+    }
+
+    .spotlight-beam--far-right {
+      right: 3%;
+      left: auto;
+      transform: rotate(18deg);
+      transform-origin: top center;
+      border-width: 0 clamp(40px, 6vw, 100px) 100vh clamp(40px, 6vw, 100px);
+      border-color: transparent transparent rgba(212, 175, 55, 0.02) transparent;
+      animation: beamSwayFarRight 14s ease-in-out infinite, beamFadeIn 2.5s ease forwards;
+      animation-delay: 2.5s;
+    }
+
+    @keyframes beamFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes beamPulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes beamSwayLeft {
+      0%, 100% { transform: rotate(-8deg); }
+      50% { transform: rotate(-3deg); }
+    }
+
+    @keyframes beamSwayRight {
+      0%, 100% { transform: rotate(8deg); }
+      50% { transform: rotate(3deg); }
+    }
+
+    @keyframes beamSwayFarLeft {
+      0%, 100% { transform: rotate(-18deg); }
+      50% { transform: rotate(-12deg); }
+    }
+
+    @keyframes beamSwayFarRight {
+      0%, 100% { transform: rotate(18deg); }
+      50% { transform: rotate(12deg); }
+    }
+
+    /* Spotlight Source Glow */
+    .spotlight-source {
+      position: absolute;
+      top: -20px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      z-index: 12;
+      pointer-events: none;
+    }
+
+    .spotlight-source--center {
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(255, 240, 180, 0.8) 0%, rgba(212, 175, 55, 0.3) 40%, transparent 70%);
+      animation: sourcePulseCenter 4s ease-in-out infinite;
+    }
+
+    .spotlight-source--left {
+      left: 18%;
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, rgba(255, 240, 180, 0.5) 0%, rgba(212, 175, 55, 0.2) 40%, transparent 70%);
+      animation: sourcePulseCenter 5s ease-in-out infinite 1s;
+    }
+
+    .spotlight-source--right {
+      right: 18%;
+      left: auto;
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, rgba(255, 240, 180, 0.5) 0%, rgba(212, 175, 55, 0.2) 40%, transparent 70%);
+      animation: sourcePulseRight 5s ease-in-out infinite 2s;
+    }
+
+    @keyframes sourcePulseCenter {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+      50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+    }
+
+    @keyframes sourcePulseRight {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* Dust Particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(212, 175, 55, 0.5);
+      border-radius: 50%;
+      animation: particleFloat linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+      10% { opacity: 1; transform: translateY(80vh) translateX(10px) scale(1); }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-10vh) translateX(-20px) scale(0.5); opacity: 0; }
+    }
+
+    /* Stage Floor */
+    .stage-floor {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 45%;
+      z-index: 2;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(11, 11, 11, 0.5) 20%,
+        rgba(20, 15, 5, 0.3) 60%,
+        rgba(11, 11, 11, 0.95) 100%
+      );
+    }
+
+    .stage-floor::before {
+      content: '';
+      position: absolute;
+      bottom: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+    }
+
+    /* Floor Spotlight Pool */
+    .floor-glow {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(300px, 50vw, 600px);
+      height: clamp(60px, 8vw, 120px);
+      background: radial-gradient(ellipse, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: 2;
+      animation: floorGlowPulse 6s ease-in-out infinite;
+    }
+
+    @keyframes floorGlowPulse {
+      0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleX(1); }
+      50% { opacity: 1; transform: translateX(-50%) scaleX(1.05); }
+    }
+
+    /* Hero Content Layout */
+    .hero-content {
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      max-width: 1300px;
+      padding: 0 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .hero-text {
+      opacity: 0;
+      animation: heroTextIn 1.2s ease forwards 0.8s;
+    }
+
+    @keyframes heroTextIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .hero-label::before,
+    .hero-label::after {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      font-weight: 500;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .hero-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.2rem 0;
+      position: relative;
+    }
+
+    .hero-divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--gold);
+    }
+
+    .hero-desc {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--white-dim);
+      margin-bottom: 2rem;
+      max-width: 400px;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.9rem 2rem;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: all 0.4s ease;
+    }
+
+    .hero-cta:hover {
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    .hero-cta svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s;
+    }
+
+    .hero-cta:hover svg { transform: translateX(4px); }
+
+    /* Product Stage */
+    .hero-stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .pedestal {
+      position: relative;
+      width: clamp(260px, 28vw, 380px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pedestal-product {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      aspect-ratio: 3/4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .pedestal-product.transitioning {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+
+    .pedestal-product img {
+      max-height: 100%;
+      max-width: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 60px rgba(212, 175, 55, 0.2));
+    }
+
+    .pedestal-base {
+      width: 110%;
+      height: 50px;
+      position: relative;
+      margin-top: -10px;
+    }
+
+    .pedestal-base-top {
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, #6B5210, #D4AF37, #F5E6A3, #D4AF37, #6B5210);
+      border-radius: 50%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pedestal-base-body {
+      width: 90%;
+      height: 35px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #3a2f14 0%, #1a1508 100%);
+      border-left: 1px solid rgba(212, 175, 55, 0.2);
+      border-right: 1px solid rgba(212, 175, 55, 0.2);
+      position: relative;
+    }
+
+    .pedestal-base-body::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -5%;
+      width: 110%;
+      height: 6px;
+      background: linear-gradient(90deg, #6B5210, #D4AF37, #F5E6A3, #D4AF37, #6B5210);
+      border-radius: 50%;
+    }
+
+    .pedestal-glow {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130%;
+      height: 60px;
+      background: radial-gradient(ellipse, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* Pedestal Footlights */
+    .pedestal-lights {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      display: flex;
+      justify-content: space-around;
+      z-index: 3;
+    }
+
+    .pedestal-light {
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--gold), 0 0 20px rgba(212, 175, 55, 0.3);
+      animation: lightTwinkle 3s ease-in-out infinite;
+    }
+
+    .pedestal-light:nth-child(2) { animation-delay: 0.5s; }
+    .pedestal-light:nth-child(3) { animation-delay: 1s; }
+    .pedestal-light:nth-child(4) { animation-delay: 1.5s; }
+    .pedestal-light:nth-child(5) { animation-delay: 2s; }
+
+    @keyframes lightTwinkle {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Now Performing Badge */
+    .now-performing {
+      position: absolute;
+      bottom: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 25;
+      padding: 0.6rem 2.5rem;
+      border: 1px solid var(--gold);
+      background: rgba(11, 11, 11, 0.8);
+      backdrop-filter: blur(10px);
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+      opacity: 0;
+      animation: badgeFadeIn 1s ease forwards 1.5s;
+    }
+
+    @keyframes badgeFadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Hero Navigation */
+    .hero-nav {
+      position: absolute;
+      bottom: 10%;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4rem;
+      z-index: 30;
+    }
+
+    .hero-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: none;
+      color: var(--white-dim);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .hero-nav-btn:hover { color: var(--gold); }
+
+    .hero-nav-btn svg {
+      width: 32px;
+      height: 32px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1;
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--white-faint);
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    .scroll-indicator svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--white-faint);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* Dot Indicators */
+    .hero-dots {
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 30;
+    }
+
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--white-faint);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 0;
+    }
+
+    .hero-dot.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    }
+
+    /* ===================== TRANSITION SECTION ===================== */
+    .transition-section {
+      position: relative;
+      padding: 8rem 2rem;
+      text-align: center;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .transition-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    }
+
+    .transition-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+    }
+
+    .transition-label.visible { animation: fadeUp 0.8s ease forwards; }
+
+    .transition-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 1rem;
+      opacity: 0;
+    }
+
+    .transition-title.visible { animation: fadeUp 0.8s ease forwards 0.2s; }
+
+    .transition-sub {
+      font-size: 1rem;
+      color: var(--white-dim);
+      font-style: italic;
+      opacity: 0;
+    }
+
+    .transition-sub.visible { animation: fadeUp 0.8s ease forwards 0.4s; }
+
+    .transition-ornament {
+      margin: 2rem auto 0;
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      position: relative;
+      opacity: 0;
+    }
+
+    .transition-ornament.visible { animation: fadeUp 0.8s ease forwards 0.6s; }
+
+    .transition-ornament::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--gold);
+      background: var(--bg);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===================== PRODUCT GRID ===================== */
+    .collection-section {
+      padding: 2rem 2rem 6rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .collection-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .collection-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .collection-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 400;
+      color: var(--white);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .product-card.visible {
+      animation: cardReveal 0.7s ease forwards;
+    }
+
+    .product-card:nth-child(2).visible { animation-delay: 0.1s; }
+    .product-card:nth-child(3).visible { animation-delay: 0.2s; }
+    .product-card:nth-child(4).visible { animation-delay: 0.3s; }
+    .product-card:nth-child(5).visible { animation-delay: 0.4s; }
+    .product-card:nth-child(6).visible { animation-delay: 0.5s; }
+    .product-card:nth-child(7).visible { animation-delay: 0.6s; }
+    .product-card:nth-child(8).visible { animation-delay: 0.7s; }
+
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.08);
+      border-color: rgba(212, 175, 55, 0.5);
+    }
+
+    .card-image {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.6s ease;
+    }
+
+    .product-card:hover .card-image img {
+      transform: scale(1.05);
+    }
+
+    .card-body {
+      padding: 1.2rem 1.2rem 1rem;
+    }
+
+    .card-title {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .card-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-stars {
+      display: flex;
+      gap: 1px;
+    }
+
+    .card-star {
+      color: var(--gold);
+      font-size: 0.7rem;
+    }
+
+    .card-star.half { opacity: 0.5; }
+
+    .card-reviews {
+      font-size: 0.7rem;
+      color: var(--white-faint);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.2rem 1.2rem;
+    }
+
+    .card-price {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .card-price .currency {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--gold);
+    }
+
+    .card-cart-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: transparent;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .card-cart-btn:hover {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+
+    .card-cart-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===================== FEATURES BAR ===================== */
+    .features-bar {
+      border-top: 1px solid rgba(212, 175, 55, 0.1);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+      padding: 2.5rem 2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0;
+    }
+
+    .feature-item.visible { animation: fadeUp 0.6s ease forwards; }
+    .feature-item:nth-child(2).visible { animation-delay: 0.15s; }
+    .feature-item:nth-child(3).visible { animation-delay: 0.3s; }
+    .feature-item:nth-child(4).visible { animation-delay: 0.45s; }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+    }
+
+    .feature-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .feature-text h4 {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0.15rem;
+    }
+
+    .feature-text p {
+      font-size: 0.75rem;
+      color: var(--white-faint);
+    }
+
+    /* ===================== FOOTER ===================== */
+    .footer {
+      background: var(--bg);
+      padding: 3rem 2rem 2rem;
+      border-top: 1px solid rgba(212, 175, 55, 0.08);
+    }
+
+    .footer-content {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .footer-logo-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .footer-logo-text {
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+    }
+
+    .footer-logo-sub {
+      font-size: 0.5rem;
+      letter-spacing: 3px;
+      color: var(--white-faint);
+      text-transform: uppercase;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.75rem;
+      color: var(--white-faint);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-links .sep {
+      color: rgba(212, 175, 55, 0.3);
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-social {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white-faint);
+      transition: all 0.3s;
+    }
+
+    .footer-social:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .footer-social svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ===================== MOBILE MENU ===================== */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 11, 11, 0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .mobile-menu.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .mobile-menu a {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      transition: color 0.3s;
+    }
+
+    .mobile-menu a:hover { color: var(--gold); }
+
+    .mobile-menu-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      color: var(--white);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 1024px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 0 2rem;
+        padding-top: 5rem;
+      }
+
+      .hero-text { order: 2; }
+      .hero-stage { order: 1; }
+
+      .hero-desc { margin-left: auto; margin-right: auto; }
+
+      .hero-label { justify-content: center; }
+
+      .pedestal { width: clamp(200px, 45vw, 300px); }
+
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+      .hero-dots { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .mobile-menu { display: flex; }
+
+      .hero-content { padding: 0 1.5rem; padding-top: 4rem; }
+      .hero-nav { padding: 0 1.5rem; bottom: 14%; }
+
+      .now-performing { bottom: 22%; font-size: 0.6rem; padding: 0.5rem 1.5rem; }
+
+      .collection-section { padding: 2rem 1.5rem 4rem; }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+      }
+
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+    }
+
+    @media (max-width: 480px) {
+      .product-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+
+      .hero-cta { width: 100%; justify-content: center; }
+
+      .pedestal { width: 70vw; }
+
+      .arch-column { display: none; }
+      .curtain { width: 40px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">
+      <img src="favicon_io.png" alt="Riaaz Logo" class="nav-logo-icon">
+      <div>
+        <div class="nav-logo-text">Riaaz</div>
+        <div class="nav-logo-sub">Music for Soul</div>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="connect.html">Contact</a></li>
+    </ul>
+
+    <div class="nav-icons">
+      <button class="nav-icon-btn" aria-label="Account">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+      <button class="nav-icon-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" id="mobileClose" aria-label="Close menu">&times;</button>
+    <a href="#">Home</a>
+    <a href="#collection">Collection</a>
+    <a href="#about">About</a>
+    <a href="connect.html">Contact</a>
+  </div>
+
+  <!-- ===================== HERO STAGE ===================== -->
+  <section class="hero" id="hero">
+    <!-- 3D Proscenium Arch -->
+    <div class="proscenium">
+      <div class="proscenium-arch"></div>
+      <div class="arch-ornament-top"></div>
+      <div class="arch-column arch-column--left"></div>
+      <div class="arch-column arch-column--right"></div>
+      <div class="curtain curtain--left"></div>
+      <div class="curtain curtain--right"></div>
+    </div>
+
+    <!-- Volumetric Spotlights -->
+    <div class="spotlights">
+      <div class="spotlight-beam spotlight-beam--far-left"></div>
+      <div class="spotlight-beam spotlight-beam--left"></div>
+      <div class="spotlight-beam spotlight-beam--center"></div>
+      <div class="spotlight-beam spotlight-beam--right"></div>
+      <div class="spotlight-beam spotlight-beam--far-right"></div>
+    </div>
+
+    <div class="spotlight-source spotlight-source--left"></div>
+    <div class="spotlight-source spotlight-source--center"></div>
+    <div class="spotlight-source spotlight-source--right"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Stage Floor -->
+    <div class="stage-floor"></div>
+    <div class="floor-glow"></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-label">Now Performing</div>
+        <h1 class="hero-title" id="heroTitle">Riaaz Piano Book</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-desc" id="heroDesc">A step-by-step guide to master the piano with Riaaz. Perfect for beginners and aspiring musicians.</p>
+        <a href="#" class="hero-cta" id="heroCta">
+          Take This Home
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-stage">
+        <div class="pedestal">
+          <div class="pedestal-product" id="pedestalProduct">
+            <img src="01.png" alt="Riaaz Piano Book" id="heroProductImg">
+          </div>
+          <div class="pedestal-base">
+            <div class="pedestal-base-top"></div>
+            <div class="pedestal-base-body"></div>
+          </div>
+          <div class="pedestal-glow"></div>
+          <div class="pedestal-lights">
+            <div class="pedestal-light"></div>
+            <div class="pedestal-light"></div>
+            <div class="pedestal-light"></div>
+            <div class="pedestal-light"></div>
+            <div class="pedestal-light"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Now Performing Badge -->
+    <div class="now-performing" id="nowPerforming">Now Performing</div>
+
+    <!-- Hero Navigation -->
+    <div class="hero-nav">
+      <button class="hero-nav-btn" id="prevAct">
+        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="23"/><path d="M28 16l-8 8 8 8"/></svg>
+        Previous Act
+      </button>
+      <button class="hero-nav-btn" id="nextAct">
+        Next Act
+        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="23"/><path d="M20 16l8 8-8 8"/></svg>
+      </button>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+      Scroll Down
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+
+    <!-- Dot Indicators -->
+    <div class="hero-dots" id="heroDots"></div>
+  </section>
+
+  <!-- ===================== TRANSITION SECTION ===================== -->
+  <section class="transition-section" id="about">
+    <p class="transition-label">Our Collection</p>
+    <h2 class="transition-title">Explore the Repertoire</h2>
+    <p class="transition-sub">Every performance deserves an encore.</p>
+    <div class="transition-ornament"></div>
+  </section>
+
+  <!-- ===================== PRODUCT GRID ===================== -->
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <p class="collection-label">All Performances</p>
+      <h2 class="collection-title">All Products</h2>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <!-- ===================== FEATURES BAR ===================== -->
+  <section class="features-bar">
+    <div class="features-grid" id="featuresGrid">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>
+        </div>
+        <div class="feature-text">
+          <h4>For Every Musician</h4>
+          <p>Products for all levels</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="feature-text">
+          <h4>Premium Quality</h4>
+          <p>Carefully crafted</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8l5 3-5 3z"/><path d="M1 19h22"/><path d="M5 19v3"/><path d="M18 19v3"/></svg>
+        </div>
+        <div class="feature-text">
+          <h4>Fast Delivery</h4>
+          <p>Across India</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="feature-text">
+          <h4>Support</h4>
+          <p>We are here for you</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="#" class="footer-logo">
+        <img src="favicon_io.png" alt="Riaaz" class="footer-logo-icon">
+        <div>
+          <div class="footer-logo-text">Riaaz</div>
+          <div class="footer-logo-sub">Music for Soul</div>
+        </div>
+      </a>
+
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li class="sep">|</li>
+        <li><a href="#">FAQs</a></li>
+        <li class="sep">|</li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li class="sep">|</li>
+        <li><a href="#">Terms & Conditions</a></li>
+      </ul>
+
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/riaomshandilya/" class="footer-social" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.youtube.com/riashandilya" class="footer-social" aria-label="YouTube" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+        </a>
+        <a href="https://www.facebook.com/" class="footer-social" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    /* ===== Product Data ===== */
+    var products = [
+      {
+        name: "Riaaz Piano Book",
+        price: 1299,
+        image: "01.png",
+        rating: 5,
+        reviews: 128,
+        desc: "A step-by-step guide to master the piano with Riaaz. Perfect for beginners and aspiring musicians."
+      },
+      {
+        name: "Mayur Flute",
+        price: 899,
+        image: "02.png",
+        rating: 4.5,
+        reviews: 96,
+        desc: "Handcrafted bamboo flute with a rich, soulful tone. An instrument that sings with tradition."
+      },
+      {
+        name: "Riaaz Notebook",
+        price: 499,
+        image: "notebook-cover.png",
+        rating: 4.5,
+        reviews: 72,
+        desc: "A beautifully designed music practice notebook. Document your musical journey in style."
+      },
+      {
+        name: "Practice Kit",
+        price: 2299,
+        image: "03.png",
+        rating: 4.5,
+        reviews: 64,
+        desc: "Everything you need to start your music practice journey. The complete starter collection."
+      },
+      {
+        name: "Swar Card Deck",
+        price: 399,
+        image: "04.png",
+        rating: 5,
+        reviews: 45,
+        desc: "Learn musical notes through elegant flash cards. A playful yet premium learning tool."
+      },
+      {
+        name: "Riaaz Music Stand",
+        price: 1999,
+        image: "05.png",
+        rating: 4.5,
+        reviews: 38,
+        desc: "Adjustable premium music stand with elegant golden accents. Built for serious performers."
+      },
+      {
+        name: "Tanpura Digital",
+        price: 3499,
+        image: "06.png",
+        rating: 4,
+        reviews: 29,
+        desc: "Digital tanpura with authentic sound reproduction. Your perfect practice companion."
+      },
+      {
+        name: "Gift Card",
+        price: 500,
+        image: "07.png",
+        rating: 4.5,
+        reviews: 18,
+        pricePrefix: "From ",
+        desc: "Give the gift of music. Perfect for any musician or aspiring artist in your life."
+      }
+    ];
+
+    /* ===== Carousel State ===== */
+    var currentSlide = 0;
+    var isTransitioning = false;
+
+    /* ===== DOM References ===== */
+    var heroTitle = document.getElementById('heroTitle');
+    var heroDesc = document.getElementById('heroDesc');
+    var heroProductImg = document.getElementById('heroProductImg');
+    var pedestalProduct = document.getElementById('pedestalProduct');
+    var heroDots = document.getElementById('heroDots');
+    var productGrid = document.getElementById('productGrid');
+
+    /* ===== Generate Particles ===== */
+    function createParticles() {
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 30; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 12) + 's';
+        p.style.animationDelay = Math.random() * 10 + 's';
+        var size = (1 + Math.random() * 2) + 'px';
+        p.style.width = size;
+        p.style.height = size;
+        container.appendChild(p);
+      }
+    }
+
+    /* ===== Generate Hero Dots ===== */
+    function createDots() {
+      heroDots.innerHTML = '';
+      products.forEach(function(_, i) {
+        var dot = document.createElement('button');
+        dot.className = 'hero-dot' + (i === currentSlide ? ' active' : '');
+        dot.setAttribute('aria-label', 'Go to product ' + (i + 1));
+        dot.addEventListener('click', function() { goToSlide(i); });
+        heroDots.appendChild(dot);
+      });
+    }
+
+    /* ===== Update Hero Content ===== */
+    function updateHero(index) {
+      var product = products[index];
+      heroTitle.textContent = product.name;
+      heroDesc.textContent = product.desc;
+      heroProductImg.src = product.image;
+      heroProductImg.alt = product.name;
+
+      document.querySelectorAll('.hero-dot').forEach(function(dot, i) {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    /* ===== Slide Transition ===== */
+    function goToSlide(index) {
+      if (isTransitioning || index === currentSlide) return;
+      isTransitioning = true;
+
+      var heroText = document.querySelector('.hero-text');
+      pedestalProduct.classList.add('transitioning');
+      heroText.style.opacity = '0';
+      heroText.style.transform = 'translateY(15px)';
+      heroText.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+      setTimeout(function() {
+        currentSlide = index;
+        updateHero(index);
+
+        pedestalProduct.classList.remove('transitioning');
+        heroText.style.opacity = '1';
+        heroText.style.transform = 'translateY(0)';
+
+        setTimeout(function() { isTransitioning = false; }, 500);
+      }, 500);
+    }
+
+    /* ===== Build Product Grid ===== */
+    function buildProductGrid() {
+      productGrid.innerHTML = '';
+      products.forEach(function(p) {
+        var fullStars = Math.floor(p.rating);
+        var hasHalf = p.rating % 1 !== 0;
+        var starsHTML = '';
+        for (var i = 0; i < fullStars; i++) starsHTML += '<span class="card-star">&#9733;</span>';
+        if (hasHalf) starsHTML += '<span class="card-star half">&#9733;</span>';
+
+        var priceText = (p.pricePrefix || '') + '<span class="currency">&#8377;</span>' + p.price.toLocaleString('en-IN');
+
+        var card = document.createElement('article');
+        card.className = 'product-card';
+        card.innerHTML =
+          '<div class="card-image"><img src="' + p.image + '" alt="' + p.name + '" loading="lazy"></div>' +
+          '<div class="card-body">' +
+            '<h3 class="card-title">' + p.name + '</h3>' +
+            '<div class="card-rating">' +
+              '<div class="card-stars">' + starsHTML + '</div>' +
+              '<span class="card-reviews">(' + p.reviews + ')</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="card-footer">' +
+            '<div class="card-price">' + priceText + '</div>' +
+            '<button class="card-cart-btn" aria-label="Add ' + p.name + ' to cart">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+                '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>' +
+                '<line x1="3" y1="6" x2="21" y2="6"/>' +
+                '<path d="M16 10a4 4 0 0 1-8 0"/>' +
+              '</svg>' +
+            '</button>' +
+          '</div>';
+        productGrid.appendChild(card);
+      });
+    }
+
+    /* ===== Scroll Animations (Intersection Observer) ===== */
+    function initScrollAnimations() {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.product-card, .feature-item, .transition-label, .transition-title, .transition-sub, .transition-ornament').forEach(function(el) {
+        observer.observe(el);
+      });
+    }
+
+    /* ===== Navbar Scroll Effect ===== */
+    function initNavbarScroll() {
+      window.addEventListener('scroll', function() {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+    }
+
+    /* ===== Mobile Menu ===== */
+    function initMobileMenu() {
+      var hamburger = document.getElementById('hamburger');
+      var menu = document.getElementById('mobileMenu');
+      var closeBtn = document.getElementById('mobileClose');
+
+      hamburger.addEventListener('click', function() { menu.classList.add('open'); });
+      closeBtn.addEventListener('click', function() { menu.classList.remove('open'); });
+      menu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() { menu.classList.remove('open'); });
+      });
+    }
+
+    /* ===== Carousel Navigation ===== */
+    function initCarousel() {
+      document.getElementById('nextAct').addEventListener('click', function() {
+        goToSlide((currentSlide + 1) % products.length);
+      });
+
+      document.getElementById('prevAct').addEventListener('click', function() {
+        goToSlide((currentSlide - 1 + products.length) % products.length);
+      });
+    }
+
+    /* ===== Cart Button Handlers ===== */
+    function initCartButtons() {
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.card-cart-btn');
+        if (!btn) return;
+
+        var countEl = document.querySelector('.cart-count');
+        var count = parseInt(countEl.textContent, 10);
+        countEl.textContent = count + 1;
+
+        btn.style.transform = 'scale(0.85)';
+        setTimeout(function() { btn.style.transform = ''; }, 200);
+      });
+    }
+
+    /* ===== Init ===== */
+    function init() {
+      createParticles();
+      createDots();
+      updateHero(0);
+      buildProductGrid();
+      initScrollAnimations();
+      initNavbarScroll();
+      initMobileMenu();
+      initCarousel();
+      initCartButtons();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+
+</body>
+</html>
