@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
- 
+
   <style>
     :root {
       --black: #000000;
@@ -387,9 +387,9 @@
     /* "Click here" hint */
     .vinyl-hint {
       position: absolute;
-      bottom: 14%;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 50%;
+      left: -90px;
+      transform: translateY(-50%);
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(0.8rem, 1.1vw, 1rem);
       font-style: italic;
@@ -402,8 +402,8 @@
       animation: hintPulse 2.6s ease-in-out infinite;
     }
     @keyframes hintPulse {
-      0%,100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
-      50%      { opacity: 1;   transform: translateX(-50%) translateY(-5px); }
+      0%,100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+      50%      { opacity: 1;   transform: translateY(-50%) translateX(-5px); }
     }
     .vinyl-hint.hidden { opacity: 0 !important; animation: none; transition: opacity 0.5s; }
 
@@ -2220,6 +2220,22 @@
 
     // ── Scratch interaction ──
     function doScratch() {
+      // If already playing — stop everything
+      if (isPlaying) {
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          currentAudio = null;
+        }
+        isPlaying = false;
+        tonearm.classList.remove('on-record');
+        nowPlaying.classList.remove('show');
+        vinylDisc.classList.remove('spinning');
+        vinylDisc.style.animationPlayState = 'paused';
+        vinylHint.classList.remove('hidden');
+        return;
+      }
+
       // Capture current rotation for scratch animation
       const style = window.getComputedStyle(vinylDisc);
       const matrix = new DOMMatrix(style.transform);
