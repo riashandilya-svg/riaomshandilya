@@ -1932,6 +1932,46 @@
       cursor: pointer;
     }
 
+    /* ══════════════════════════════════════
+       SCROLL REVEAL
+       ══════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition:
+        opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.reveal-left  { transform: translateX(-44px); }
+    .reveal.reveal-right { transform: translateX(44px); }
+    .reveal.reveal-scale { transform: scale(0.86) translateY(20px); }
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0) translateX(0) scale(1);
+    }
+    /* Stagger delays for card grids */
+    .reveal.delay-1 { transition-delay: 0.06s; }
+    .reveal.delay-2 { transition-delay: 0.12s; }
+    .reveal.delay-3 { transition-delay: 0.18s; }
+    .reveal.delay-4 { transition-delay: 0.24s; }
+    .reveal.delay-5 { transition-delay: 0.30s; }
+    .reveal.delay-6 { transition-delay: 0.36s; }
+    .reveal.delay-7 { transition-delay: 0.42s; }
+    .reveal.delay-8 { transition-delay: 0.48s; }
+    .reveal.delay-9 { transition-delay: 0.54s; }
+    /* Rule line grows in from left */
+    .reveal-rule {
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: opacity 0.5s ease 0.2s, transform 0.65s cubic-bezier(0.22,1,0.36,1) 0.2s;
+    }
+    .reveal-rule.in-view { opacity: 1; transform: scaleX(1); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-rule { transition: none !important; opacity: 1 !important; transform: none !important; }
+    }
+
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; text-align: center; padding: 0 24px; }
       .hero-text { margin: 0 auto; }
@@ -2173,9 +2213,9 @@
 
 <!-- ── BOOKS SECTION ── -->
 <section id="books" class="section-wrap">
-  <div class="section-eyebrow">The Collection</div>
-  <h2 class="section-heading">Choose Your <span>Books</span></h2>
-  <div class="section-rule"><span class="section-rule-icon">♩</span></div>
+  <div class="section-eyebrow reveal reveal-left">The Collection</div>
+  <h2 class="section-heading reveal">Choose Your <span>Books</span></h2>
+  <div class="section-rule reveal-rule"><span class="section-rule-icon">♩</span></div>
   <div id="books-grid">
     <!-- populated by JS -->
   </div>
@@ -2183,9 +2223,9 @@
 
 <!-- ── COMBOS SECTION ── -->
 <section id="combos" class="section-wrap" style="padding-top:0;">
-  <div class="section-eyebrow">Bundle &amp; Save</div>
-  <h2 class="section-heading">Combo <span>Sets</span></h2>
-  <div class="section-rule"><span class="section-rule-icon">♫</span></div>
+  <div class="section-eyebrow reveal reveal-left">Bundle &amp; Save</div>
+  <h2 class="section-heading reveal">Combo <span>Sets</span></h2>
+  <div class="section-rule reveal-rule"><span class="section-rule-icon">♫</span></div>
   <div id="combo-grid">
     <!-- populated by JS -->
   </div>
@@ -2194,28 +2234,28 @@
 <!-- ── FEATURES BAR ── -->
 <div class="features-bar">
   <div class="features-inner">
-    <div class="feature-item">
+    <div class="feature-item reveal reveal-scale delay-1">
       <div class="feature-icon"><i class="fa-solid fa-music"></i></div>
       <div class="feature-text">
         <div class="feature-title">For Every Musician</div>
         <div class="feature-desc">Beginner to advanced — a score for every skill level</div>
       </div>
     </div>
-    <div class="feature-item">
+    <div class="feature-item reveal reveal-scale delay-2">
       <div class="feature-icon"><i class="fa-solid fa-medal"></i></div>
       <div class="feature-text">
         <div class="feature-title">Premium Quality</div>
         <div class="feature-desc">Beautifully printed on high-quality paper</div>
       </div>
     </div>
-    <div class="feature-item">
+    <div class="feature-item reveal reveal-scale delay-3">
       <div class="feature-icon"><i class="fa-solid fa-truck-fast"></i></div>
       <div class="feature-text">
         <div class="feature-title">Fast Delivery</div>
         <div class="feature-desc">Swift shipping across India — free on all orders</div>
       </div>
     </div>
-    <div class="feature-item">
+    <div class="feature-item reveal reveal-scale delay-4">
       <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
       <div class="feature-text">
         <div class="feature-title">Support</div>
@@ -2544,8 +2584,8 @@
   // ════════════════════════════════════
   function renderBooks() {
     const grid = document.getElementById('books-grid');
-    grid.innerHTML = BOOKS.map(book => `
-      <div class="book-card" data-id="${book.id}">
+    grid.innerHTML = BOOKS.map((book, idx) => `
+      <div class="book-card reveal delay-${Math.min(idx + 1, 9)}" data-id="${book.id}">
         <a class="book-container" href="" tabindex="0"
            aria-label="About ${book.title}"
            onclick="if(BOOK_DETAILS['${book.id}']){openBookPopup(BOOKS.find(b=>b.id==='${book.id}')); return false;} return false;">
@@ -2573,8 +2613,8 @@
 
   function renderCombos() {
     const grid = document.getElementById('combo-grid');
-    grid.innerHTML = COMBOS.map(combo => `
-      <div class="combo-card" data-id="${combo.id}">
+    grid.innerHTML = COMBOS.map((combo, idx) => `
+      <div class="combo-card reveal delay-${Math.min(idx + 1, 9)}" data-id="${combo.id}">
         <div class="combo-ribbon">Combo</div>
         <div class="combo-icon-wrap">${combo.icon}</div>
         <div class="combo-body">
@@ -3059,6 +3099,30 @@
   renderBooks();
   renderCombos();
   updateCartUI();
+
+  // ════════════════════════════════════
+  //  SCROLL REVEAL — IntersectionObserver
+  // ════════════════════════════════════
+  (function initReveal() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target); // fire once only
+        }
+      });
+    }, {
+      threshold: 0.12,      // 12% visible before triggering
+      rootMargin: '0px 0px -40px 0px'  // slightly before bottom edge
+    });
+
+    // Observe all static reveal elements
+    document.querySelectorAll('.reveal, .reveal-rule').forEach(el => observer.observe(el));
+
+    // Re-observe after dynamic cards are rendered (they already exist by now)
+    // Books and combos grids: stagger is already set per-card via delay-N classes
+    document.querySelectorAll('#books-grid .reveal, #combo-grid .reveal').forEach(el => observer.observe(el));
+  })();
 
   // Delegated click for "About the Book" buttons (uses data-about attribute)
   document.getElementById('books-grid').addEventListener('click', (e) => {
