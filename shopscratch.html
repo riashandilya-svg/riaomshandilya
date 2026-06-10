@@ -1819,16 +1819,16 @@
   //  CATALOG
   // ════════════════════════════════════
   const BOOKS = [
-    { id: 'soulful-bollywood',  title: 'Soulful Bollywood Melodies',           subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',                        price: 499, symbol: '♩',  cover: 'soulful.jpg'  },
-    { id: 'soulful-bollywood',  title: 'Soulful Bollywood Melodies',           subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',                        price: 499, symbol: '♩',  cover: 'soulful.jpg',   audio: 'preview-soulful.mp3'   },
-    { id: 'peppy-bollywood',    title: 'Peppy Bollywood Melodies',             subtitle: 'Señorita, Naina Da Kya Kasoor, and more lively tunes',                            price: 499, symbol: '♪',  cover: 'peppy.jpg',     audio: 'preview-peppy.mp3'     },
-    { id: 'romantic-bollywood', title: 'Romantic Bollywood Melodies',          subtitle: 'Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, and more',                        price: 499, symbol: '♫',  cover: 'romantic.jpg',  audio: 'preview-romantic.mp3'  },
-    { id: 'classic-bollywood',  title: 'Classic Bollywood Melodies',           subtitle: 'Ek Ladki Bheegi Bhaagi Si, Kal Ho Na Ho, and timeless classics',                 price: 499, symbol: '𝄞', cover: 'classic.png',   audio: 'preview-classic.mp3'   },
-    { id: 'meet-notes-beginner',title: "Meet The Notes: Beginner's Guide",     subtitle: 'Beginner-friendly piano foundations',                                             price: 399, symbol: '𝄢', cover: 'kids.png',      audio: 'preview-beginner.mp3'  },
-    { id: 'meet-notes-theory',  title: 'Meet The Notes: Theory Edition',       subtitle: 'Theory + activities + worksheets',                                                price: 399, symbol: '𝄡', cover: 'kids2.png',     audio: 'preview-theory.mp3'    },
-    { id: 'wyom-100',           title: 'Write Your Own Melodies (100 pages)',  subtitle: 'Blank 12-stave music journal — 100 pages / 50 sheets',                           price: 299, symbol: '✦',  cover: 'wyom.png',      audio: 'preview-wyom100.mp3'   },
-    { id: 'wyom-72',            title: 'Write Your Own Melodies (72 pages)',   subtitle: 'Blank 12-stave music journal — 72 pages / 36 sheets',                            price: 249, symbol: '✧',  cover: 'wyom2.png',     audio: 'preview-wyom72.mp3'    },
-    { id: 'track-your-journey', title: 'Track Your Journey',                   subtitle: 'Music log book for all instruments',                                              price: 299, symbol: '♬',  cover: 'logbook.png',   audio: 'preview-logbook.mp3'   },
+    { id: 'soulful-bollywood',  title: 'Soulful Bollywood Melodies',           subtitle: 'Jashn-e-bahaara, Srivalli, and more soul-stirring songs',                        price: 499, symbol: '♩',  cover: 'soulful.jpg',   audio: 'soulful.mp3'   },
+    { id: 'peppy-bollywood',    title: 'Peppy Bollywood Melodies',             subtitle: 'Señorita, Naina Da Kya Kasoor, and more lively tunes',                            price: 499, symbol: '♪',  cover: 'peppy.jpg',     audio: 'peppy.mp3'     },
+    { id: 'romantic-bollywood', title: 'Romantic Bollywood Melodies',          subtitle: 'Aaj Kal Tere Mere Pyaar ke Charche, Piyu Bole, and more',                        price: 499, symbol: '♫',  cover: 'romantic.jpg',  audio: 'romantic.mp3'  },
+    { id: 'classic-bollywood',  title: 'Classic Bollywood Melodies',           subtitle: 'Ek Ladki Bheegi Bhaagi Si, Kal Ho Na Ho, and timeless classics',                 price: 499, symbol: '𝄞', cover: 'classic.png',   audio: 'classic.mp3'   },
+    { id: 'meet-notes-beginner',title: "Meet The Notes: Beginner's Guide",     subtitle: 'Beginner-friendly piano foundations',                                             price: 399, symbol: '𝄢', cover: 'kids.png'      },
+    { id: 'meet-notes-theory',  title: 'Meet The Notes: Theory Edition',       subtitle: 'Theory + activities + worksheets',                                                price: 399, symbol: '𝄡', cover: 'kids2.png'     },
+    { id: 'wyom-100',           title: 'Write Your Own Melodies (100 pages)',  subtitle: 'Blank 12-stave music journal — 100 pages / 50 sheets',                           price: 299, symbol: '✦',  cover: 'wyom.png'      },
+    { id: 'wyom-72',            title: 'Write Your Own Melodies (72 pages)',   subtitle: 'Blank 12-stave music journal — 72 pages / 36 sheets',                            price: 249, symbol: '✧',  cover: 'wyom2.png'     },
+    { id: 'track-your-journey', title: 'Track Your Journey',                   subtitle: 'Music log book for all instruments',                                              price: 299, symbol: '♬',  cover: 'logbook.png'   },
+  ];
   ];
 
   const COMBOS = [
@@ -2168,34 +2168,40 @@
     // GitHub raw URL base — your sound-effects repo
     const SOUND_BASE = 'https://raw.githubusercontent.com/riaomshandilya/sound-effects/main/';
 
-    // ── Play recordscratch.mp3, then zoobiedoobie.mp3 ──
+    // ── Play recordscratch.mp3, then the current book's mp3 ──
     function playScratchThenSong() {
+      const item = ALL_ITEMS[current];
+      if (!item.audio) return;
+
       try {
         const scratch = new Audio(SOUND_BASE + 'recordscratch.mp3');
         scratch.volume = 1.0;
-        scratch.play().catch(() => { playZoobieDoobie(); });
-        scratch.addEventListener('ended',  playZoobieDoobie, { once: true });
-        scratch.addEventListener('error',  () => setTimeout(playZoobieDoobie, 400), { once: true });
+        scratch.play().catch(() => { playBookAudio(item); });
+        scratch.addEventListener('ended', () => { playBookAudio(item); }, { once: true });
+        scratch.addEventListener('error', () => { playBookAudio(item); }, { once: true });
       } catch(e) {
-        setTimeout(playZoobieDoobie, 400);
+        playBookAudio(item);
       }
     }
 
-    function playZoobieDoobie() {
+    // ── Play a book's MP3 from GitHub ──
+    function playBookAudio(item) {
+      if (!item.audio) return;
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
+        isPlaying = false;
       }
 
-      const audio = new Audio(SOUND_BASE + 'zoobiedoobie.mp3');
+      const audio = new Audio(SOUND_BASE + item.audio);
       audio.volume = 0.85;
       currentAudio = audio;
 
       audio.play().then(() => {
         isPlaying = true;
         tonearm.classList.add('on-record');
-        nowPlaying.textContent = '♪ Zoobie Doobie…';
+        nowPlaying.textContent = '♪ ' + item.title.split(' ').slice(0, 3).join(' ') + '…';
         nowPlaying.classList.add('show');
         vinylDisc.classList.add('spinning');
         vinylDisc.style.animationPlayState = 'running';
@@ -2210,39 +2216,6 @@
       }).catch(() => {
         isPlaying = false;
         vinylDisc.style.animationPlayState = 'paused';
-      });
-    }
-
-    // ── Play/stop the book's MP3 preview (used by carousel items with .audio) ──
-    function playBookAudio(item) {
-      if (!item.audio) return;
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null;
-        isPlaying = false;
-      }
-
-      const audio = new Audio(item.audio);
-      audio.volume = 0.85;
-      currentAudio = audio;
-
-      audio.play().then(() => {
-        isPlaying = true;
-        tonearm.classList.add('on-record');
-        nowPlaying.textContent = '♪ ' + item.title.split(' ').slice(0,3).join(' ') + '…';
-        nowPlaying.classList.add('show');
-        vinylDisc.style.animationPlayState = 'running';
-
-        audio.addEventListener('ended', () => {
-          isPlaying = false;
-          tonearm.classList.remove('on-record');
-          nowPlaying.classList.remove('show');
-          currentAudio = null;
-          vinylDisc.style.animationPlayState = 'paused';
-        }, { once: true });
-      }).catch(() => {
-        isPlaying = false;
       });
     }
 
