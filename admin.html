@@ -111,6 +111,64 @@
       display: none;
     }
 
+    /* ── FINGERPRINT ── */
+    .fp-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .fp-btn {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: var(--gold-pale);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      position: relative;
+      outline: none;
+    }
+    .fp-btn:hover { background: rgba(201,151,58,0.22); transform: scale(1.05); }
+    .fp-btn svg { width: 38px; height: 38px; }
+    .fp-btn.scanning { animation: fp-pulse 1.2s ease-in-out infinite; }
+    .fp-btn.success { border-color: var(--green); background: rgba(76,175,125,0.18); }
+    .fp-btn.fail    { border-color: var(--red);   background: rgba(224,82,82,0.14); animation: none; }
+    @keyframes fp-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(201,151,58,0.4); }
+      50%      { box-shadow: 0 0 0 14px rgba(201,151,58,0); }
+    }
+    .fp-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .fp-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 4px 0 18px;
+      color: var(--text-muted); font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .fp-divider::before, .fp-divider::after {
+      content: ''; flex: 1;
+      border-top: 1px solid var(--border);
+    }
+    .fp-register-btn {
+      width: 100%; padding: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; margin-top: 10px;
+      transition: all 0.2s;
+    }
+    .fp-register-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+
     /* ── DASHBOARD ── */
     #dashboard { display: none; }
 
@@ -499,12 +557,32 @@
   <div class="login-box">
     <div class="brand">Ria Om Shandilya™</div>
     <div class="brand-sub">Admin Dashboard</div>
+
+    <!-- Fingerprint prompt -->
+    <div class="fp-screen" id="fp-screen">
+      <button class="fp-btn" id="fp-btn" onclick="doFingerprintLogin()" title="Sign in with fingerprint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold-light)">
+          <path d="M12 2C8 2 5 5.5 5 9c0 5.25 3 9.5 7 13 4-3.5 7-7.75 7-13 0-3.5-3-7-7-7z"/>
+          <path d="M12 6c-2 0-3.5 1.8-3.5 4 0 3 1.5 5.5 3.5 7.5 2-2 3.5-4.5 3.5-7.5C15.5 7.8 14 6 12 6z"/>
+          <path d="M12 10c-.8 0-1.5.8-1.5 2 0 1.5.6 2.8 1.5 3.8.9-1 1.5-2.3 1.5-3.8 0-1.2-.7-2-1.5-2z"/>
+        </svg>
+      </button>
+      <div class="fp-label" id="fp-label">Touch to sign in</div>
+    </div>
+
+    <div class="fp-divider">or</div>
+
     <label>Email</label>
     <input type="email" id="admin-email" placeholder="your@email.com" />
     <label>Password</label>
     <input type="password" id="admin-password" placeholder="Enter password" />
     <div class="login-error" id="login-error">Incorrect email or password.</div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+
+    <!-- Register fingerprint (shown only after password login, if no cred exists) -->
+    <button class="fp-register-btn" id="fp-register-btn" style="display:none" onclick="doFingerprintRegister()">
+      ＋ Register Fingerprint on This Device
+    </button>
   </div>
 </div>
 
@@ -514,6 +592,7 @@
     <div class="topbar-brand">Ria Om Shandilya™ <span>Admin</span></div>
     <div class="topbar-actions">
       <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
+      <button id="topbar-fp-btn" onclick="doFingerprintRegister()" style="display:none" title="Register fingerprint on this device">☞ Register Fingerprint</button>
       <button onclick="doLogout()">Sign Out</button>
     </div>
   </div>
@@ -675,6 +754,187 @@
   let customEnd = null;
 
   // ═══════════════════════════════
+  //  WEBAUTHN HELPERS
+  // ═══════════════════════════════
+  const RP_ID   = location.hostname === 'localhost' ? 'localhost' : location.hostname;
+  const RP_NAME = 'Ria Om Shandilya Admin';
+
+  function b64url(buffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+      .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function fromB64url(str) {
+    str = str.replace(/-/g,'+').replace(/_/g,'/');
+    while (str.length % 4) str += '=';
+    return Uint8Array.from(atob(str), c => c.charCodeAt(0)).buffer;
+  }
+
+  function fpState(state, label) {
+    const btn = document.getElementById('fp-btn');
+    const lbl = document.getElementById('fp-label');
+    btn.className = 'fp-btn' + (state ? ' ' + state : '');
+    if (label) lbl.textContent = label;
+  }
+
+  // ── CHECK if a credential is stored for this device ──
+  async function getStoredCredentialId() {
+    return localStorage.getItem('fp_credential_id');
+  }
+
+  // ── REGISTER fingerprint (after password login) ──
+  async function doFingerprintRegister() {
+    const loginBtn = document.getElementById('fp-register-btn');
+    const topbarBtn = document.getElementById('topbar-fp-btn');
+    const activeBtn = loginBtn.style.display !== 'none' ? loginBtn : topbarBtn;
+    const origText = activeBtn.textContent;
+    activeBtn.textContent = 'Registering…'; activeBtn.disabled = true;
+
+    try {
+      const { data: { user } } = await db.auth.getUser();
+      if (!user) throw new Error('Not logged in');
+
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      const userId    = new TextEncoder().encode(user.id);
+
+      const cred = await navigator.credentials.create({ publicKey: {
+        challenge,
+        rp: { id: RP_ID, name: RP_NAME },
+        user: { id: userId, name: user.email, displayName: 'Admin' },
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7  },   // ES256
+          { type: 'public-key', alg: -257 },  // RS256
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required',
+          residentKey: 'preferred',
+        },
+        timeout: 60000,
+      }});
+
+      const credId  = b64url(cred.rawId);
+      const pubKey  = b64url(cred.response.getPublicKey
+        ? cred.response.getPublicKey()
+        : cred.response.attestationObject);
+
+      const { error } = await db.from('webauthn_credentials').insert({
+        user_id:       user.id,
+        credential_id: credId,
+        public_key:    pubKey,
+        sign_count:    0,
+      });
+      if (error) throw error;
+
+      localStorage.setItem('fp_credential_id', credId);
+      activeBtn.textContent = '✓ Fingerprint Registered!';
+      // Hide topbar register button since we're now registered
+      topbarBtn.style.display = 'none';
+      showToast('Fingerprint registered — you can now sign in with it next time.');
+      // If on login screen, go to dashboard now
+      if (loginBtn.style.display !== 'none') setTimeout(() => showDashboard(), 800);
+    } catch (e) {
+      activeBtn.textContent = origText;
+      activeBtn.disabled = false;
+      showToast('Registration failed: ' + (e.message || e));
+    }
+  }
+
+  // ── LOGIN with fingerprint ──
+  async function doFingerprintLogin() {
+    if (!window.PublicKeyCredential) {
+      fpState('fail', 'Not supported on this browser');
+      return;
+    }
+
+    fpState('scanning', 'Verifying…');
+
+    try {
+      // Look up all credentials for this RP from Supabase
+      // We use an empty allow list first to let platform pick, then filter
+      const challenge = crypto.getRandomValues(new Uint8Array(32));
+
+      // Try resident key (no credential ID needed) first
+      let assertion;
+      try {
+        assertion = await navigator.credentials.get({ publicKey: {
+          challenge,
+          rpId: RP_ID,
+          userVerification: 'required',
+          timeout: 60000,
+        }});
+      } catch (e) {
+        // Resident key failed — try with stored credential ID
+        const storedId = await getStoredCredentialId();
+        if (!storedId) throw new Error('No fingerprint registered on this device');
+        assertion = await navigator.credentials.get({ publicKey: {
+          challenge,
+          rpId: RP_ID,
+          userVerification: 'required',
+          timeout: 60000,
+          allowCredentials: [{ type: 'public-key', id: fromB64url(storedId) }],
+        }});
+      }
+
+      const credId = b64url(assertion.rawId);
+
+      // Look up the credential in Supabase (unauthenticated read via anon key)
+      const { data: rows, error } = await db
+        .from('webauthn_credentials')
+        .select('user_id, sign_count')
+        .eq('credential_id', credId)
+        .limit(1);
+
+      if (error || !rows || !rows.length) throw new Error('Credential not found');
+
+      const userId = rows[0].user_id;
+
+      // Update sign_count
+      await db.from('webauthn_credentials')
+        .update({ sign_count: rows[0].sign_count + 1 })
+        .eq('credential_id', credId);
+
+      // Get a session by calling our edge function
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/webauthn-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ user_id: userId }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Session creation failed');
+      }
+
+      const { access_token, refresh_token } = await res.json();
+      await db.auth.setSession({ access_token, refresh_token });
+      accessToken = access_token;
+
+      fpState('success', 'Verified ✓');
+      localStorage.setItem('fp_credential_id', credId);
+      setTimeout(() => showDashboard(), 400);
+
+    } catch (e) {
+      const msg = e.message || '';
+      if (msg.includes('not registered') || msg.includes('No fingerprint')) {
+        fpState('', 'No fingerprint registered');
+      } else if (msg.includes('cancel') || msg.includes('abort') || msg.includes('NotAllowed')) {
+        fpState('', 'Touch to sign in');
+      } else {
+        fpState('fail', 'Failed — use password');
+        console.error('WebAuthn error:', e);
+      }
+    }
+  }
+
+  // ── Auto-trigger fingerprint on page load ──
+  window.addEventListener('load', () => {
+    setTimeout(doFingerprintLogin, 600);
+  });
+
+  // ═══════════════════════════════
   //  LOGIN
   // ═══════════════════════════════
   async function doLogin() {
@@ -698,6 +958,14 @@
     }
 
     accessToken = data.session.access_token;
+
+    // Show register button if no fingerprint credential on this device
+    if (!localStorage.getItem('fp_credential_id') && window.PublicKeyCredential) {
+      document.getElementById('fp-register-btn').style.display = 'block';
+      // Give a moment before jumping to dashboard so they can register
+      return;
+    }
+
     showDashboard();
   }
 
@@ -723,6 +991,10 @@
   function showDashboard() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
+    // Show "Register Fingerprint" in topbar if not yet registered on this device
+    if (!localStorage.getItem('fp_credential_id') && window.PublicKeyCredential) {
+      document.getElementById('topbar-fp-btn').style.display = 'inline-block';
+    }
     initCustomMonthPicker();
     loadOrders();
   }
