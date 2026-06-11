@@ -1158,13 +1158,14 @@
         .eq('credential_id', credId);
 
       // Get a session by calling our edge function
+      // credential_id is sent so the server can verify it belongs to this user_id
       const res = await fetch(`${SUPABASE_URL}/functions/v1/webauthn-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'apikey': SUPABASE_ANON_KEY,
         },
-        body: JSON.stringify({ user_id: userId }),
+        body: JSON.stringify({ user_id: userId, credential_id: credId }),
       });
 
       if (!res.ok) {
