@@ -709,11 +709,15 @@
         </button>
         <div class="fp-label" id="fp-label">Touch to sign in</div>
       </div>
-      <div class="fp-divider">or use password</div>
-      <label>Password</label>
-      <input type="password" id="admin-password" placeholder="Enter password" autocomplete="current-password" />
-      <div class="login-error" id="login-error">Incorrect email or password.</div>
-      <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+      <!-- Password fallback — hidden until user clicks or fingerprint fails -->
+      <div id="fp-password-fallback" style="display:none; margin-top:4px">
+        <div class="fp-divider">or use password</div>
+        <label>Password</label>
+        <input type="password" id="admin-password" placeholder="Enter password" autocomplete="current-password" />
+        <div class="login-error" id="login-error">Incorrect email or password.</div>
+        <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+      </div>
+      <button class="fp-use-pw-link" id="fp-use-pw-link" onclick="revealFpPasswordFallback()">Use password instead</button>
     </div>
 
     <!-- Step 2: Password only (shown when user has NO WebAuthn credentials) -->
