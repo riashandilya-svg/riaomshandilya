@@ -360,9 +360,135 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
+    /* ── VIEW TABS ── */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .view-tab {
+      padding: 10px 28px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: -1px;
+    }
+    .view-tab:hover { color: var(--gold-light); }
+    .view-tab.active {
+      color: var(--gold-light);
+      border-bottom-color: var(--gold);
+    }
+
+    /* ── DATE RANGE BAR ── */
+    .date-range-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .date-range-bar .bar-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+    .range-btn {
+      padding: 5px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .range-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+    .range-btn.active {
+      background: var(--gold-pale);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .custom-range {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-left: 6px;
+      flex-wrap: wrap;
+    }
+    .custom-range .cr-sep {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+    .month-select {
+      padding: 5px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .month-select:focus { border-color: var(--gold); }
+    .custom-apply-btn {
+      padding: 5px 14px;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .custom-apply-btn:hover { background: var(--gold-light); }
+
+    /* ── SALES VIEW ── */
+    #sales-view { display: none; }
+    .sales-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .sales-table-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .period-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0.8;
+    }
+
     @media (max-width: 700px) {
       .dashboard-body { padding: 16px; }
       .topbar { padding: 12px 16px; }
+      .date-range-bar { padding: 10px 12px; gap: 6px; }
     }
   </style>
 </head>
@@ -385,7 +511,7 @@
 <!-- ── DASHBOARD ── -->
 <div id="dashboard">
   <div class="topbar">
-    <div class="topbar-brand">Orders Dashboard <span>Admin</span></div>
+    <div class="topbar-brand">Ria Om Shandilya™ <span>Admin</span></div>
     <div class="topbar-actions">
       <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
       <button onclick="doLogout()">Sign Out</button>
@@ -393,57 +519,135 @@
   </div>
 
   <div class="dashboard-body">
-    <!-- Stats -->
-    <div class="stats-row" id="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Total Orders</div>
-        <div class="stat-value" id="stat-total">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Revenue</div>
-        <div class="stat-value" id="stat-revenue">—</div>
-        <div class="stat-sub">incl. shipping</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">To Ship</div>
-        <div class="stat-value" id="stat-toship">—</div>
-        <div class="stat-sub">awaiting dispatch</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Shipped</div>
-        <div class="stat-value" id="stat-shipped">—</div>
+
+    <!-- View Tabs -->
+    <div class="view-tabs">
+      <button class="view-tab active" id="tab-sales" onclick="switchView('sales')">Sales</button>
+      <button class="view-tab" id="tab-orders" onclick="switchView('orders')">Orders</button>
+    </div>
+
+    <!-- Date Range Bar (shared) -->
+    <div class="date-range-bar">
+      <span class="bar-label">Period:</span>
+      <button class="range-btn active" data-range="this_month" onclick="setRange(this,'this_month')">This Month</button>
+      <button class="range-btn" data-range="last_month" onclick="setRange(this,'last_month')">Last Month</button>
+      <button class="range-btn" data-range="last_90" onclick="setRange(this,'last_90')">Last 90 Days</button>
+      <button class="range-btn" data-range="this_year" onclick="setRange(this,'this_year')">This Year</button>
+      <button class="range-btn" data-range="last_year" onclick="setRange(this,'last_year')">Last Year</button>
+      <button class="range-btn" data-range="lifetime" onclick="setRange(this,'lifetime')">Lifetime</button>
+      <button class="range-btn" data-range="custom" onclick="setRange(this,'custom')">Custom</button>
+      <div class="custom-range" id="custom-range-picker" style="display:none">
+        <select class="month-select" id="custom-start"></select>
+        <span class="cr-sep">→</span>
+        <select class="month-select" id="custom-end"></select>
+        <button class="custom-apply-btn" onclick="applyCustomRange()">Apply</button>
       </div>
     </div>
 
-    <!-- Filters -->
-    <div class="filters-bar">
-      <button class="filter-btn active" data-filter="all" onclick="setFilter(this, 'all')">All</button>
-      <button class="filter-btn" data-filter="paid" onclick="setFilter(this, 'paid')">Paid</button>
-      <button class="filter-btn" data-filter="shipped" onclick="setFilter(this, 'shipped')">Shipped</button>
-      <button class="filter-btn" data-filter="delivered" onclick="setFilter(this, 'delivered')">Delivered</button>
-      <button class="filter-btn" data-filter="cancelled" onclick="setFilter(this, 'cancelled')">Cancelled</button>
-      <input class="search-input" id="search-input" placeholder="Search name, email, phone…" oninput="renderTable()" />
+    <!-- ── SALES VIEW ── -->
+    <div id="sales-view">
+      <div class="period-label" id="sales-period-label"></div>
+      <div class="sales-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value" id="sales-revenue">—</div>
+          <div class="stat-sub">incl. shipping</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Orders Placed</div>
+          <div class="stat-value" id="sales-orders">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg. Order Value</div>
+          <div class="stat-value" id="sales-avg">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Delivered</div>
+          <div class="stat-value" id="sales-delivered">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cancelled / Refunded</div>
+          <div class="stat-value" id="sales-cancelled">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Net Revenue</div>
+          <div class="stat-value" id="sales-net">—</div>
+          <div class="stat-sub">excl. cancelled</div>
+        </div>
+      </div>
+
+      <!-- Top items table -->
+      <div class="sales-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Book</th>
+              <th>Units Sold</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody id="sales-items-tbody">
+            <tr class="loading-row"><td colspan="3">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Table -->
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Order</th>
-            <th>Customer</th>
-            <th>Books</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Update</th>
-          </tr>
-        </thead>
-        <tbody id="orders-tbody">
-          <tr class="loading-row"><td colspan="7">Loading orders…</td></tr>
-        </tbody>
-      </table>
+    <!-- ── ORDERS VIEW ── -->
+    <div id="orders-view" style="display:none">
+      <!-- Stats -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Revenue</div>
+          <div class="stat-value" id="stat-revenue">—</div>
+          <div class="stat-sub">incl. shipping</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">To Ship</div>
+          <div class="stat-value" id="stat-toship">—</div>
+          <div class="stat-sub">awaiting dispatch</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Shipped</div>
+          <div class="stat-value" id="stat-shipped">—</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter(this, 'all')">All</button>
+        <button class="filter-btn" data-filter="paid" onclick="setFilter(this, 'paid')">Paid</button>
+        <button class="filter-btn" data-filter="shipped" onclick="setFilter(this, 'shipped')">Shipped</button>
+        <button class="filter-btn" data-filter="delivered" onclick="setFilter(this, 'delivered')">Delivered</button>
+        <button class="filter-btn" data-filter="cancelled" onclick="setFilter(this, 'cancelled')">Cancelled</button>
+        <input class="search-input" id="search-input" placeholder="Search name, email, phone…" oninput="renderTable()" />
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Books</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody">
+            <tr class="loading-row"><td colspan="7">Loading orders…</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -465,6 +669,10 @@
   let allOrders = [];
   let currentFilter = 'all';
   let accessToken = null;
+  let currentRange = 'this_month';
+  let currentView = 'sales';
+  let customStart = null;
+  let customEnd = null;
 
   // ═══════════════════════════════
   //  LOGIN
@@ -515,15 +723,132 @@
   function showDashboard() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
+    initCustomMonthPicker();
     loadOrders();
+  }
+
+  // ═══════════════════════════════
+  //  VIEW SWITCHING
+  // ═══════════════════════════════
+  function switchView(view) {
+    currentView = view;
+    document.getElementById('tab-sales').classList.toggle('active', view === 'sales');
+    document.getElementById('tab-orders').classList.toggle('active', view === 'orders');
+    document.getElementById('sales-view').style.display = view === 'sales' ? 'block' : 'none';
+    document.getElementById('orders-view').style.display = view === 'orders' ? 'block' : 'none';
+    refreshCurrentView();
+  }
+
+  // ═══════════════════════════════
+  //  DATE RANGE
+  // ═══════════════════════════════
+  function getRangeDates(range) {
+    const now = new Date();
+    let start, end;
+    if (range === 'this_month') {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    } else if (range === 'last_month') {
+      start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    } else if (range === 'last_90') {
+      end = new Date(now);
+      start = new Date(now); start.setDate(now.getDate() - 89); start.setHours(0,0,0,0);
+    } else if (range === 'this_year') {
+      start = new Date(now.getFullYear(), 0, 1);
+      end = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+    } else if (range === 'last_year') {
+      start = new Date(now.getFullYear() - 1, 0, 1);
+      end = new Date(now.getFullYear() - 1, 11, 31, 23, 59, 59);
+    } else if (range === 'lifetime') {
+      return { start: null, end: null };
+    } else if (range === 'custom') {
+      return { start: customStart, end: customEnd };
+    }
+    return { start, end };
+  }
+
+  function rangeLabelText(range) {
+    const now = new Date();
+    const mo = d => d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    if (range === 'this_month') return `This Month — ${mo(now)}`;
+    if (range === 'last_month') { const d = new Date(now.getFullYear(), now.getMonth()-1,1); return `Last Month — ${mo(d)}`; }
+    if (range === 'last_90') return 'Last 90 Days';
+    if (range === 'this_year') return `This Year — ${now.getFullYear()}`;
+    if (range === 'last_year') return `Last Year — ${now.getFullYear()-1}`;
+    if (range === 'lifetime') return 'Lifetime — All Orders';
+    if (range === 'custom' && customStart && customEnd) {
+      const fmt = d => d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+      return `Custom: ${fmt(customStart)} → ${fmt(customEnd)}`;
+    }
+    return '';
+  }
+
+  function filterOrdersByRange(orders, range) {
+    const { start, end } = getRangeDates(range);
+    if (!start && !end) return orders;
+    return orders.filter(o => {
+      const d = new Date(o.created_at);
+      return (!start || d >= start) && (!end || d <= end);
+    });
+  }
+
+  function setRange(btn, range) {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRange = range;
+    const picker = document.getElementById('custom-range-picker');
+    picker.style.display = range === 'custom' ? 'flex' : 'none';
+    if (range !== 'custom') refreshCurrentView();
+  }
+
+  function applyCustomRange() {
+    const s = document.getElementById('custom-start').value;
+    const e = document.getElementById('custom-end').value;
+    if (!s || !e) { showToast('Pick both start and end month.'); return; }
+    const [sy, sm] = s.split('-').map(Number);
+    const [ey, em] = e.split('-').map(Number);
+    customStart = new Date(sy, sm - 1, 1, 0, 0, 0);
+    customEnd   = new Date(ey, em, 0, 23, 59, 59);
+    if (customStart > customEnd) { showToast('Start month must be before end month.'); return; }
+    refreshCurrentView();
+  }
+
+  function initCustomMonthPicker() {
+    const startSel = document.getElementById('custom-start');
+    const endSel   = document.getElementById('custom-end');
+    const now = new Date();
+    // Generate last 5 years of months
+    const months = [];
+    for (let y = now.getFullYear(); y >= now.getFullYear() - 4; y--) {
+      for (let m = (y === now.getFullYear() ? now.getMonth() : 11); m >= 0; m--) {
+        months.push({ y, m });
+      }
+    }
+    const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    months.forEach(({ y, m }) => {
+      const val = `${y}-${String(m+1).padStart(2,'0')}`;
+      const label = `${names[m]} ${y}`;
+      startSel.insertAdjacentHTML('beforeend', `<option value="${val}">${label}</option>`);
+      endSel.insertAdjacentHTML('beforeend',   `<option value="${val}">${label}</option>`);
+    });
+    // Default end = this month, start = 3 months ago
+    endSel.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const s = new Date(now.getFullYear(), now.getMonth()-2, 1);
+    startSel.value = `${s.getFullYear()}-${String(s.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  function refreshCurrentView() {
+    if (currentView === 'sales') renderSales();
+    else { updateStats(); renderTable(); }
   }
 
   // ═══════════════════════════════
   //  LOAD ORDERS
   // ═══════════════════════════════
   async function loadOrders() {
-    const tbody = document.getElementById('orders-tbody');
-    tbody.innerHTML = '<tr class="loading-row"><td colspan="7">Loading…</td></tr>';
+    document.getElementById('orders-tbody').innerHTML = '<tr class="loading-row"><td colspan="7">Loading…</td></tr>';
+    document.getElementById('sales-items-tbody').innerHTML = '<tr class="loading-row"><td colspan="3">Loading…</td></tr>';
 
     const { data, error } = await db
       .from('orders')
@@ -531,23 +856,70 @@
       .order('created_at', { ascending: false });
 
     if (error) {
-      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px">Error: ${error.message}</td></tr>`;
+      document.getElementById('orders-tbody').innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px">Error: ${error.message}</td></tr>`;
       return;
     }
 
     allOrders = Array.isArray(data) ? data : [];
-    updateStats();
-    renderTable();
+    // Show the default view
+    switchView(currentView);
   }
 
   // ═══════════════════════════════
-  //  STATS
+  //  SALES VIEW
+  // ═══════════════════════════════
+  function renderSales() {
+    const orders = filterOrdersByRange(allOrders, currentRange);
+    document.getElementById('sales-period-label').textContent = rangeLabelText(currentRange);
+
+    const total = orders.length;
+    const revenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+    const avg = total ? Math.round(revenue / total) : 0;
+    const delivered = orders.filter(o => o.status === 'delivered').length;
+    const cancelled = orders.filter(o => o.status === 'cancelled').length;
+    const netRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s,o) => s + (o.total||0), 0);
+
+    document.getElementById('sales-revenue').textContent = `₹${revenue.toLocaleString('en-IN')}`;
+    document.getElementById('sales-orders').textContent = total;
+    document.getElementById('sales-avg').textContent = total ? `₹${avg.toLocaleString('en-IN')}` : '—';
+    document.getElementById('sales-delivered').textContent = delivered;
+    document.getElementById('sales-cancelled').textContent = cancelled;
+    document.getElementById('sales-net').textContent = `₹${netRevenue.toLocaleString('en-IN')}`;
+
+    // Book breakdown
+    const bookMap = {};
+    orders.filter(o => o.status !== 'cancelled').forEach(o => {
+      (o.items || []).forEach(item => {
+        const key = item.title || 'Unknown';
+        if (!bookMap[key]) bookMap[key] = { qty: 0, rev: 0 };
+        bookMap[key].qty += (item.qty || 1);
+        bookMap[key].rev += (item.price || 0) * (item.qty || 1);
+      });
+    });
+    const sorted = Object.entries(bookMap).sort((a,b) => b[1].rev - a[1].rev);
+    const tbody = document.getElementById('sales-items-tbody');
+    if (!sorted.length) {
+      tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="symbol">♪</div><p>No sales in this period</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = sorted.map(([title, d]) => `
+      <tr>
+        <td style="font-weight:500">${title}</td>
+        <td style="color:var(--text-muted)">${d.qty}</td>
+        <td><span class="amount">₹${d.rev.toLocaleString('en-IN')}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  // ═══════════════════════════════
+  //  STATS (Orders view)
   // ═══════════════════════════════
   function updateStats() {
-    const total = allOrders.length;
-    const revenue = allOrders.reduce((s, o) => s + (o.total || 0), 0);
-    const toship = allOrders.filter(o => o.status === 'paid').length;
-    const shipped = allOrders.filter(o => o.status === 'shipped').length;
+    const orders = filterOrdersByRange(allOrders, currentRange);
+    const total = orders.length;
+    const revenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+    const toship = orders.filter(o => o.status === 'paid').length;
+    const shipped = orders.filter(o => o.status === 'shipped').length;
 
     document.getElementById('stat-total').textContent = total;
     document.getElementById('stat-revenue').textContent = `₹${revenue.toLocaleString('en-IN')}`;
@@ -556,7 +928,7 @@
   }
 
   // ═══════════════════════════════
-  //  FILTER + RENDER
+  //  FILTER + RENDER (Orders view)
   // ═══════════════════════════════
   function setFilter(btn, filter) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -567,8 +939,7 @@
 
   function renderTable() {
     const q = document.getElementById('search-input').value.toLowerCase();
-
-    let orders = allOrders;
+    let orders = filterOrdersByRange(allOrders, currentRange);
     if (currentFilter !== 'all') {
       orders = orders.filter(o => o.status === currentFilter);
     }
