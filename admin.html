@@ -705,6 +705,20 @@
     <div class="view-tabs">
       <button class="view-tab active" id="tab-orders" onclick="switchView('orders')">Orders</button>
       <button class="view-tab" id="tab-sales" onclick="switchView('sales')">Sales</button>
+      <button class="view-tab" id="tab-fingerprints" onclick="switchView('fingerprints')">Fingerprints</button>
+    </div>
+
+    <!-- ── FINGERPRINTS VIEW ── -->
+    <div id="fingerprints-view" style="display:none">
+      <div class="fp-manage-panel" id="fp-manage-panel">
+        <div class="fp-manage-header">
+          <div class="fp-manage-title">Registered Fingerprints</div>
+          <button class="fp-add-btn" onclick="doFingerprintRegister()">＋ Add Fingerprint</button>
+        </div>
+        <div class="fp-cred-list" id="fp-cred-list">
+          <div class="fp-empty">Loading…</div>
+        </div>
+      </div>
     </div>
 
     <!-- Date Range Bar (shared) -->
@@ -891,22 +905,54 @@
     if (label) lbl.textContent = label;
   }
 
-  // ── CHECK if a credential is stored for this device ──
-  async function getStoredCredentialId() {
-    return localStorage.getItem('fp_credential_id');
+  // ── CHECK all credentials stored for this device ──
+  function getStoredCredentialIds() {
+    const arr = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
+    const legacy = localStorage.getItem('fp_credential_id');
+    if (legacy && !arr.includes(legacy)) arr.push(legacy);
+    return arr;
   }
+  // ── FINGERPRINT LABEL MODAL ──
+  let _fpRegisterResolve = null;
+
+  function openFpModal() {
+    return new Promise((resolve) => {
+      _fpRegisterResolve = resolve;
+      const modal = document.getElementById('fp-label-modal');
+      document.getElementById('fp-label-input').value = '';
+      modal.style.display = 'flex';
+      setTimeout(() => document.getElementById('fp-label-input').focus(), 80);
+    });
+  }
+
+  function closeFpModal() {
+    document.getElementById('fp-label-modal').style.display = 'none';
+    if (_fpRegisterResolve) { _fpRegisterResolve(null); _fpRegisterResolve = null; }
+  }
+
+  function confirmFpRegister() {
+    const val = document.getElementById('fp-label-input').value.trim() || 'Fingerprint';
+    document.getElementById('fp-label-modal').style.display = 'none';
+    if (_fpRegisterResolve) { _fpRegisterResolve(val); _fpRegisterResolve = null; }
+  }
+
+  // Allow Enter key in modal input
+  document.getElementById('fp-label-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmFpRegister();
+    if (e.key === 'Escape') closeFpModal();
+  });
 
   // ── REGISTER fingerprint (after password login) ──
   async function doFingerprintRegister() {
-    const loginBtn = document.getElementById('fp-register-btn');
-    const topbarBtn = document.getElementById('topbar-fp-btn');
-    const activeBtn = loginBtn.style.display !== 'none' ? loginBtn : topbarBtn;
-    const origText = activeBtn.textContent;
-    activeBtn.textContent = 'Registering…'; activeBtn.disabled = true;
-
     try {
       const { data: { user } } = await db.auth.getUser();
       if (!user) throw new Error('Not logged in');
+
+      // Ask for a label first
+      const label = await openFpModal();
+      if (!label) return; // user cancelled
+
+      showToast('Touch your fingerprint sensor…');
 
       const challenge = crypto.getRandomValues(new Uint8Array(32));
       const userId    = new TextEncoder().encode(user.id);
@@ -927,8 +973,8 @@
         timeout: 60000,
       }});
 
-      const credId  = b64url(cred.rawId);
-      const pubKey  = b64url(cred.response.getPublicKey
+      const credId = b64url(cred.rawId);
+      const pubKey = b64url(cred.response.getPublicKey
         ? cred.response.getPublicKey()
         : cred.response.attestationObject);
 
@@ -937,21 +983,111 @@
         credential_id: credId,
         public_key:    pubKey,
         sign_count:    0,
+        label:         label,
       });
       if (error) throw error;
 
+      // Store this credential ID locally so login can find it
+      const stored = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
+      if (!stored.includes(credId)) stored.push(credId);
+      localStorage.setItem('fp_credential_ids', JSON.stringify(stored));
+      // Legacy single-key compat
       localStorage.setItem('fp_credential_id', credId);
-      activeBtn.textContent = '✓ Fingerprint Registered!';
-      // Hide topbar register button since we're now registered
-      topbarBtn.style.display = 'none';
-      showToast('Fingerprint registered — you can now sign in with it next time.');
-      // If on login screen, go to dashboard now
-      if (loginBtn.style.display !== 'none') setTimeout(() => showDashboard(), 800);
+
+      showToast(`"${label}" registered ✓ — use it to sign in next time.`);
+
+      // Refresh manage panel if visible
+      if (currentView === 'fingerprints') loadFingerprintPanel();
+
+      // If on login screen, go to dashboard
+      const loginRegBtn = document.getElementById('fp-register-btn');
+      if (loginRegBtn.style.display !== 'none') {
+        loginRegBtn.style.display = 'none';
+        document.getElementById('topbar-fp-btn').style.display = 'none';
+        setTimeout(() => showDashboard(), 600);
+      }
+
     } catch (e) {
-      activeBtn.textContent = origText;
-      activeBtn.disabled = false;
-      showToast('Registration failed: ' + (e.message || e));
+      const msg = e.message || '';
+      if (!msg.includes('cancel') && !msg.includes('abort') && !msg.includes('NotAllowed')) {
+        showToast('Registration failed: ' + msg);
+      }
     }
+  }
+
+  // ── LOAD & RENDER fingerprint manage panel ──
+  async function loadFingerprintPanel() {
+    const list = document.getElementById('fp-cred-list');
+    list.innerHTML = '<div class="fp-empty">Loading…</div>';
+
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return;
+
+    // Get all credentials for this user
+    const { data: creds, error } = await db
+      .from('webauthn_credentials')
+      .select('id, credential_id, label, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: true });
+
+    if (error || !creds || !creds.length) {
+      list.innerHTML = '<div class="fp-empty">No fingerprints registered yet.</div>';
+      return;
+    }
+
+    // Get locally stored IDs to mark "this device"
+    const localIds = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
+    const legacyId = localStorage.getItem('fp_credential_id');
+    if (legacyId && !localIds.includes(legacyId)) localIds.push(legacyId);
+
+    list.innerHTML = creds.map(c => {
+      const isThis = localIds.includes(c.credential_id);
+      const date = new Date(c.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' });
+      return `
+        <div class="fp-cred-item" id="fp-item-${c.id}">
+          <div class="fp-cred-info">
+            <div class="fp-cred-icon">☞</div>
+            <div>
+              <div class="fp-cred-label">
+                ${escHtml(c.label || 'Fingerprint')}
+                ${isThis ? '<span class="fp-cred-this">This device</span>' : ''}
+              </div>
+              <div class="fp-cred-meta">Registered ${date} · ID: ${c.credential_id.slice(0,12)}…</div>
+            </div>
+          </div>
+          <button class="fp-delete-btn" onclick="deleteFpCred('${c.id}','${c.credential_id}','${escHtml(c.label||'Fingerprint')}')">Remove</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function deleteFpCred(rowId, credId, label) {
+    if (!confirm(`Remove fingerprint "${label}"?\n\nYou won't be able to log in with it anymore.`)) return;
+
+    const { error } = await db
+      .from('webauthn_credentials')
+      .delete()
+      .eq('id', rowId);
+
+    if (error) { showToast('Error removing: ' + error.message); return; }
+
+    // Remove from localStorage
+    const stored = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
+    const updated = stored.filter(id => id !== credId);
+    localStorage.setItem('fp_credential_ids', JSON.stringify(updated));
+    if (localStorage.getItem('fp_credential_id') === credId) {
+      localStorage.removeItem('fp_credential_id');
+      if (updated.length) localStorage.setItem('fp_credential_id', updated[updated.length - 1]);
+    }
+
+    showToast(`"${label}" removed.`);
+    document.getElementById(`fp-item-${rowId}`)?.remove();
+    const list = document.getElementById('fp-cred-list');
+    if (!list.children.length) list.innerHTML = '<div class="fp-empty">No fingerprints registered yet.</div>';
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   // ── LOGIN with fingerprint ──
@@ -964,11 +1100,9 @@
     fpState('scanning', 'Verifying…');
 
     try {
-      // Look up all credentials for this RP from Supabase
-      // We use an empty allow list first to let platform pick, then filter
       const challenge = crypto.getRandomValues(new Uint8Array(32));
 
-      // Try resident key (no credential ID needed) first
+      // Try resident key first (browser picks the right account automatically)
       let assertion;
       try {
         assertion = await navigator.credentials.get({ publicKey: {
@@ -978,15 +1112,15 @@
           timeout: 60000,
         }});
       } catch (e) {
-        // Resident key failed — try with stored credential ID
-        const storedId = await getStoredCredentialId();
-        if (!storedId) throw new Error('No fingerprint registered on this device');
+        // Resident key failed — try with all stored credential IDs
+        const storedIds = getStoredCredentialIds();
+        if (!storedIds.length) throw new Error('No fingerprint registered on this device');
         assertion = await navigator.credentials.get({ publicKey: {
           challenge,
           rpId: RP_ID,
           userVerification: 'required',
           timeout: 60000,
-          allowCredentials: [{ type: 'public-key', id: fromB64url(storedId) }],
+          allowCredentials: storedIds.map(id => ({ type: 'public-key', id: fromB64url(id) })),
         }});
       }
 
@@ -1097,7 +1231,7 @@
     accessToken = data.session.access_token;
 
     // Show register button if no fingerprint credential on this device
-    if (!localStorage.getItem('fp_credential_id') && window.PublicKeyCredential) {
+    if (!getStoredCredentialIds().length && window.PublicKeyCredential) {
       document.getElementById('fp-register-btn').style.display = 'block';
       return; // Let them register before entering dashboard
     }
@@ -1115,7 +1249,7 @@
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     // Show "Register Fingerprint" in topbar if not yet registered on this device
-    if (!localStorage.getItem('fp_credential_id') && window.PublicKeyCredential) {
+    if (!getStoredCredentialIds().length && window.PublicKeyCredential) {
       document.getElementById('topbar-fp-btn').style.display = 'inline-block';
     }
     initCustomMonthPicker();
@@ -1129,9 +1263,14 @@
     currentView = view;
     document.getElementById('tab-sales').classList.toggle('active', view === 'sales');
     document.getElementById('tab-orders').classList.toggle('active', view === 'orders');
+    document.getElementById('tab-fingerprints').classList.toggle('active', view === 'fingerprints');
     document.getElementById('sales-view').style.display = view === 'sales' ? 'block' : 'none';
     document.getElementById('orders-view').style.display = view === 'orders' ? 'block' : 'none';
-    refreshCurrentView();
+    document.getElementById('fingerprints-view').style.display = view === 'fingerprints' ? 'block' : 'none';
+    // Hide date range bar when on fingerprints view
+    document.querySelector('.date-range-bar').style.display = view === 'fingerprints' ? 'none' : '';
+    if (view === 'fingerprints') loadFingerprintPanel();
+    else refreshCurrentView();
   }
 
   // ═══════════════════════════════
