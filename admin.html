@@ -169,6 +169,32 @@
     }
     .fp-register-btn:hover { border-color: var(--gold); color: var(--gold-light); }
 
+    /* ── TWO-STEP LOGIN ── */
+    .login-step-back { margin-bottom: 22px; }
+    .step-back-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      padding: 4px 0;
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .step-back-btn:hover { color: var(--gold-light); }
+    .step-back-btn span {
+      color: var(--gold);
+      font-weight: 500;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     /* ── FINGERPRINT LABEL MODAL ── */
     .fp-modal-overlay {
       position: fixed; inset: 0;
@@ -660,26 +686,47 @@
     <div class="brand">Ria Om Shandilya™</div>
     <div class="brand-sub">Admin Dashboard</div>
 
-    <!-- Fingerprint prompt -->
-    <div class="fp-screen" id="fp-screen">
-      <button class="fp-btn" id="fp-btn" onclick="doFingerprintLogin()" title="Sign in with fingerprint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold-light)">
-          <path d="M12 2C8 2 5 5.5 5 9c0 5.25 3 9.5 7 13 4-3.5 7-7.75 7-13 0-3.5-3-7-7-7z"/>
-          <path d="M12 6c-2 0-3.5 1.8-3.5 4 0 3 1.5 5.5 3.5 7.5 2-2 3.5-4.5 3.5-7.5C15.5 7.8 14 6 12 6z"/>
-          <path d="M12 10c-.8 0-1.5.8-1.5 2 0 1.5.6 2.8 1.5 3.8.9-1 1.5-2.3 1.5-3.8 0-1.2-.7-2-1.5-2z"/>
-        </svg>
-      </button>
-      <div class="fp-label" id="fp-label">Touch to sign in</div>
+    <!-- Step 1: Email -->
+    <div id="login-step-email">
+      <label>Email</label>
+      <input type="email" id="admin-email" placeholder="your@email.com" autocomplete="email" />
+      <div class="login-error" id="email-error">Please enter a valid email.</div>
+      <button class="login-btn" id="email-next-btn" onclick="doEmailNext()">Continue</button>
     </div>
 
-    <div class="fp-divider">or</div>
+    <!-- Step 2: Fingerprint (shown when user has WebAuthn credentials) -->
+    <div id="login-step-fingerprint" style="display:none">
+      <div class="login-step-back">
+        <button class="step-back-btn" onclick="goBackToEmail()">← <span id="step2-email-display"></span></button>
+      </div>
+      <div class="fp-screen" id="fp-screen">
+        <button class="fp-btn" id="fp-btn" onclick="doFingerprintLogin()" title="Sign in with fingerprint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold-light)">
+            <path d="M12 2C8 2 5 5.5 5 9c0 5.25 3 9.5 7 13 4-3.5 7-7.75 7-13 0-3.5-3-7-7-7z"/>
+            <path d="M12 6c-2 0-3.5 1.8-3.5 4 0 3 1.5 5.5 3.5 7.5 2-2 3.5-4.5 3.5-7.5C15.5 7.8 14 6 12 6z"/>
+            <path d="M12 10c-.8 0-1.5.8-1.5 2 0 1.5.6 2.8 1.5 3.8.9-1 1.5-2.3 1.5-3.8 0-1.2-.7-2-1.5-2z"/>
+          </svg>
+        </button>
+        <div class="fp-label" id="fp-label">Touch to sign in</div>
+      </div>
+      <div class="fp-divider">or use password</div>
+      <label>Password</label>
+      <input type="password" id="admin-password" placeholder="Enter password" autocomplete="current-password" />
+      <div class="login-error" id="login-error">Incorrect email or password.</div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+    </div>
 
-    <label>Email</label>
-    <input type="email" id="admin-email" placeholder="your@email.com" />
-    <label>Password</label>
-    <input type="password" id="admin-password" placeholder="Enter password" />
-    <div class="login-error" id="login-error">Incorrect email or password.</div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+    <!-- Step 2: Password only (shown when user has NO WebAuthn credentials) -->
+    <div id="login-step-password" style="display:none">
+      <div class="login-step-back">
+        <button class="step-back-btn" onclick="goBackToEmail()">← <span id="step2-pw-email-display"></span></button>
+      </div>
+      <label>Password</label>
+      <input type="password" id="admin-password-only" placeholder="Enter password" autocomplete="current-password" />
+      <div class="login-error" id="login-error-pw">Incorrect email or password.</div>
+      <button class="login-btn" id="login-btn-pw" onclick="doLoginPasswordOnly()">Sign In</button>
+    </div>
+
   </div>
 </div>
 
@@ -909,11 +956,11 @@
   }
 
   // ── Seed localStorage from DB so any registered credential works even on fresh load ──
-  async function seedCredentialIdsFromDB() {
+  async function seedCredentialIdsFromDB(userId) {
     try {
-      const { data: creds } = await db
-        .from('webauthn_credentials')
-        .select('credential_id');
+      let query = db.from('webauthn_credentials').select('credential_id');
+      if (userId) query = query.eq('user_id', userId);
+      const { data: creds } = await query;
       if (!creds || !creds.length) return;
       const local = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
       let changed = false;
@@ -1182,6 +1229,8 @@
       const storedAfter = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
       if (!storedAfter.includes(credId)) { storedAfter.push(credId); localStorage.setItem('fp_credential_ids', JSON.stringify(storedAfter)); }
       localStorage.setItem('fp_credential_id', credId);
+      // Cache email → userId for future step-2 routing
+      if (_loginEmail) cacheEmailUserId(_loginEmail, userId);
       setTimeout(() => showDashboard(), 400);
 
     } catch (e) {
@@ -1197,43 +1246,141 @@
     }
   }
 
-  // ── Auto-trigger fingerprint on page load ──
-  // Runs ONLY if no existing session — session check happens first
-  let _fpAutoTriggered = false;
-  function triggerFingerprintIfNeeded() {
-    if (_fpAutoTriggered) return;
-    _fpAutoTriggered = true;
-    doFingerprintLogin();
-  }
-
-  document.getElementById('admin-password').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
-
   // ── Session restore — always runs first ──
-  // If a session exists, go straight to dashboard (NO fingerprint prompt)
-  // If no session, show login screen and auto-trigger fingerprint
   (async () => {
     const { data: { session } } = await db.auth.getSession();
     if (session) {
       accessToken = session.access_token;
-      showDashboard(); // already authenticated — skip all login UI
-    } else {
-      // Seed credential IDs from DB first so allowCredentials list is populated,
-      // then auto-prompt fingerprint
-      await seedCredentialIdsFromDB();
-      triggerFingerprintIfNeeded();
+      showDashboard();
     }
+    // No auto-fingerprint — user starts at email step
   })();
 
+  // Keydown helpers (bound after DOM is ready)
+  document.getElementById('admin-email').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doEmailNext();
+  });
+  document.getElementById('admin-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('admin-password-only').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLoginPasswordOnly();
+  });
+
   // ═══════════════════════════════
-  //  LOGIN
+  //  TWO-STEP LOGIN FLOW
+  // ═══════════════════════════════
+
+  // State for current email being authenticated
+  let _loginEmail = '';
+
+  // Step 1 → Step 2: look up user by email, decide fingerprint vs password-only
+  async function doEmailNext() {
+    const email = document.getElementById('admin-email').value.trim();
+    const errEl = document.getElementById('email-error');
+    const btn   = document.getElementById('email-next-btn');
+
+    errEl.style.display = 'none';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = 'Please enter a valid email.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.textContent = 'Checking…';
+    btn.disabled = true;
+
+    try {
+      // Look up user_id by email via webauthn_credentials join
+      // We do this by finding credentials where the user's email matches.
+      // Strategy: fetch all credentials, then check auth — but we can't look up
+      // by email server-side without a service role. Instead, check DB for any
+      // webauthn_credentials associated with known users, and cross-check locally.
+      // Simpler: query a view or just check local storage + DB credential count.
+      //
+      // We'll use a Supabase RPC or just query the credentials table to see if
+      // ANY credentials exist for an account with this email. Since we need the
+      // user_id to query by, we temporarily sign in to get it — but we can't do
+      // that without a password. 
+      //
+      // Best approach: store email→user_id mapping after first successful login,
+      // OR: try signing in with a dummy password (bad UX) OR: use a public RPC.
+      //
+      // Clean solution: query webauthn_credentials for credentials where user has
+      // this email. We'll use a Supabase Edge Function OR simply check localStorage
+      // for a cached user_id for this email, and fall back to checking DB with anon.
+      //
+      // For now: if we have a cached user_id for this email in localStorage AND
+      // the DB has credentials for that user_id → show fingerprint.
+      // Otherwise → show password only (which will cache after success).
+
+      _loginEmail = email;
+      let hasBiometric = false;
+
+      // Check localStorage for a cached user_id for this email
+      const emailMap = JSON.parse(localStorage.getItem('email_userid_map') || '{}');
+      const cachedUserId = emailMap[email];
+
+      if (cachedUserId) {
+        const { data: creds } = await db
+          .from('webauthn_credentials')
+          .select('credential_id', { count: 'exact', head: false })
+          .eq('user_id', cachedUserId)
+          .limit(1);
+        hasBiometric = !!(creds && creds.length);
+      } else {
+        // No cached mapping — default to password step; biometric will become
+        // available after first successful password login caches the user_id.
+        hasBiometric = false;
+      }
+
+      // Hide step 1
+      document.getElementById('login-step-email').style.display = 'none';
+
+      if (hasBiometric && window.PublicKeyCredential) {
+        // Show step 2: fingerprint + password fallback
+        document.getElementById('step2-email-display').textContent = email;
+        document.getElementById('login-step-fingerprint').style.display = 'block';
+        // Seed credential IDs for this user then auto-trigger
+        await seedCredentialIdsFromDB(cachedUserId);
+        setTimeout(() => doFingerprintLogin(), 300);
+      } else {
+        // Show step 2: password only
+        document.getElementById('step2-pw-email-display').textContent = email;
+        document.getElementById('login-step-password').style.display = 'block';
+        setTimeout(() => document.getElementById('admin-password-only').focus(), 80);
+      }
+
+    } catch (err) {
+      errEl.textContent = 'Something went wrong. Try again.';
+      errEl.style.display = 'block';
+    } finally {
+      btn.textContent = 'Continue';
+      btn.disabled = false;
+    }
+  }
+
+  function goBackToEmail() {
+    document.getElementById('login-step-fingerprint').style.display = 'none';
+    document.getElementById('login-step-password').style.display = 'none';
+    document.getElementById('login-error').style.display = 'none';
+    document.getElementById('login-error-pw').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+    document.getElementById('admin-password-only').value = '';
+    fpState('', 'Touch to sign in');
+    document.getElementById('login-step-email').style.display = 'block';
+    setTimeout(() => document.getElementById('admin-email').focus(), 80);
+  }
+
+  // ═══════════════════════════════
+  //  LOGIN (fingerprint step — password fallback)
   // ═══════════════════════════════
   async function doLogin() {
-    const email = document.getElementById('admin-email').value.trim();
+    const email    = _loginEmail || document.getElementById('admin-email').value.trim();
     const password = document.getElementById('admin-password').value;
-    const btn = document.getElementById('login-btn');
-    const errEl = document.getElementById('login-error');
+    const btn      = document.getElementById('login-btn');
+    const errEl    = document.getElementById('login-error');
 
     errEl.style.display = 'none';
     btn.textContent = 'Signing in…';
@@ -1249,8 +1396,47 @@
       return;
     }
 
+    // Cache email → user_id for future biometric lookup
+    cacheEmailUserId(email, data.user.id);
     accessToken = data.session.access_token;
     showDashboard();
+  }
+
+  // ═══════════════════════════════
+  //  LOGIN (password-only step)
+  // ═══════════════════════════════
+  async function doLoginPasswordOnly() {
+    const email    = _loginEmail;
+    const password = document.getElementById('admin-password-only').value;
+    const btn      = document.getElementById('login-btn-pw');
+    const errEl    = document.getElementById('login-error-pw');
+
+    errEl.style.display = 'none';
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+    btn.textContent = 'Sign In';
+    btn.disabled = false;
+
+    if (error) {
+      errEl.style.display = 'block';
+      return;
+    }
+
+    // Cache email → user_id so next login can offer biometric
+    cacheEmailUserId(email, data.user.id);
+    accessToken = data.session.access_token;
+    showDashboard();
+  }
+
+  function cacheEmailUserId(email, userId) {
+    try {
+      const map = JSON.parse(localStorage.getItem('email_userid_map') || '{}');
+      map[email] = userId;
+      localStorage.setItem('email_userid_map', JSON.stringify(map));
+    } catch(_) {}
   }
 
   async function doLogout() {
