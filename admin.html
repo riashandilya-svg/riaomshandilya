@@ -680,11 +680,6 @@
     <input type="password" id="admin-password" placeholder="Enter password" />
     <div class="login-error" id="login-error">Incorrect email or password.</div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In</button>
-
-    <!-- Register fingerprint (shown only after password login, if no cred exists) -->
-    <button class="fp-register-btn" id="fp-register-btn" style="display:none" onclick="doFingerprintRegister()">
-      ＋ Register Fingerprint on This Device
-    </button>
   </div>
 </div>
 
@@ -999,13 +994,8 @@
       // Refresh manage panel if visible
       if (currentView === 'fingerprints') loadFingerprintPanel();
 
-      // If on login screen, go to dashboard
-      const loginRegBtn = document.getElementById('fp-register-btn');
-      if (loginRegBtn.style.display !== 'none') {
-        loginRegBtn.style.display = 'none';
-        document.getElementById('topbar-fp-btn').style.display = 'none';
-        setTimeout(() => showDashboard(), 600);
-      }
+      // Hide topbar register button now that a credential exists
+      document.getElementById('topbar-fp-btn').style.display = 'none';
 
     } catch (e) {
       const msg = e.message || '';
@@ -1229,13 +1219,6 @@
     }
 
     accessToken = data.session.access_token;
-
-    // Show register button if no fingerprint credential on this device
-    if (!getStoredCredentialIds().length && window.PublicKeyCredential) {
-      document.getElementById('fp-register-btn').style.display = 'block';
-      return; // Let them register before entering dashboard
-    }
-
     showDashboard();
   }
 
