@@ -907,6 +907,22 @@
     if (legacy && !arr.includes(legacy)) arr.push(legacy);
     return arr;
   }
+
+  // ── Seed localStorage from DB so any registered credential works even on fresh load ──
+  async function seedCredentialIdsFromDB() {
+    try {
+      const { data: creds } = await db
+        .from('webauthn_credentials')
+        .select('credential_id');
+      if (!creds || !creds.length) return;
+      const local = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
+      let changed = false;
+      for (const c of creds) {
+        if (!local.includes(c.credential_id)) { local.push(c.credential_id); changed = true; }
+      }
+      if (changed) localStorage.setItem('fp_credential_ids', JSON.stringify(local));
+    } catch (_) { /* non-fatal */ }
+  }
   // ── FINGERPRINT LABEL MODAL ──
   let _fpRegisterResolve = null;
 
@@ -1013,11 +1029,10 @@
     const { data: { user } } = await db.auth.getUser();
     if (!user) return;
 
-    // Get all credentials for this user
+    // Get ALL credentials (shared across all admin accounts)
     const { data: creds, error } = await db
       .from('webauthn_credentials')
-      .select('id, credential_id, label, created_at')
-      .eq('user_id', user.id)
+      .select('id, credential_id, label, created_at, user_id')
       .order('created_at', { ascending: true });
 
     if (error || !creds || !creds.length) {
@@ -1032,6 +1047,7 @@
 
     list.innerHTML = creds.map(c => {
       const isThis = localIds.includes(c.credential_id);
+      const isMine = c.user_id === user.id;
       const date = new Date(c.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' });
       return `
         <div class="fp-cred-item" id="fp-item-${c.id}">
@@ -1041,6 +1057,7 @@
               <div class="fp-cred-label">
                 ${escHtml(c.label || 'Fingerprint')}
                 ${isThis ? '<span class="fp-cred-this">This device</span>' : ''}
+                ${isMine ? '<span class="fp-cred-this" style="color:var(--gold)">Mine</span>' : ''}
               </div>
               <div class="fp-cred-meta">Registered ${date} · ID: ${c.credential_id.slice(0,12)}…</div>
             </div>
@@ -1116,14 +1133,22 @@
 
       const credId = b64url(assertion.rawId);
 
-      // Look up the credential in Supabase (unauthenticated read via anon key)
+      // Look up the credential by credential_id only — works for any admin account
       const { data: rows, error } = await db
         .from('webauthn_credentials')
         .select('user_id, sign_count')
         .eq('credential_id', credId)
         .limit(1);
 
-      if (error || !rows || !rows.length) throw new Error('Credential not found');
+      if (error || !rows || !rows.length) {
+        // Also try a full scan in case credential_id encoding differs slightly
+        const { data: allCreds } = await db
+          .from('webauthn_credentials')
+          .select('user_id, sign_count, credential_id');
+        const match = (allCreds || []).find(c => c.credential_id === credId);
+        if (!match) throw new Error('Credential not found');
+        rows.push(match);
+      }
 
       const userId = rows[0].user_id;
 
@@ -1152,6 +1177,9 @@
       accessToken = access_token;
 
       fpState('success', 'Verified ✓');
+      // Persist this credId so future logins can use it with allowCredentials
+      const storedAfter = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
+      if (!storedAfter.includes(credId)) { storedAfter.push(credId); localStorage.setItem('fp_credential_ids', JSON.stringify(storedAfter)); }
       localStorage.setItem('fp_credential_id', credId);
       setTimeout(() => showDashboard(), 400);
 
@@ -1190,7 +1218,9 @@
       accessToken = session.access_token;
       showDashboard(); // already authenticated — skip all login UI
     } else {
-      // No session — show login and auto-prompt fingerprint
+      // Seed credential IDs from DB first so allowCredentials list is populated,
+      // then auto-prompt fingerprint
+      await seedCredentialIdsFromDB();
       triggerFingerprintIfNeeded();
     }
   })();
