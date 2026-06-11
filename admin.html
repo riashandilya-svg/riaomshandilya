@@ -169,6 +169,108 @@
     }
     .fp-register-btn:hover { border-color: var(--gold); color: var(--gold-light); }
 
+    /* ── FINGERPRINT LABEL MODAL ── */
+    .fp-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,8,5,0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200; padding: 20px;
+    }
+    .fp-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 32px 28px;
+      width: 100%; max-width: 340px;
+    }
+    .fp-modal h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 600;
+      color: var(--gold-light); margin-bottom: 6px;
+    }
+    .fp-modal p {
+      font-size: 0.78rem; color: var(--text-muted);
+      margin-bottom: 20px; line-height: 1.6;
+    }
+    .fp-modal input {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Jost', sans-serif; font-size: 0.9rem;
+      outline: none; margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .fp-modal input:focus { border-color: var(--gold); }
+    .fp-modal-actions { display: flex; gap: 10px; }
+    .fp-modal-actions .fp-modal-confirm {
+      flex: 1; padding: 10px;
+      background: var(--gold); color: var(--ink);
+      border: none; font-family: 'Jost', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .fp-modal-actions .fp-modal-confirm:hover { background: var(--gold-light); }
+    .fp-modal-actions .fp-modal-cancel {
+      padding: 10px 18px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Jost', sans-serif; font-size: 0.78rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .fp-modal-actions .fp-modal-cancel:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── MANAGE FINGERPRINTS PANEL ── */
+    .fp-manage-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 22px 24px;
+      margin-bottom: 24px;
+    }
+    .fp-manage-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 16px;
+    }
+    .fp-manage-title {
+      font-size: 0.72rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .fp-add-btn {
+      padding: 5px 14px;
+      background: var(--gold-pale);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-family: 'Jost', sans-serif; font-size: 0.72rem;
+      font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .fp-add-btn:hover { background: rgba(201,151,58,0.22); }
+    .fp-cred-list { display: flex; flex-direction: column; gap: 8px; }
+    .fp-cred-item {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+    }
+    .fp-cred-info { display: flex; align-items: center; gap: 10px; }
+    .fp-cred-icon { font-size: 1.1rem; opacity: 0.7; }
+    .fp-cred-label { font-size: 0.85rem; color: var(--text); }
+    .fp-cred-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+    .fp-cred-this { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); margin-left: 8px; }
+    .fp-delete-btn {
+      background: none; border: 1px solid transparent;
+      color: var(--text-muted); cursor: pointer;
+      font-size: 0.72rem; padding: 4px 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      transition: all 0.15s; font-family: 'Jost', sans-serif;
+    }
+    .fp-delete-btn:hover { border-color: var(--red); color: var(--red); }
+    .fp-empty { font-size: 0.8rem; color: var(--text-muted); padding: 8px 0; }
+
     /* ── DASHBOARD ── */
     #dashboard { display: none; }
 
@@ -730,6 +832,19 @@
   </div>
 </div>
 
+<!-- ── FINGERPRINT LABEL MODAL ── -->
+<div class="fp-modal-overlay" id="fp-label-modal" style="display:none">
+  <div class="fp-modal">
+    <h3>Name this fingerprint</h3>
+    <p>Give it a short label so you know which finger it is (e.g. "Right index", "Left thumb").</p>
+    <input type="text" id="fp-label-input" placeholder="e.g. Right index finger" maxlength="40" />
+    <div class="fp-modal-actions">
+      <button class="fp-modal-cancel" onclick="closeFpModal()">Cancel</button>
+      <button class="fp-modal-confirm" onclick="confirmFpRegister()">Register ☞</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -930,9 +1045,31 @@
   }
 
   // ── Auto-trigger fingerprint on page load ──
-  window.addEventListener('load', () => {
-    setTimeout(doFingerprintLogin, 600);
+  // Runs ONLY if no existing session — session check happens first
+  let _fpAutoTriggered = false;
+  function triggerFingerprintIfNeeded() {
+    if (_fpAutoTriggered) return;
+    _fpAutoTriggered = true;
+    doFingerprintLogin();
+  }
+
+  document.getElementById('admin-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
   });
+
+  // ── Session restore — always runs first ──
+  // If a session exists, go straight to dashboard (NO fingerprint prompt)
+  // If no session, show login screen and auto-trigger fingerprint
+  (async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) {
+      accessToken = session.access_token;
+      showDashboard(); // already authenticated — skip all login UI
+    } else {
+      // No session — show login and auto-prompt fingerprint
+      triggerFingerprintIfNeeded();
+    }
+  })();
 
   // ═══════════════════════════════
   //  LOGIN
@@ -962,8 +1099,7 @@
     // Show register button if no fingerprint credential on this device
     if (!localStorage.getItem('fp_credential_id') && window.PublicKeyCredential) {
       document.getElementById('fp-register-btn').style.display = 'block';
-      // Give a moment before jumping to dashboard so they can register
-      return;
+      return; // Let them register before entering dashboard
     }
 
     showDashboard();
@@ -974,19 +1110,6 @@
     accessToken = null;
     location.reload();
   }
-
-  document.getElementById('admin-password').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
-
-  // auto-restore session on page load
-  (async () => {
-    const { data: { session } } = await db.auth.getSession();
-    if (session) {
-      accessToken = session.access_token;
-      showDashboard();
-    }
-  })();
 
   function showDashboard() {
     document.getElementById('login-screen').style.display = 'none';
