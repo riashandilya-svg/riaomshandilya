@@ -522,8 +522,8 @@
 
     <!-- View Tabs -->
     <div class="view-tabs">
-      <button class="view-tab active" id="tab-sales" onclick="switchView('sales')">Sales</button>
-      <button class="view-tab" id="tab-orders" onclick="switchView('orders')">Orders</button>
+      <button class="view-tab active" id="tab-orders" onclick="switchView('orders')">Orders</button>
+      <button class="view-tab" id="tab-sales" onclick="switchView('sales')">Sales</button>
     </div>
 
     <!-- Date Range Bar (shared) -->
@@ -670,7 +670,7 @@
   let currentFilter = 'all';
   let accessToken = null;
   let currentRange = 'this_month';
-  let currentView = 'sales';
+  let currentView = 'orders';
   let customStart = null;
   let customEnd = null;
 
@@ -939,7 +939,8 @@
 
   function renderTable() {
     const q = document.getElementById('search-input').value.toLowerCase();
-    let orders = filterOrdersByRange(allOrders, currentRange);
+    // When searching, ignore the date range so all orders are searchable
+    let orders = q ? allOrders : filterOrdersByRange(allOrders, currentRange);
     if (currentFilter !== 'all') {
       orders = orders.filter(o => o.status === currentFilter);
     }
