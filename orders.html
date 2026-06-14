@@ -733,12 +733,26 @@
     document.getElementById('not-found').style.display = 'none';
 
     const isPhone = /^\d{10}$/.test(val);
-    let query = db.from('orders')
-      .select('id, created_at, items, subtotal, shipping, total, status, tracking_number, email, razorpay_payment_id')
-      .order('created_at', { ascending: false });
-    query = isPhone ? query.eq('phone', val) : query.eq('email', val);
-
-    const { data, error } = await query;
+    let data, error;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/get-orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify(isPhone ? { phone: val } : { email: val }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        error = { message: result.error || 'Failed to load orders' };
+      } else {
+        data = result.orders || result.data || result;
+      }
+    } catch (err) {
+      error = { message: 'Network error' };
+    }
 
     btn.textContent = 'Track';
     btn.disabled = false;

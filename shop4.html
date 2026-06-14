@@ -1524,6 +1524,8 @@
   const SUPABASE_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkZHRyd3p6aW1kdm51enV4cXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NTc1NTksImV4cCI6MjA5NjMzMzU1OX0.75HfYj0v3TFd0d2_rsDyLf7P3mDaV-sS2JphqBdIiNE';
   const SEND_EMAIL_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/send-order-email';
+  const CREATE_ORDER_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/create-razorpay-order';
+  const CONFIRM_ORDER_URL = 'https://bddtrwzzimdvnuzuxqvx.supabase.co/functions/v1/confirm-order';
 
   // ════════════════════════════════════
   //  CATALOG
@@ -1759,7 +1761,6 @@
       showToast('Enter a valid 6-digit PIN code'); return;
     }
 
-    const amountPaise = (cartTotal() + SHIPPING_FEE) * 100;
     const address = {
       line1: addr1,
       line2: document.getElementById('f-addr2').value.trim(),
@@ -1770,9 +1771,34 @@
       id: item.id, title: item.title, qty: item.qty, price: item.price,
     }));
 
+    // Step 1: Create Razorpay order server-side (server verifies prices)
+    showToast('Creating order…');
+    let serverOrder;
+    try {
+      const res = await fetch(CREATE_ORDER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ items: orderItems }),
+      });
+      serverOrder = await res.json();
+      if (!res.ok || !serverOrder.order_id) {
+        showToast('Order creation failed: ' + (serverOrder.error || 'Unknown error'));
+        return;
+      }
+    } catch (err) {
+      showToast('Network error creating order. Please try again.');
+      return;
+    }
+
+    // Step 2: Open Razorpay with server-locked order_id and amount
     const rzp = new Razorpay({
       key: RAZORPAY_KEY_ID,
-      amount: amountPaise,
+      order_id: serverOrder.order_id,
+      amount: serverOrder.amount,
       currency: 'INR',
       name: 'Ria Om Shandilya™',
       description: 'Piano Sheet Music Books',
@@ -1780,55 +1806,42 @@
       theme: { color: '#d4af37' },
 
       handler: async function(response) {
-        const savedTotal = cartTotal() + SHIPPING_FEE;
-        const savedItems = [...orderItems];
-        const savedAddress = `${address.line1}${address.line2 ? ', ' + address.line2 : ''}, ${address.city}, ${address.state} - ${address.pin}`;
-
-        const { data, error } = await db.from('orders').insert([{
-          razorpay_payment_id: response.razorpay_payment_id,
-          name, email, phone,
-          address: address.line1 + (address.line2 ? ', ' + address.line2 : ''),
-          city: address.city,
-          state: address.state,
-          pin: address.pin,
-          country: address.country,
-          items: orderItems,
-          subtotal: cartTotal(),
-          shipping: SHIPPING_FEE,
-          total: savedTotal,
-          status: 'paid',
-        }]).select().single();
-
-        if (error) console.error('Supabase error:', error);
-
-        const shortId = data
-          ? data.id.toString().slice(0, 8).toUpperCase()
-          : response.razorpay_payment_id.slice(-8).toUpperCase();
+        showToast('Confirming payment…');
 
         try {
-          const emailRes = await fetch(SEND_EMAIL_URL, {
+          const confirmRes = await fetch(CONFIRM_ORDER_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            },
             body: JSON.stringify({
-              name, email,
-              orderId: shortId,
-              items: savedItems,
-              total: `₹${savedTotal}`,
-              address: savedAddress,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              name, email, phone,
+              address,
             }),
           });
-          const emailData = await emailRes.json();
-          console.log('Email result:', emailData);
-        } catch (emailErr) {
-          console.warn('Email send failed:', emailErr);
+
+          const result = await confirmRes.json();
+
+          if (!confirmRes.ok || !result.success) {
+            showToast('Order confirmation failed: ' + (result.error || 'Unknown error'));
+            return;
+          }
+
+          document.getElementById('checkout-form-wrapper').style.display = 'none';
+          document.getElementById('success-order-id').textContent = result.order_id || response.razorpay_payment_id;
+          document.getElementById('success-state').classList.add('show');
+
+          cart = {};
+          updateCartUI();
+        } catch (err) {
+          showToast('Error confirming order. Contact support if payment was deducted.');
+          console.error('Order confirmation error:', err);
         }
-
-        document.getElementById('checkout-form-wrapper').style.display = 'none';
-        document.getElementById('success-order-id').textContent = data ? data.id : response.razorpay_payment_id;
-        document.getElementById('success-state').classList.add('show');
-
-        cart = {};
-        updateCartUI();
       },
 
       modal: { ondismiss: () => showToast('Payment cancelled') }

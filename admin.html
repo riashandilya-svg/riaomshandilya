@@ -963,10 +963,11 @@
 
   // ── Seed localStorage from DB so any registered credential works even on fresh load ──
   async function seedCredentialIdsFromDB(userId) {
+    if (!userId) return;
     try {
-      let query = db.from('webauthn_credentials').select('credential_id');
-      if (userId) query = query.eq('user_id', userId);
-      const { data: creds } = await query;
+      const { data: creds } = await db.from('webauthn_credentials')
+        .select('credential_id')
+        .eq('user_id', userId);
       if (!creds || !creds.length) return;
       const local = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
       let changed = false;
@@ -1082,10 +1083,10 @@
     const { data: { user } } = await db.auth.getUser();
     if (!user) return;
 
-    // Get ALL credentials (shared across all admin accounts)
     const { data: creds, error } = await db
       .from('webauthn_credentials')
       .select('id, credential_id, label, created_at, user_id')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: true });
 
     if (error || !creds || !creds.length) {
@@ -1100,7 +1101,6 @@
 
     list.innerHTML = creds.map(c => {
       const isThis = localIds.includes(c.credential_id);
-      const isMine = c.user_id === user.id;
       const date = new Date(c.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' });
       return `
         <div class="fp-cred-item" id="fp-item-${c.id}">
@@ -1110,24 +1110,33 @@
               <div class="fp-cred-label">
                 ${escHtml(c.label || 'Fingerprint')}
                 ${isThis ? '<span class="fp-cred-this">This device</span>' : ''}
-                ${isMine ? '<span class="fp-cred-this" style="color:var(--gold)">Mine</span>' : ''}
               </div>
               <div class="fp-cred-meta">Registered ${date} · ID: ${c.credential_id.slice(0,12)}…</div>
             </div>
           </div>
-          <button class="fp-delete-btn" onclick="deleteFpCred('${c.id}','${c.credential_id}','${escHtml(c.label||'Fingerprint')}')">Remove</button>
+          <button class="fp-delete-btn" data-row-id="${escHtml(c.id)}" data-cred-id="${escHtml(c.credential_id)}" data-label="${escHtml(c.label||'Fingerprint')}">Remove</button>
         </div>
       `;
     }).join('');
+
+    list.querySelectorAll('.fp-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        deleteFpCred(btn.dataset.rowId, btn.dataset.credId, btn.dataset.label);
+      });
+    });
   }
 
   async function deleteFpCred(rowId, credId, label) {
     if (!confirm(`Remove fingerprint "${label}"?\n\nYou won't be able to log in with it anymore.`)) return;
 
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) { showToast('Not authenticated'); return; }
+
     const { error } = await db
       .from('webauthn_credentials')
       .delete()
-      .eq('id', rowId);
+      .eq('id', rowId)
+      .eq('user_id', user.id);
 
     if (error) { showToast('Error removing: ' + error.message); return; }
 
@@ -1147,7 +1156,7 @@
   }
 
   function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   // ── LOGIN with fingerprint (server-verified challenge) ──
@@ -1587,10 +1596,26 @@
     document.getElementById('orders-tbody').innerHTML = '<tr class="loading-row"><td colspan="7">Loading…</td></tr>';
     document.getElementById('sales-items-tbody').innerHTML = '<tr class="loading-row"><td colspan="3">Loading…</td></tr>';
 
-    const { data, error } = await db
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+    let data, error;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/get-orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({}),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        error = { message: result.error || 'Failed to load orders' };
+      } else {
+        data = result.orders || result.data || result;
+      }
+    } catch (err) {
+      error = { message: 'Network error loading orders' };
+    }
 
     if (error) {
       document.getElementById('orders-tbody').innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px">Error: ${error.message}</td></tr>`;
@@ -1802,10 +1827,24 @@
     }
 
     // ── Normal save (non-cancel) ──
-    const { error } = await db
-      .from('orders')
-      .update({ status, tracking_number: tracking })
-      .eq('id', id);
+    let error;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/update-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ order_id: id, status, tracking_number: tracking }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        error = { message: result.error || 'Update failed' };
+      }
+    } catch (err) {
+      error = { message: 'Network error updating order' };
+    }
 
     if (error) {
       showToast('Error saving order: ' + error.message);
