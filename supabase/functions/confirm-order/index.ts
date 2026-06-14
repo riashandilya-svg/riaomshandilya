@@ -7,6 +7,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const PRICES: Record<string, number> = {
+  "soulful-bollywood": 499,
+  "peppy-bollywood": 499,
+  "romantic-bollywood": 499,
+  "classic-bollywood": 499,
+  "meet-notes-beginner": 399,
+  "meet-notes-theory": 399,
+  "wyom-100": 299,
+  "wyom-72": 249,
+  "track-your-journey": 299,
+  "combo-classic-romantic": 1200,
+  "combo-classic-romantic-peppy": 1700,
+  "combo-all-four": 2200,
+};
+const SHIPPING = 0;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -80,13 +96,39 @@ serve(async (req) => {
     const totalPaise = razorpayOrder.amount;
     const notes = razorpayOrder.notes || {};
 
-    // Step 3: Insert order into Supabase using service_role key
+    // Step 3: Resolve items from notes (compact format: "id:qty,id:qty")
+    let orderItems: any[] = [];
+    let subtotal = notes.subtotal ? parseInt(notes.subtotal) : Math.floor(totalPaise / 100);
+
+    if (notes.items_compact) {
+      const pairs = notes.items_compact.split(",");
+      for (const pair of pairs) {
+        const [id, qtyStr] = pair.split(":");
+        const qty = parseInt(qtyStr) || 1;
+        const price = PRICES[id];
+        if (price) {
+          orderItems.push({ id, title: id, qty, price });
+        }
+      }
+    }
+
+    // Verify: subtotal from notes must match what Razorpay charged
+    const shippingAmount = notes.shipping ? parseInt(notes.shipping) : SHIPPING;
+    const expectedTotal = subtotal + shippingAmount;
+    if (expectedTotal * 100 !== totalPaise) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Amount mismatch" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Step 4: Insert order into Supabase using service_role key
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const db = createClient(supabaseUrl, supabaseServiceKey);
 
     const addressStr = address
-      ? `${address.line1}${address.line2 ? ", " + address.line2 : ""}`
+      ? `${address.line1 || ""}${address.line2 ? ", " + address.line2 : ""}`
       : "";
 
     const { data, error } = await db.from("orders").insert([{
@@ -100,9 +142,9 @@ serve(async (req) => {
       state: (address?.state || "").slice(0, 100),
       pin: (address?.pin || "").slice(0, 10),
       country: (address?.country || "India").slice(0, 50),
-      items: notes.items ? JSON.parse(notes.items) : [],
-      subtotal: notes.subtotal ? parseInt(notes.subtotal) : Math.floor(totalPaise / 100),
-      shipping: notes.shipping ? parseInt(notes.shipping) : 0,
+      items: orderItems,
+      subtotal,
+      shipping: shippingAmount,
       total: Math.floor(totalPaise / 100),
       status: "paid",
     }]).select("id").single();
@@ -115,7 +157,7 @@ serve(async (req) => {
       );
     }
 
-    // Step 4: Send confirmation email
+    // Step 5: Send confirmation email
     const shortId = data.id.toString().slice(0, 8).toUpperCase();
     try {
       await fetch(`${supabaseUrl}/functions/v1/send-order-email`, {
@@ -128,7 +170,7 @@ serve(async (req) => {
           name,
           email,
           orderId: shortId,
-          items: notes.items ? JSON.parse(notes.items) : [],
+          items: orderItems,
           total: `₹${Math.floor(totalPaise / 100)}`,
           address: `${addressStr}, ${address?.city}, ${address?.state} - ${address?.pin}`,
         }),
