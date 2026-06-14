@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
   <title>Track Order — Ria Om Shandilya™</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -668,6 +669,11 @@
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
   // ═══════════════════════════════
   //  STATUS TIMELINE
   // ═══════════════════════════════
@@ -698,11 +704,27 @@
   }
 
   // ═══════════════════════════════
-  //  TRACK ORDER
+  //  TRACK ORDER (with rate limiting)
   // ═══════════════════════════════
+  const _trackAttempts = [];
+  const TRACK_LIMIT = 5;
+  const TRACK_WINDOW_MS = 60000;
+
+  function isRateLimited() {
+    const now = Date.now();
+    while (_trackAttempts.length && _trackAttempts[0] < now - TRACK_WINDOW_MS) _trackAttempts.shift();
+    return _trackAttempts.length >= TRACK_LIMIT;
+  }
+
   async function trackOrder() {
     const val = document.getElementById('track-input').value.trim().toLowerCase();
     if (!val) return;
+
+    if (isRateLimited()) {
+      showToast('Too many attempts. Please wait a minute.');
+      return;
+    }
+    _trackAttempts.push(Date.now());
 
     const btn = document.getElementById('track-btn');
     btn.textContent = '…';
@@ -711,7 +733,9 @@
     document.getElementById('not-found').style.display = 'none';
 
     const isPhone = /^\d{10}$/.test(val);
-    let query = db.from('orders').select('*').order('created_at', { ascending: false });
+    let query = db.from('orders')
+      .select('id, created_at, items, subtotal, shipping, total, status, tracking_number, email, razorpay_payment_id')
+      .order('created_at', { ascending: false });
     query = isPhone ? query.eq('phone', val) : query.eq('email', val);
 
     const { data, error } = await query;
@@ -746,36 +770,38 @@
       const date = new Date(order.created_at).toLocaleDateString('en-IN', {
         day: '2-digit', month: 'long', year: 'numeric'
       });
-      const shortId = (order.id || '').toString().slice(0, 8).toUpperCase();
+      const shortId = escHtml((order.id || '').toString().slice(0, 8).toUpperCase());
       const items = (order.items || []);
+      const safeStatus = ['paid','shipped','delivered','cancelled','pending'].includes(order.status) ? order.status : 'pending';
+      const safeTotal = parseInt(order.total) || 0;
       const itemsHtml = items.map(item => `
         <div class="order-item-row">
-          <div class="order-item-name">${item.title}</div>
-          <div class="order-item-qty">× ${item.qty}</div>
-          <div class="order-item-price">₹${item.price * item.qty}</div>
+          <div class="order-item-name">${escHtml(item.title)}</div>
+          <div class="order-item-qty">× ${parseInt(item.qty) || 0}</div>
+          <div class="order-item-price">₹${(parseInt(item.price) || 0) * (parseInt(item.qty) || 0)}</div>
         </div>
       `).join('');
 
       return `
-        <div class="order-card" data-order-id="${order.id}">
+        <div class="order-card" data-order-id="${escHtml(order.id)}">
           <div class="order-card-header">
             <div>
               <div class="order-card-id">Order #${shortId}</div>
               <div class="order-card-date">${date}</div>
             </div>
-            <span class="badge badge-${order.status || 'pending'}">${order.status || 'pending'}</span>
+            <span class="badge badge-${safeStatus}">${safeStatus}</span>
           </div>
           <div class="order-card-body">
             <div class="order-items">${itemsHtml}</div>
             <div class="order-totals">
-              <div class="total-row"><span>Subtotal</span><span>₹${order.subtotal || 0}</span></div>
-              <div class="total-row"><span>Shipping</span><span>${order.shipping === 0 ? 'Free' : '₹' + order.shipping}</span></div>
-              <div class="total-row bold"><span>Total</span><span>₹${order.total || 0}</span></div>
+              <div class="total-row"><span>Subtotal</span><span>₹${parseInt(order.subtotal) || 0}</span></div>
+              <div class="total-row"><span>Shipping</span><span>${order.shipping === 0 ? 'Free' : '₹' + (parseInt(order.shipping) || 0)}</span></div>
+              <div class="total-row bold"><span>Total</span><span>₹${safeTotal}</span></div>
             </div>
-            ${renderTimeline(order.status)}
+            ${renderTimeline(safeStatus)}
             ${order.tracking_number ? `
               <div class="tracking-info">
-                📦 <strong>Tracking Number:</strong> ${order.tracking_number}<br>
+                📦 <strong>Tracking Number:</strong> ${escHtml(order.tracking_number)}<br>
                 <span style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;display:block;">
                   Track on
                   <a href="https://www.indiapost.gov.in/_layouts/15/DOP.Portal.Tracking/TrackConsignment.aspx" target="_blank" style="color:var(--rust);">India Post</a> ·
@@ -783,16 +809,16 @@
                   <a href="https://www.delhivery.com/tracking" target="_blank" style="color:var(--rust);">Delhivery</a>
                 </span>
               </div>` : ''}
-            ${order.status === 'paid' ? `
+            ${safeStatus === 'paid' ? `
               <div class="cancel-zone">
-                <button class="cancel-btn" onclick="openCancelModal('${order.id}', ${order.total}, '${order.email}')">
+                <button class="cancel-btn" onclick="openCancelModal('${escHtml(order.id)}', ${safeTotal}, '${escHtml(order.email)}')">
                   Cancel Order & Refund
                 </button>
                 <p class="cancel-note">Only available before shipment. Requires email verification. Refund takes 5–7 business days.</p>
               </div>` : ''}
-            ${order.status === 'cancelled' ? `
+            ${safeStatus === 'cancelled' ? `
               <div class="cancel-zone">
-                <div class="cancel-done-note">✓ Cancelled — refund of ₹${order.total} initiated. Allow 5–7 business days.</div>
+                <div class="cancel-done-note">✓ Cancelled — refund of ₹${safeTotal} initiated. Allow 5–7 business days.</div>
               </div>` : ''}
           </div>
         </div>

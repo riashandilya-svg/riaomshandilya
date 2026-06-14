@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
   <title>Admin — Ria Om Shandilya™</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1148,7 +1150,7 @@
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  // ── LOGIN with fingerprint ──
+  // ── LOGIN with fingerprint (server-verified challenge) ──
   async function doFingerprintLogin() {
     if (!window.PublicKeyCredential) {
       fpState('fail', 'Not supported on this browser');
@@ -1158,23 +1160,29 @@
     fpState('scanning', 'Verifying…');
 
     try {
-      const challenge = crypto.getRandomValues(new Uint8Array(32));
+      // Step 1: Get a server-generated challenge
+      const chalRes = await fetch(`${SUPABASE_URL}/functions/v1/webauthn-challenge`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      });
+      if (!chalRes.ok) throw new Error('Failed to get challenge from server');
+      const { challenge: serverChallenge } = await chalRes.json();
+      const challengeBuffer = fromB64url(serverChallenge);
 
-      // Try resident key first (browser picks the right account automatically)
+      // Step 2: WebAuthn assertion using the server challenge
       let assertion;
       try {
         assertion = await navigator.credentials.get({ publicKey: {
-          challenge,
+          challenge: challengeBuffer,
           rpId: RP_ID,
           userVerification: 'required',
           timeout: 60000,
         }});
       } catch (e) {
-        // Resident key failed — try with all stored credential IDs
         const storedIds = getStoredCredentialIds();
         if (!storedIds.length) throw new Error('No fingerprint registered on this device');
         assertion = await navigator.credentials.get({ publicKey: {
-          challenge,
+          challenge: challengeBuffer,
           rpId: RP_ID,
           userVerification: 'required',
           timeout: 60000,
@@ -1183,40 +1191,33 @@
       }
 
       const credId = b64url(assertion.rawId);
+      const clientDataJSON = b64url(assertion.response.clientDataJSON);
+      const authenticatorData = b64url(assertion.response.authenticatorData);
 
-      // Look up the credential by credential_id only — works for any admin account
-      const { data: rows, error } = await db
-        .from('webauthn_credentials')
-        .select('user_id, sign_count')
-        .eq('credential_id', credId)
-        .limit(1);
+      // Step 3: Look up user_id for this credential (from localStorage cache)
+      const emailMap = JSON.parse(localStorage.getItem('email_userid_map') || '{}');
+      const cachedUserId = _loginEmail ? emailMap[_loginEmail] : null;
 
-      if (error || !rows || !rows.length) {
-        // Also try a full scan in case credential_id encoding differs slightly
-        const { data: allCreds } = await db
-          .from('webauthn_credentials')
-          .select('user_id, sign_count, credential_id');
-        const match = (allCreds || []).find(c => c.credential_id === credId);
-        if (!match) throw new Error('Credential not found');
-        rows.push(match);
+      let userId = cachedUserId;
+      if (!userId) {
+        // If no cached mapping, we can't proceed without knowing the user_id
+        // Fall back to password login
+        throw new Error('No cached user mapping — use password first');
       }
 
-      const userId = rows[0].user_id;
-
-      // Update sign_count
-      await db.from('webauthn_credentials')
-        .update({ sign_count: rows[0].sign_count + 1 })
-        .eq('credential_id', credId);
-
-      // Get a session by calling our edge function
-      // credential_id is sent so the server can verify it belongs to this user_id
+      // Step 4: Send to server for verification (server checks challenge + credential)
       const res = await fetch(`${SUPABASE_URL}/functions/v1/webauthn-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'apikey': SUPABASE_ANON_KEY,
         },
-        body: JSON.stringify({ user_id: userId, credential_id: credId }),
+        body: JSON.stringify({
+          user_id: userId,
+          credential_id: credId,
+          client_data_json: clientDataJSON,
+          authenticator_data: authenticatorData,
+        }),
       });
 
       if (!res.ok) {
@@ -1229,11 +1230,9 @@
       accessToken = access_token;
 
       fpState('success', 'Verified ✓');
-      // Persist this credId so future logins can use it with allowCredentials
       const storedAfter = JSON.parse(localStorage.getItem('fp_credential_ids') || '[]');
       if (!storedAfter.includes(credId)) { storedAfter.push(credId); localStorage.setItem('fp_credential_ids', JSON.stringify(storedAfter)); }
       localStorage.setItem('fp_credential_id', credId);
-      // Cache email → userId for future step-2 routing
       if (_loginEmail) cacheEmailUserId(_loginEmail, userId);
       setTimeout(() => showDashboard(), 400);
 
@@ -1642,9 +1641,9 @@
     }
     tbody.innerHTML = sorted.map(([title, d]) => `
       <tr>
-        <td style="font-weight:500">${title}</td>
-        <td style="color:var(--text-muted)">${d.qty}</td>
-        <td><span class="amount">₹${d.rev.toLocaleString('en-IN')}</span></td>
+        <td style="font-weight:500">${escHtml(title)}</td>
+        <td style="color:var(--text-muted)">${parseInt(d.qty) || 0}</td>
+        <td><span class="amount">₹${(parseInt(d.rev) || 0).toLocaleString('en-IN')}</span></td>
       </tr>
     `).join('');
   }
@@ -1700,38 +1699,39 @@
 
     tbody.innerHTML = orders.map(order => {
       const date = new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
-      const items = (order.items || []).map(i => `${i.title.split(' ')[0]}… ×${i.qty}`).join(', ');
-      const addrStr = [order.address, order.city, order.state, order.pin, order.country].filter(Boolean).join(', ');
-      const shortId = (order.id || '').toString().slice(0, 8);
+      const items = (order.items || []).map(i => `${escHtml(i.title.split(' ')[0])}… ×${parseInt(i.qty) || 0}`).join(', ');
+      const addrStr = [order.address, order.city, order.state, order.pin, order.country].filter(Boolean).map(s => escHtml(s)).join(', ');
+      const shortId = escHtml((order.id || '').toString().slice(0, 8));
+      const safeStatus = ['paid','shipped','delivered','cancelled','pending'].includes(order.status) ? order.status : 'pending';
 
       return `
         <tr>
           <td>
             <div class="order-id">#${shortId}</div>
-            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">${order.razorpay_payment_id || '—'}</div>
-            ${order.razorpay_refund_id ? `<div style="font-size:0.68rem;color:var(--red);margin-top:2px">Refund: ${order.razorpay_refund_id}</div>` : ''}
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">${escHtml(order.razorpay_payment_id || '—')}</div>
+            ${order.razorpay_refund_id ? `<div style="font-size:0.68rem;color:var(--red);margin-top:2px">Refund: ${escHtml(order.razorpay_refund_id)}</div>` : ''}
           </td>
           <td>
-            <div class="customer-name">${order.name || '—'}</div>
-            <div class="customer-email">${order.email || ''}</div>
-            <div class="customer-email">${order.phone || ''}</div>
+            <div class="customer-name">${escHtml(order.name || '—')}</div>
+            <div class="customer-email">${escHtml(order.email || '')}</div>
+            <div class="customer-email">${escHtml(order.phone || '')}</div>
             <button class="expand-btn" onclick="toggleAddr(this)" style="margin-top:6px">📦 Address</button>
             <div class="address-popup">${addrStr || 'No address'}</div>
           </td>
           <td><div class="items-list">${items || '—'}</div></td>
-          <td><div class="amount">₹${(order.total || 0).toLocaleString('en-IN')}</div></td>
+          <td><div class="amount">₹${(parseInt(order.total) || 0).toLocaleString('en-IN')}</div></td>
           <td style="white-space:nowrap;color:var(--text-muted);font-size:0.8rem">${date}</td>
-          <td><span class="badge badge-${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+          <td><span class="badge badge-${safeStatus}">${safeStatus}</span></td>
           <td>
             <div class="action-row">
-              <select class="status-select" id="status-${order.id}">
-                <option value="paid" ${order.status === 'paid' ? 'selected' : ''}>Paid</option>
-                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
-                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+              <select class="status-select" id="status-${escHtml(order.id)}">
+                <option value="paid" ${safeStatus === 'paid' ? 'selected' : ''}>Paid</option>
+                <option value="shipped" ${safeStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="delivered" ${safeStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="cancelled" ${safeStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
               </select>
-              <input class="tracking-input" id="tracking-${order.id}" placeholder="Tracking #" value="${order.tracking_number || ''}" />
-              <button class="save-btn" onclick="saveOrder('${order.id}')">Save</button>
+              <input class="tracking-input" id="tracking-${escHtml(order.id)}" placeholder="Tracking #" value="${escHtml(order.tracking_number || '')}" />
+              <button class="save-btn" onclick="saveOrder('${escHtml(order.id)}')">Save</button>
             </div>
           </td>
         </tr>
